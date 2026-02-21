@@ -33,7 +33,7 @@
         <div class="usd-page-title">
             <span class="usd-page-icon"><span class="fa fa-tachometer"></span></span>
             <span class="usd-page-name">UX Monitor</span>
-            <span class="usd-page-info" title="API probe and page load performance data. Click a data point on a page check chart to view the AJAX request breakdown. Shift+Drag to zoom, Alt+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it."><span class="fa fa-info-circle"></span></span>
+            <span class="usd-help usd-page-info" data-tooltip="API probe and page load performance data. Click a data point on a page check chart to view the AJAX request breakdown."><span class="fa fa-info-circle"></span></span>
         </div>
         <div class="usd-controls-bar__left">
             <span id="uxEnvLabel">--</span>
@@ -44,6 +44,13 @@
         <div class="usd-file-chips" id="uxFileChips" style="display:none"></div>
         <button class="usd-btn usd-file-clear-btn" id="uxFileClearBtn" style="display:none">Clear Files</button>
         <div class="usd-controls-bar__right" id="uxStorageInfo"></div>
+    </div>
+
+    <!-- Chart interaction guidance -->
+    <div class="usd-guidance" data-guidance-id="ux-shortcuts">
+        <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
+        <div class="usd-guidance__text"><kbd>Shift+Drag</kbd> to zoom, <kbd>Alt+Drag</kbd> to pan, <kbd>Ctrl+Scroll</kbd> to zoom. <kbd>Ctrl</kbd>/<kbd>Shift</kbd>/<kbd>Cmd</kbd> + click a legend item to solo it. Click a data point on a page check chart to view the full AJAX breakdown.</div>
+        <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
     </div>
 
     <!-- Time range controls -->

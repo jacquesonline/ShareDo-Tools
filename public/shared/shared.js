@@ -64,6 +64,12 @@ var shared = (function () {
         // Alert stream -- conditional on notification settings
         initAlertStream();
 
+        // Guidance dismissal -- restore dismissed state, wire dismiss buttons
+        initGuidance();
+
+        // Tooltips -- JS-positioned to escape overflow containers
+        initTooltips();
+
         // Close SSE on page unload to free the connection slot
         window.addEventListener("beforeunload", closeAlertStream);
     }
@@ -209,6 +215,129 @@ var shared = (function () {
         }).catch(function () {});
     }
 
+    // ─── Guidance dismissal ───
+    var GUIDANCE_PREFIX = "sharedo-tools-guidance-";
+
+    function initGuidance() {
+        var blocks = document.querySelectorAll(".usd-guidance[data-guidance-id]");
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            var id = block.getAttribute("data-guidance-id");
+            // Restore dismissed state
+            try { if (localStorage.getItem(GUIDANCE_PREFIX + id) === "dismissed") { block.hidden = true; continue; } } catch (e) {}
+            // Wire dismiss button
+            var btn = block.querySelector(".usd-guidance__dismiss");
+            if (btn) {
+                btn.addEventListener("click", (function (el, key) {
+                    return function () {
+                        el.hidden = true;
+                        try { localStorage.setItem(GUIDANCE_PREFIX + key, "dismissed"); } catch (e) {}
+                    };
+                })(block, id));
+            }
+        }
+    }
+
+    // ─── Tooltips (JS-positioned to escape overflow containers) ───
+    var _tooltipEl = null;
+    var _tooltipTimer = null;
+
+    function initTooltips() {
+        // Create shared tooltip element once
+        _tooltipEl = document.createElement("div");
+        _tooltipEl.className = "usd-tooltip";
+        document.body.appendChild(_tooltipEl);
+
+        // Delegate via document -- catches dynamically added .usd-help elements too
+        document.addEventListener("mouseenter", function (e) {
+            var trigger = e.target.closest(".usd-help[data-tooltip]");
+            if (!trigger) return;
+            showTooltip(trigger);
+        }, true);
+
+        document.addEventListener("mouseleave", function (e) {
+            var trigger = e.target.closest(".usd-help[data-tooltip]");
+            if (!trigger) return;
+            hideTooltip();
+        }, true);
+
+        document.addEventListener("focusin", function (e) {
+            var trigger = e.target.closest(".usd-help[data-tooltip]");
+            if (trigger) showTooltip(trigger);
+        });
+
+        document.addEventListener("focusout", function (e) {
+            var trigger = e.target.closest(".usd-help[data-tooltip]");
+            if (trigger) hideTooltip();
+        });
+    }
+
+    function showTooltip(trigger) {
+        clearTimeout(_tooltipTimer);
+        var text = trigger.getAttribute("data-tooltip");
+        if (!text) return;
+        _tooltipEl.textContent = "";
+        // Support line breaks via &#10; (already decoded by browser) or \n
+        var lines = text.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+            if (i > 0) _tooltipEl.appendChild(document.createElement("br"));
+            _tooltipEl.appendChild(document.createTextNode(lines[i]));
+        }
+
+        // Make visible off-screen to measure
+        _tooltipEl.style.left = "-9999px";
+        _tooltipEl.style.top = "-9999px";
+        _tooltipEl.classList.add("usd-tooltip--visible");
+
+        var tipRect = _tooltipEl.getBoundingClientRect();
+        var trigRect = trigger.getBoundingClientRect();
+        var gap = 8;
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+
+        var pos = trigger.getAttribute("data-tooltip-pos") || "above";
+        var left, top;
+
+        if (pos === "right") {
+            left = trigRect.right + gap;
+            top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
+            // Flip to left if clipped
+            if (left + tipRect.width > vw - gap) { left = trigRect.left - tipRect.width - gap; }
+        } else if (pos === "left") {
+            left = trigRect.left - tipRect.width - gap;
+            top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
+            // Flip to right if clipped
+            if (left < gap) { left = trigRect.right + gap; }
+        } else if (pos === "below") {
+            left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
+            top = trigRect.bottom + gap;
+            // Flip to above if clipped
+            if (top + tipRect.height > vh - gap) { top = trigRect.top - tipRect.height - gap; }
+        } else {
+            // Default: above
+            left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
+            top = trigRect.top - tipRect.height - gap;
+            // Flip to below if clipped
+            if (top < gap) { top = trigRect.bottom + gap; }
+        }
+
+        // Clamp horizontal to viewport
+        if (left < gap) left = gap;
+        if (left + tipRect.width > vw - gap) left = vw - tipRect.width - gap;
+        // Clamp vertical to viewport
+        if (top < gap) top = gap;
+        if (top + tipRect.height > vh - gap) top = vh - tipRect.height - gap;
+
+        _tooltipEl.style.left = Math.round(left) + "px";
+        _tooltipEl.style.top = Math.round(top) + "px";
+    }
+
+    function hideTooltip() {
+        _tooltipTimer = setTimeout(function () {
+            if (_tooltipEl) _tooltipEl.classList.remove("usd-tooltip--visible");
+        }, 80);
+    }
+
     return {
         init: init,
         onEnvChange: onEnvChange,
@@ -217,6 +346,8 @@ var shared = (function () {
         openAlertStream: openAlertStream,
         updateCookieStatus: updateCookieStatus,
         refreshCookieStatus: refreshCookieStatus,
+        initGuidance: initGuidance,
+        initTooltips: initTooltips,
         esc: esc,
         fmtNum: fmtNum,
         fmtDate: fmtDate

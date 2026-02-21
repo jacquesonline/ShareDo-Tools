@@ -53,6 +53,11 @@
     --phase-closed: #d32f2f;
     --phase-default: #f57c00;
 
+    /* ── Guidance ── */
+    --guidance-bg: #1a3352;
+    --guidance-text: #8ec4f0;
+    --guidance-border: #2a5a80;
+
     /* ── High contrast pill text (inactive in normal mode) ── */
     --hc-pill-text: inherit;
 
@@ -119,6 +124,11 @@
     --phase-open: #1565c0;
     --phase-closed: #c62828;
     --phase-default: #e65100;
+
+    /* ── Guidance ── */
+    --guidance-bg: #EFF8FF;
+    --guidance-text: #1d6db5;
+    --guidance-border: #93c5fd;
 }
 
 /* ═══════════════════════════════════════════ */
@@ -497,6 +507,31 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .usd-bg--blue { background: var(--accent-blue); }
 .usd-bg--cyan { background: var(--accent-cyan); }
 .usd-icon-mr { margin-right: 4px; }
+
+/* ─── Tooltip (JS-positioned, see shared.js initTooltips) ─── */
+.usd-help { display: inline-flex; align-items: center; cursor: help; }
+.usd-tooltip {
+    position: fixed; z-index: 10000; pointer-events: none;
+    background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; font-size: var(--font-size-md); font-weight: 400; font-family: var(--font-ui);
+    line-height: 1.5; white-space: pre-line; max-width: 320px; width: max-content;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0; transition: opacity 0.15s ease;
+}
+.usd-tooltip--visible { opacity: 1; }
+
+/* ─── Guidance (dismissible hint block) ─── */
+.usd-guidance {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; background: var(--guidance-bg); border: 1px solid var(--guidance-border);
+    border-radius: 6px; font-size: var(--font-size-md); color: var(--guidance-text); line-height: 1.5;
+}
+.usd-guidance__icon { color: var(--guidance-text); font-size: var(--font-size-base); flex-shrink: 0; margin-top: 1px; }
+.usd-guidance__text { flex: 1; min-width: 0; }
+.usd-guidance__text kbd { font-family: var(--font-mono); font-size: var(--font-size-sm); background: var(--bg-card); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; }
+.usd-guidance__dismiss { background: none; border: none; color: var(--guidance-text); cursor: pointer; padding: 2px 4px; font-size: var(--font-size-base); flex-shrink: 0; border-radius: 3px; opacity: 0.6; transition: opacity 0.15s ease; }
+.usd-guidance__dismiss:hover { opacity: 1; }
+.usd-guidance[hidden] { display: none; }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }

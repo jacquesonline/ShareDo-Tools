@@ -53,11 +53,19 @@
             </button>
         </div>
 
+        <!-- Index guidance -->
+        <div class="usd-guidance" data-guidance-id="waila-index">
+            <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
+            <div class="usd-guidance__text">Click <kbd>Build Index</kbd> to fetch and index all workflow definitions for the current environment. Once built, use Search or Filters to query across all workflows.</div>
+            <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
+        </div>
+
         <!-- Search -->
         <div class="wla-panel">
             <div class="wla-panel__header">
                 <span class="wla-panel__icon wla-panel__icon--search"><span class="fa fa-search"></span></span>
                 <span class="wla-panel__title">Search</span>
+                <span class="usd-help usd-clr--muted" data-tooltip="Searches across workflow system names, step names, block types, display names, config content, and variables.&#10;Use Filters for field-specific or exact match queries." data-tooltip-pos="right"><span class="fa fa-info-circle"></span></span>
             </div>
             <div class="wla-search-input-wrap">
                 <input type="text" class="wla-search-input" id="unifiedSearch"
