@@ -29,51 +29,51 @@
 <div class="ux-body">
 
     <!-- Controls bar -->
-    <div class="ux-controls">
-        <div class="ux-controls__title">
-            <span class="ux-controls__icon"><span class="fa fa-tachometer"></span></span>
-            <span class="ux-controls__name">UX Monitor</span>
-            <span class="ux-controls__info" title="API probe and page load performance data. Click a data point on a page check chart to view the AJAX request breakdown. Shift+Drag to zoom, Alt+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it."><span class="fa fa-info-circle"></span></span>
+    <div class="usd-controls-bar">
+        <div class="usd-page-title">
+            <span class="usd-page-icon"><span class="fa fa-tachometer"></span></span>
+            <span class="usd-page-name">UX Monitor</span>
+            <span class="usd-page-info" title="API probe and page load performance data. Click a data point on a page check chart to view the AJAX request breakdown. Shift+Drag to zoom, Alt+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it."><span class="fa fa-info-circle"></span></span>
         </div>
-        <div class="ux-controls__left">
-            <span class="ux-controls__env-label" id="uxEnvLabel">--</span>
+        <div class="usd-controls-bar__left">
+            <span id="uxEnvLabel">--</span>
         </div>
         <button class="usd-btn usd-btn--primary" id="uxLoadBtn"><span class="fa fa-refresh"></span> Load</button>
-        <button class="usd-btn ux-file-btn" id="uxFileBtn" title="Load UX metrics from local JSONL file(s). Accepted: ux-pages.jsonl, ux-api.jsonl, with optional -backup or env suffix."><span class="fa fa-folder-open-o"></span></button>
+        <button class="usd-btn usd-file-btn" id="uxFileBtn" title="Load UX metrics from local JSONL file(s). Accepted: ux-pages.jsonl, ux-api.jsonl, with optional -backup or env suffix."><span class="fa fa-folder-open-o"></span></button>
         <input type="file" id="uxFileInput" accept=".jsonl" multiple style="display:none" />
-        <div class="ux-file-chips" id="uxFileChips" style="display:none"></div>
-        <button class="usd-btn ux-file-clear-btn" id="uxFileClearBtn" style="display:none">Clear Files</button>
-        <div class="ux-controls__right" id="uxStorageInfo"></div>
+        <div class="usd-file-chips" id="uxFileChips" style="display:none"></div>
+        <button class="usd-btn usd-file-clear-btn" id="uxFileClearBtn" style="display:none">Clear Files</button>
+        <div class="usd-controls-bar__right" id="uxStorageInfo"></div>
     </div>
 
     <!-- Time range controls -->
-    <div class="ux-time-bar">
-        <div class="ux-time-bar__quick">
-            <button class="usd-btn ux-quick-btn ux-quick-btn--active" data-range="1">1h</button>
-            <button class="usd-btn ux-quick-btn" data-range="6">6h</button>
-            <button class="usd-btn ux-quick-btn" data-range="24">24h</button>
-            <button class="usd-btn ux-quick-btn" data-range="72">3d</button>
-            <button class="usd-btn ux-quick-btn" data-range="168">7d</button>
-            <button class="usd-btn ux-quick-btn" data-range="0">All</button>
+    <div class="usd-time-bar">
+        <div class="usd-time-bar__quick">
+            <button class="usd-btn usd-quick-btn usd-quick-btn--active" data-range="1">1h</button>
+            <button class="usd-btn usd-quick-btn" data-range="6">6h</button>
+            <button class="usd-btn usd-quick-btn" data-range="24">24h</button>
+            <button class="usd-btn usd-quick-btn" data-range="72">3d</button>
+            <button class="usd-btn usd-quick-btn" data-range="168">7d</button>
+            <button class="usd-btn usd-quick-btn" data-range="0">All</button>
         </div>
-        <div class="ux-time-bar__sep"></div>
-        <div class="ux-time-bar__nav">
-            <button class="usd-btn ux-nav-btn" id="uxNavPrev" title="Step backward"><span class="fa fa-chevron-left"></span></button>
-            <button class="usd-btn ux-nav-btn" id="uxNavNext" title="Step forward"><span class="fa fa-chevron-right"></span></button>
+        <div class="usd-time-bar__sep"></div>
+        <div class="usd-time-bar__nav">
+            <button class="usd-btn usd-nav-btn" id="uxNavPrev" title="Step backward"><span class="fa fa-chevron-left"></span></button>
+            <button class="usd-btn usd-nav-btn" id="uxNavNext" title="Step forward"><span class="fa fa-chevron-right"></span></button>
         </div>
-        <div class="ux-time-bar__sep"></div>
-        <div class="ux-time-bar__dates">
-            <label class="ux-controls__label">From</label>
-            <input type="datetime-local" class="ux-date-input" id="uxDateFrom" />
+        <div class="usd-time-bar__sep"></div>
+        <div class="usd-time-bar__dates">
+            <label class="usd-controls-bar__label">From</label>
+            <input type="datetime-local" class="usd-date-input" id="uxDateFrom" />
         </div>
-        <div class="ux-time-bar__dates">
-            <label class="ux-controls__label">To</label>
-            <input type="datetime-local" class="ux-date-input" id="uxDateTo" />
+        <div class="usd-time-bar__dates">
+            <label class="usd-controls-bar__label">To</label>
+            <input type="datetime-local" class="usd-date-input" id="uxDateTo" />
         </div>
     </div>
 
     <!-- Storage warning -->
-    <div class="ux-warning" id="uxWarning" style="display:none">
+    <div class="usd-warning-bar" id="uxWarning" style="display:none">
         <span class="fa fa-exclamation-triangle"></span>
         <span id="uxWarningText"></span>
     </div>
@@ -82,12 +82,12 @@
     <div class="ux-summary" id="uxSummary" style="display:none"></div>
 
     <!-- Comparative chart (Tier 2) -->
-    <div class="ux-chart-panel ux-chart-panel--collapsible" id="uxComparePanel">
-        <div class="ux-chart-panel__header">
-            <span class="ux-chart-panel__chevron fa fa-chevron-down"></span>
+    <div class="usd-chart-panel usd-chart-panel--collapsible" id="uxComparePanel">
+        <div class="usd-chart-panel__header">
+            <span class="usd-chart-panel__chevron fa fa-chevron-down"></span>
             <span class="fa fa-line-chart"></span> Page Performance Comparison
-            <span class="ux-chart-panel__count" id="uxCompareCount"></span>
-            <div class="ux-chart-panel__actions" id="uxCompareActions">
+            <span class="usd-chart-panel__count" id="uxCompareCount"></span>
+            <div class="usd-chart-panel__actions" id="uxCompareActions">
                 <select class="ux-compare-metric-select" id="uxCompareMetric">
                     <option value="lcp" selected>LCP</option>
                     <option value="fcp">FCP</option>
@@ -95,13 +95,13 @@
                     <option value="totalLoadMs">Total Load</option>
                     <option value="ajaxSlowest">Slowest AJAX</option>
                 </select>
-                <button class="usd-btn ux-chart-panel__toggle" id="uxCompareResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                <button class="usd-btn ux-chart-panel__toggle" id="uxCompareShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                <button class="usd-btn ux-chart-panel__toggle" id="uxCompareHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
             </div>
         </div>
-        <div class="ux-chart-panel__body">
-            <div class="ux-chart-empty" id="uxCompareEmpty">Load data to view Page Performance Comparison</div>
+        <div class="usd-chart-panel__body">
+            <div class="usd-chart-empty" id="uxCompareEmpty">Load data to view Page Performance Comparison</div>
             <canvas id="uxChartCompare" style="display:none"></canvas>
         </div>
     </div>
@@ -110,40 +110,40 @@
     <div class="ux-detail-filter" id="uxDetailFilter" style="display:none"></div>
 
     <!-- Detail charts -->
-    <div class="ux-charts">
+    <div class="usd-charts">
 
         <!-- Web Vitals -->
-        <div class="ux-chart-panel ux-chart-panel--collapsible ux-chart-panel--collapsed">
-            <div class="ux-chart-panel__header">
-                <span class="ux-chart-panel__chevron fa fa-chevron-down"></span>
+        <div class="usd-chart-panel usd-chart-panel--collapsible usd-chart-panel--collapsed">
+            <div class="usd-chart-panel__header">
+                <span class="usd-chart-panel__chevron fa fa-chevron-down"></span>
                 <span class="fa fa-heartbeat"></span> Web Vitals Over Time
-                <span class="ux-chart-panel__count" id="uxVitalsCount"></span>
-                <div class="ux-chart-panel__actions" id="uxVitalsActions" style="display:none">
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxVitalsResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxVitalsShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxVitalsHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                <span class="usd-chart-panel__count" id="uxVitalsCount"></span>
+                <div class="usd-chart-panel__actions" id="uxVitalsActions" style="display:none">
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
                 </div>
             </div>
-            <div class="ux-chart-panel__body">
-                <div class="ux-chart-empty" id="uxVitalsEmpty">Load data to view Web Vitals</div>
+            <div class="usd-chart-panel__body">
+                <div class="usd-chart-empty" id="uxVitalsEmpty">Load data to view Web Vitals</div>
                 <canvas id="uxChartVitals" style="display:none"></canvas>
             </div>
         </div>
 
         <!-- API Probes -->
-        <div class="ux-chart-panel ux-chart-panel--collapsible">
-            <div class="ux-chart-panel__header">
-                <span class="ux-chart-panel__chevron fa fa-chevron-down"></span>
+        <div class="usd-chart-panel usd-chart-panel--collapsible">
+            <div class="usd-chart-panel__header">
+                <span class="usd-chart-panel__chevron fa fa-chevron-down"></span>
                 <span class="fa fa-exchange"></span> API Probe Response Times
-                <span class="ux-chart-panel__count" id="uxProbesCount"></span>
-                <div class="ux-chart-panel__actions" id="uxProbesActions" style="display:none">
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxProbesResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxProbesShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                    <button class="usd-btn ux-chart-panel__toggle" id="uxProbesHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                <span class="usd-chart-panel__count" id="uxProbesCount"></span>
+                <div class="usd-chart-panel__actions" id="uxProbesActions" style="display:none">
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
                 </div>
             </div>
-            <div class="ux-chart-panel__body">
-                <div class="ux-chart-empty" id="uxProbesEmpty">Load data to view API Probes</div>
+            <div class="usd-chart-panel__body">
+                <div class="usd-chart-empty" id="uxProbesEmpty">Load data to view API Probes</div>
                 <canvas id="uxChartProbes" style="display:none"></canvas>
             </div>
         </div>
@@ -169,9 +169,13 @@
 <div class="ux-modal-overlay" id="uxAjaxModal" style="display:none">
     <div class="ux-modal">
         <div class="ux-modal__header">
-            <h2 class="ux-modal__title">Page Check Detail</h2>
-            <span class="ux-modal__context" id="uxAjaxContext"></span>
-            <button class="ux-modal__close" id="uxAjaxModalClose"><span class="fa fa-times"></span></button>
+            <div class="ux-modal__title-group">
+                <span class="ux-modal__title">Page Check Detail</span>
+                <span class="ux-modal__subtitle" id="uxAjaxContext"></span>
+            </div>
+            <div class="ux-modal__actions">
+                <button class="usd-btn" id="uxAjaxModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+            </div>
         </div>
         <div class="ux-modal__summary" id="uxAjaxSummary"></div>
         <div class="ux-modal__body" id="uxAjaxBody"></div>
@@ -184,6 +188,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
 <script src="/shared/shared.js"></script>
+<script src="/shared/chartTheme.js"></script>
 <script src="/ux/ux.js"></script>
 </body>
 </html>

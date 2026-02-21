@@ -72,10 +72,16 @@ var shared = (function () {
     var THEME_KEY = "sharedo-tools-theme";
     var HC_KEY = "sharedo-tools-high-contrast";
 
+    function applyThemeAttr(theme) {
+        document.body.dataset.theme = theme;
+        if (theme === "light") document.body.classList.add("light-theme");
+        else document.body.classList.remove("light-theme");
+    }
+
     function initTheme() {
         var saved = null;
         try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
-        if (saved === "light") document.body.classList.add("light-theme");
+        applyThemeAttr(saved === "light" ? "light" : "dark");
 
         var hcSaved = null;
         try { hcSaved = localStorage.getItem(HC_KEY); } catch (e) {}
@@ -84,10 +90,10 @@ var shared = (function () {
         // Sync with server (this fetch is shared with initAlertStream via _settingsPromise)
         _settingsPromise.then(function (data) {
             if (data.theme === "light") {
-                document.body.classList.add("light-theme");
+                applyThemeAttr("light");
                 try { localStorage.setItem(THEME_KEY, "light"); } catch (e) {}
             } else if (data.theme === "dark") {
-                document.body.classList.remove("light-theme");
+                applyThemeAttr("dark");
                 try { localStorage.setItem(THEME_KEY, "dark"); } catch (e) {}
             }
             if (data.highContrast) {

@@ -54,13 +54,7 @@ select.srch-input option { background: var(--bg-panel); color: var(--text-primar
 
 /* ─── Chips ─── */
 .srch-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.srch-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; background: var(--accent-blue-bg); color: var(--accent-blue); }
-.srch-chip--enrich { background: var(--accent-cyan-bg); color: var(--accent-cyan); }
-.srch-chip--derived { background: var(--accent-green-bg); color: var(--accent-green); }
-.srch-chip--exact { background: var(--accent-blue-bg); color: var(--accent-blue); }
-.srch-chip__mode { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7; }
-.srch-chip__remove { cursor: pointer; font-size: 13px; line-height: 1; opacity: 0.7; }
-.srch-chip__remove:hover { opacity: 1; color: var(--accent-red); }
+.srch-attr-chip-mode { font-size: 9px; font-weight: 600; text-transform: uppercase; opacity: 0.7; }
 
 /* ─── Enrich add row ─── */
 .srch-enrich-add { display: flex; gap: 6px; margin-top: 6px; }
@@ -74,11 +68,7 @@ select.srch-input option { background: var(--bg-panel); color: var(--text-primar
 /* ─── Results ─── */
 .srch-results { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
 .srch-results__controls { padding: 8px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-.srch-rpp { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
-.srch-rpp__input { width: 50px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text-primary); font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; text-align: center; outline: none; }
-.srch-rpp__input:focus { border-color: var(--accent-blue); }
 .srch-results__table-wrap { overflow-x: auto; }
-.srch-pagination { display: flex; align-items: center; justify-content: center; padding: 10px 12px; gap: 8px; }
 
 /* ─── Attribute filter ─── */
 .srch-attr-val { margin-top: 4px; }
@@ -96,16 +86,7 @@ select.srch-input option { background: var(--bg-panel); color: var(--text-primar
 
 /* ─── URL enrichment links ─── */
 .srch-link { color: var(--accent-blue); text-decoration: none; font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; display: inline-flex; align-items: center; gap: 4px; transition: color 0.15s ease; }
-.srch-link:hover { color: #7ab8ff; }
+.srch-link:hover { color: var(--link-hover); }
 .srch-link .fa { font-size: 9px; }
 
-/* ─── High Contrast ─── */
-.high-contrast .srch-chip { background: var(--accent-blue); color: #000; }
-.high-contrast .srch-chip--enrich { background: var(--accent-cyan); color: #000; }
-.high-contrast .srch-chip--derived { background: var(--accent-green); color: #000; }
-.high-contrast .srch-chip--exact { background: var(--accent-blue); color: #000; }
-
-.high-contrast.light-theme .srch-chip,
-.high-contrast.light-theme .srch-chip--enrich,
-.high-contrast.light-theme .srch-chip--derived,
-.high-contrast.light-theme .srch-chip--exact { color: #fff; }
+/* ─── High Contrast: see /shared/style.css ─── */

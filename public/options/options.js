@@ -104,20 +104,9 @@
             document.getElementById("optRecoveryThreshold").value = data.notifyRecoveryThreshold != null ? data.notifyRecoveryThreshold : 0;
             document.getElementById("optGracePeriod").value = data.notifyGracePeriod != null ? data.notifyGracePeriod : 0;
 
-            // Theme
-            if (data.theme === "light") {
-                document.body.classList.add("light-theme");
-            } else {
-                document.body.classList.remove("light-theme");
-            }
+            // Theme & High Contrast -- display state only.
+            // DOM application is handled by shared.js > initTheme().
             updateThemeDisplay();
-
-            // High contrast
-            if (data.highContrast) {
-                document.body.classList.add("high-contrast");
-            } else {
-                document.body.classList.remove("high-contrast");
-            }
             updateHcDisplay();
 
             // Notifications
@@ -231,6 +220,7 @@
     function toggleTheme() {
         document.body.classList.toggle("light-theme");
         var isLight = document.body.classList.contains("light-theme");
+        document.body.dataset.theme = isLight ? "light" : "dark";
         try { localStorage.setItem("sharedo-tools-theme", isLight ? "light" : "dark"); } catch (e) {}
         updateThemeDisplay();
     }
@@ -560,13 +550,13 @@
         var html = "";
         for (var i = 0; i < _uxPageTargets.length; i++) {
             var hasGuid = _uxPageTargets[i].indexOf("{guid}") !== -1;
-            html += '<span class="opt-chip' + (hasGuid ? ' opt-chip--param' : '') + '">';
-            html += '<span class="opt-chip__text">' + shared.esc(_uxPageTargets[i]) + '</span>';
-            html += '<span class="opt-chip__remove" data-idx="' + i + '">&times;</span>';
+            html += '<span class="usd-chip' + (hasGuid ? ' usd-chip--cyan' : ' usd-chip--blue') + '">';
+            html += '<span class="usd-chip__text">' + shared.esc(_uxPageTargets[i]) + '</span>';
+            html += '<span class="usd-chip__remove" data-idx="' + i + '">&times;</span>';
             html += '</span>';
         }
         container.innerHTML = html;
-        var removeBtns = container.querySelectorAll(".opt-chip__remove");
+        var removeBtns = container.querySelectorAll(".usd-chip__remove");
         for (var ri = 0; ri < removeBtns.length; ri++) {
             removeBtns[ri].addEventListener("click", function () {
                 removePageTarget(parseInt(this.getAttribute("data-idx"), 10));

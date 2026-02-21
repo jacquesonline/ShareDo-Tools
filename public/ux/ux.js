@@ -33,14 +33,14 @@
             id: "bgFill",
             beforeDraw: function (chart) {
                 if (!_chartBackgrounds) return;
-                var ctx = chart.ctx; var isDark = !document.body.classList.contains("light-theme");
-                ctx.save(); ctx.fillStyle = isDark ? "#22262e" : "#ffffff"; ctx.fillRect(0, 0, chart.width, chart.height); ctx.restore();
+                var ctx = chart.ctx;
+                ctx.save(); ctx.fillStyle = chartTheme.bgFill(); ctx.fillRect(0, 0, chart.width, chart.height); ctx.restore();
             }
         };
         Chart.register(bgFillPlugin);
 
         document.getElementById("uxLoadBtn").addEventListener("click", loadData);
-        var quickBtns = document.querySelectorAll(".ux-quick-btn");
+        var quickBtns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < quickBtns.length; i++) { quickBtns[i].addEventListener("click", function () { selectQuickRange(this.getAttribute("data-range")); }); }
         document.getElementById("uxDateFrom").addEventListener("change", onDatePickerChange);
         document.getElementById("uxDateTo").addEventListener("change", onDatePickerChange);
@@ -67,11 +67,11 @@
         document.getElementById("uxRunPageBtn").addEventListener("click", runPageCheck);
 
         // Collapsible chart panels
-        var collapsibles = document.querySelectorAll(".ux-chart-panel--collapsible > .ux-chart-panel__header");
+        var collapsibles = document.querySelectorAll(".usd-chart-panel--collapsible > .usd-chart-panel__header");
         for (var ci = 0; ci < collapsibles.length; ci++) {
             collapsibles[ci].addEventListener("click", function (e) {
-                if (e.target.closest(".ux-chart-panel__actions")) return;
-                this.parentNode.classList.toggle("ux-chart-panel--collapsed");
+                if (e.target.closest(".usd-chart-panel__actions")) return;
+                this.parentNode.classList.toggle("usd-chart-panel--collapsed");
             });
         }
 
@@ -105,8 +105,8 @@
 
     function selectQuickRange(val) {
         _activeRange = val;
-        var btns = document.querySelectorAll(".ux-quick-btn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("ux-quick-btn--active", btns[i].getAttribute("data-range") === val);
+        var btns = document.querySelectorAll(".usd-quick-btn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("usd-quick-btn--active", btns[i].getAttribute("data-range") === val);
         document.getElementById("uxNavPrev").disabled = (val === "0");
         document.getElementById("uxNavNext").disabled = (val === "0");
         updateDatePickerFromRange();
@@ -120,8 +120,8 @@
         _activeRange = "custom";
         _rangeAfter = from ? new Date(from).toISOString() : null;
         _rangeBefore = to ? new Date(to).toISOString() : null;
-        var btns = document.querySelectorAll(".ux-quick-btn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("ux-quick-btn--active");
+        var btns = document.querySelectorAll(".usd-quick-btn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
         document.getElementById("uxNavPrev").disabled = !_rangeAfter;
         document.getElementById("uxNavNext").disabled = !_rangeAfter;
         loadData();
@@ -149,8 +149,8 @@
         _activeRange = "custom";
         _rangeAfter = newAfter.toISOString();
         _rangeBefore = newBefore.toISOString();
-        var btns = document.querySelectorAll(".ux-quick-btn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("ux-quick-btn--active");
+        var btns = document.querySelectorAll(".usd-quick-btn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
         document.getElementById("uxNavPrev").disabled = false;
         document.getElementById("uxNavNext").disabled = false;
         document.getElementById("uxDateFrom").value = toLocalDatetimeString(newAfter);
@@ -180,11 +180,11 @@
             var infoEl = document.getElementById("uxStorageInfo");
             var warnEl = document.getElementById("uxWarning");
             var warnText = document.getElementById("uxWarningText");
-            if (!data.enabled) { infoEl.innerHTML = '<span class="ux-storage-off"><span class="fa fa-pause-circle"></span> Recording disabled</span>'; return; }
+            if (!data.enabled) { infoEl.innerHTML = '<span class="usd-storage-off"><span class="fa fa-pause-circle"></span> Recording disabled</span>'; return; }
             var maxPct = 0; var parts = [];
             var uxFiles = (data.files || []).filter(function (f) { return f.metric.indexOf("ux-") === 0; });
             for (var i = 0; i < uxFiles.length; i++) { var f = uxFiles[i]; if (f.capPct > maxPct) maxPct = f.capPct; parts.push(f.env + "/" + f.metric + ": " + f.sizeMB + "MB (" + f.capPct + "%)"); }
-            infoEl.innerHTML = '<span class="ux-storage-info" title="' + esc(parts.join("\n")) + '">' + uxFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
+            infoEl.innerHTML = '<span class="usd-storage-info" title="' + esc(parts.join("\n")) + '">' + uxFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
             if (maxPct >= 90) { warnEl.style.display = ""; warnText.textContent = "A UX metrics file is at " + maxPct + "% of the " + data.capMB + "MB cap."; }
             else if (maxPct >= 75) { warnEl.style.display = ""; warnText.textContent = "A UX metrics file is at " + maxPct + "% of the " + data.capMB + "MB cap."; }
             else { warnEl.style.display = "none"; }
@@ -235,21 +235,21 @@
     }
 
     function updateFileChips() {
-        var chipsEl = document.getElementById("uxFileChips"); var clearBtn = document.getElementById("uxFileClearBtn"); var fileBtn = document.getElementById("uxFileBtn"); var envGroup = document.querySelector(".ux-controls__left");
+        var chipsEl = document.getElementById("uxFileChips"); var clearBtn = document.getElementById("uxFileClearBtn"); var fileBtn = document.getElementById("uxFileBtn"); var envGroup = document.querySelector(".usd-controls-bar__left");
         chipsEl.innerHTML = "";
         var hasAny = _fileNames.pages || _fileNames.api;
-        if (!hasAny) { chipsEl.style.display = "none"; clearBtn.style.display = "none"; fileBtn.classList.remove("ux-file-btn--active"); if (envGroup) envGroup.style.display = ""; return; }
+        if (!hasAny) { chipsEl.style.display = "none"; clearBtn.style.display = "none"; fileBtn.classList.remove("usd-file-btn--active"); if (envGroup) envGroup.style.display = ""; return; }
         if (envGroup) envGroup.style.display = "none";
         var types = ["pages", "api"];
         for (var ti = 0; ti < types.length; ti++) {
             var type = types[ti]; if (!_fileNames[type]) continue;
-            var chip = document.createElement("span"); chip.className = "ux-file-chip";
+            var chip = document.createElement("span"); chip.className = "usd-chip usd-chip--cyan";
             var label = document.createElement("span"); label.textContent = _fileNames[type]; chip.appendChild(label);
-            var removeBtn = document.createElement("span"); removeBtn.className = "ux-file-chip__remove"; removeBtn.innerHTML = "&times;"; removeBtn.title = "Remove this file";
+            var removeBtn = document.createElement("span"); removeBtn.className = "usd-chip__remove"; removeBtn.innerHTML = "&times;"; removeBtn.title = "Remove this file";
             (function (t) { removeBtn.addEventListener("click", function () { removeFile(t); }); })(type);
             chip.appendChild(removeBtn); chipsEl.appendChild(chip);
         }
-        chipsEl.style.display = ""; clearBtn.style.display = ""; fileBtn.classList.add("ux-file-btn--active");
+        chipsEl.style.display = ""; clearBtn.style.display = ""; fileBtn.classList.add("usd-file-btn--active");
     }
 
     function removeFile(type) {
@@ -326,7 +326,7 @@
     }
 
     // ─── Chart helpers ───
-    function generateColors(count) { var base = ["#4a9eff","#3dd68c","#ef5350","#f0a840","#a078ff","#56d4c0","#ff7eb3","#8bc34a","#ff9800","#7986cb","#26c6da","#d4e157","#ec407a","#66bb6a","#ffa726"]; var r = []; for (var i = 0; i < count; i++) r.push(base[i % base.length]); return r; }
+    function generateColors(count) { return chartTheme.palette(count); }
     function toggleAllDatasets(chart, visible) { if (!chart) return; for (var i = 0; i < chart.data.datasets.length; i++) chart.setDatasetVisibility(i, visible); chart.update(); }
 
     function legendClickHandler(e, legendItem, legend) {
@@ -341,24 +341,24 @@
     }
 
     function getCommonChartConfig(prefix) {
-        var isDark = !document.body.classList.contains("light-theme");
+        var ct = chartTheme;
         return {
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: "nearest", intersect: false },
             scales: {
-                x: { type: "time", time: { tooltipFormat: "dd MMM yyyy, HH:mm:ss" }, grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }, ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, maxTicksLimit: 12, autoSkip: true, maxRotation: 45 } },
-                y: { beginAtZero: true, title: { display: true, text: "ms", color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } }, grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }, ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } } }
+                x: ct.timeAxis(),
+                y: ct.valueAxis("ms")
             },
             plugins: {
                 zoom: getZoomPluginConfig(prefix),
-                legend: { position: "bottom", labels: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 10, family: "'Consolas', 'Courier New', monospace" }, boxWidth: 12, padding: 10 }, onClick: function (e, li, lg) { legendClickHandler(e, li, lg); } },
-                tooltip: { backgroundColor: isDark ? "#22262e" : "#ffffff", titleColor: isDark ? "#e2e5ea" : "#1a1d23", bodyColor: isDark ? "#abb2bf" : "#5c6370", borderColor: isDark ? "#363c48" : "#d8dbe0", borderWidth: 1 }
+                legend: ct.legend(function (e, li, lg) { legendClickHandler(e, li, lg); }),
+                tooltip: ct.tooltip()
             }
         };
     }
 
     // Per-URL consistent colours (order matches first-seen in data)
-    var URL_COLORS = ["#4a9eff", "#3dd68c", "#f0a840", "#ef5350", "#a078ff", "#56d4c0", "#ff7eb3", "#8bc34a"];
+    function getUrlColors() { return chartTheme.palette(8); }
 
     var METRIC_LABELS = {
         lcp: "LCP (ms)", fcp: "FCP (ms)", tti: "TTI (ms)",
@@ -396,10 +396,11 @@
         var metric = _compareMetric;
         var datasets = [];
         _compareEntryMap = [];
+        var urlColors = getUrlColors();
 
         for (var gi = 0; gi < groups.length; gi++) {
             var g = groups[gi];
-            var color = URL_COLORS[gi % URL_COLORS.length];
+            var color = urlColors[gi % urlColors.length];
             var dsData = [];
             var dsEntries = [];
             for (var ei = 0; ei < g.entries.length; ei++) {
@@ -452,9 +453,9 @@
         var config = getCommonChartConfig("Vitals");
         config.onClick = function (_evt, elements) { if (elements.length > 0) { var entry = _currentPageEntries[elements[0].index]; if (entry) openCheckDetailModal(entry); } };
         _vitalsChart = new Chart(canvas, { type: "line", data: { datasets: [
-            { label: "FCP", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.fcp || null }; }), borderColor: "#4a9eff", borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false },
-            { label: "LCP", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.lcp || null }; }), borderColor: "#ef5350", borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false },
-            { label: "TTI", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.tti || null }; }), borderColor: "#3dd68c", borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false }
+            { label: "FCP", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.fcp || null }; }), borderColor: chartTheme.accentBlue(), borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false },
+            { label: "LCP", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.lcp || null }; }), borderColor: chartTheme.accentRed(), borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false },
+            { label: "TTI", data: entries.map(function (e) { return { x: new Date(e.ts), y: e.tti || null }; }), borderColor: chartTheme.accentGreen(), borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false }
         ] }, options: config });
     }
 
@@ -476,7 +477,7 @@
         }
         var fqServerData = []; var hasFqServer = false;
         for (var si = 0; si < entries.length; si++) { var fqMatch = null; if (entries[si].probes) { for (var sj = 0; sj < entries[si].probes.length; sj++) { if (entries[si].probes[sj].label === "FindByQuery" && entries[si].probes[sj].tookMs != null) { fqMatch = entries[si].probes[sj].tookMs; hasFqServer = true; } } } fqServerData.push({ x: new Date(entries[si].ts), y: fqMatch }); }
-        if (hasFqServer) datasets.push({ label: "FindByQuery (server)", data: fqServerData, borderColor: "#4a9eff", borderWidth: 1.5, borderDash: [5, 3], pointRadius: 1, tension: 0.2, fill: false });
+        if (hasFqServer) datasets.push({ label: "FindByQuery (server)", data: fqServerData, borderColor: chartTheme.accentBlue(), borderWidth: 1.5, borderDash: [5, 3], pointRadius: 1, tension: 0.2, fill: false });
         _probesChart = new Chart(canvas, { type: "line", data: { datasets: datasets }, options: getCommonChartConfig("Probes") });
     }
 

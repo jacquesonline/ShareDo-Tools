@@ -443,19 +443,4 @@
 .mck-log-entry--node .mck-log-entry__title    { color: var(--accent-amber); }
 .mck-log-entry--service .mck-log-entry__title { color: var(--accent-blue); }
 
-/* ─── High contrast ─── */
-.high-contrast .mck-stream__status--ok       { background: var(--accent-green); color: #000; }
-.high-contrast .mck-stream__status--breach   { background: var(--accent-red);   color: #000; }
-.high-contrast .mck-node-btn--active         { background: var(--accent-green); color: #000; }
-.high-contrast .mck-node-btn--stopped        { background: var(--accent-red);   color: #000; }
-.high-contrast .mck-node-btn--restarting     { background: var(--accent-amber); color: #000; }
-.high-contrast .mck-svc-btn--healthy         { background: var(--accent-green); color: #000; }
-.high-contrast .mck-svc-btn--unhealthy       { background: var(--accent-red);   color: #000; }
-
-.high-contrast.light-theme .mck-stream__status--ok,
-.high-contrast.light-theme .mck-stream__status--breach,
-.high-contrast.light-theme .mck-node-btn--active,
-.high-contrast.light-theme .mck-node-btn--stopped,
-.high-contrast.light-theme .mck-node-btn--restarting,
-.high-contrast.light-theme .mck-svc-btn--healthy,
-.high-contrast.light-theme .mck-svc-btn--unhealthy { color: #fff; }
+/* ─── High contrast: see /shared/style.css ─── */

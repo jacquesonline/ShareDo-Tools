@@ -176,12 +176,12 @@
         var html = "";
         for (var i = 0; i < selectedTypes.length; i++) {
             var t = selectedTypes[i];
-            var chipCls = t.mode === "exact" ? "srch-chip srch-chip--exact" : "srch-chip srch-chip--derived";
+            var chipCls = t.mode === "exact" ? "usd-chip usd-chip--blue" : "usd-chip usd-chip--green";
             var modeLabel = t.mode === "exact" ? "Exact" : "Derived";
-            html += '<span class="' + chipCls + '"><span class="srch-chip__mode">' + modeLabel + '</span> ' + esc(t.name) + ' <span class="srch-chip__remove" data-idx="' + i + '">&times;</span></span>';
+            html += '<span class="' + chipCls + '"><span class="usd-chip__mode">' + modeLabel + '</span> ' + esc(t.name) + ' <span class="usd-chip__remove" data-idx="' + i + '">&times;</span></span>';
         }
         container.innerHTML = html;
-        var btns = container.querySelectorAll(".srch-chip__remove");
+        var btns = container.querySelectorAll(".usd-chip__remove");
         for (var j = 0; j < btns.length; j++) {
             btns[j].addEventListener("click", function () {
                 selectedTypes.splice(parseInt(this.dataset.idx, 10), 1);
@@ -212,14 +212,14 @@
         var container = document.getElementById(containerId);
         var html = "";
         for (var i = 0; i < list.length; i++) {
-            html += '<span class="srch-chip">' + esc(list[i]) + ' <span class="srch-chip__remove" data-idx="' + i + '">&times;</span></span>';
+            html += '<span class="usd-chip usd-chip--blue">' + esc(list[i]) + ' <span class="usd-chip__remove" data-idx="' + i + '">&times;</span></span>';
         }
         container.innerHTML = html;
         wireChipRemoveButtons(container, list, function () { renderChips(list, containerId); });
     }
 
     function wireChipRemoveButtons(container, list, rerender) {
-        var btns = container.querySelectorAll(".srch-chip__remove");
+        var btns = container.querySelectorAll(".usd-chip__remove");
         for (var i = 0; i < btns.length; i++) {
             btns[i].addEventListener("click", function () {
                 var idx = parseInt(this.dataset.idx, 10);
@@ -240,7 +240,7 @@
         var container = document.getElementById("enrichChips");
         var html = "";
         for (var i = 0; i < enrichPaths.length; i++) {
-            html += '<span class="srch-chip srch-chip--enrich">' + esc(enrichPaths[i]) + ' <span class="srch-chip__remove" data-idx="' + i + '">&times;</span></span>';
+            html += '<span class="usd-chip usd-chip--cyan">' + esc(enrichPaths[i]) + ' <span class="usd-chip__remove" data-idx="' + i + '">&times;</span></span>';
         }
         container.innerHTML = html;
         wireChipRemoveButtons(container, enrichPaths, renderEnrichChips);
@@ -266,13 +266,13 @@
         for (var i = 0; i < attributes.length; i++) {
             var a = attributes[i];
             var modeLabel = a.mode === "exact" ? "Exact" : "Contains";
-            var chipCls = a.mode === "exact" ? "srch-chip srch-chip--exact" : "srch-chip srch-chip--derived";
+            var chipCls = a.mode === "exact" ? "usd-chip usd-chip--blue" : "usd-chip usd-chip--green";
             html += '<span class="' + chipCls + '"><span class="srch-attr-chip-mode">' + modeLabel + '</span> ' + esc(a.key);
             if (a.value) html += ': ' + esc(a.value);
-            html += ' <span class="srch-chip__remove" data-idx="' + i + '">&times;</span></span>';
+            html += ' <span class="usd-chip__remove" data-idx="' + i + '">&times;</span></span>';
         }
         container.innerHTML = html;
-        var btns = container.querySelectorAll(".srch-chip__remove");
+        var btns = container.querySelectorAll(".usd-chip__remove");
         for (var j = 0; j < btns.length; j++) {
             btns[j].addEventListener("click", function () {
                 attributes.splice(parseInt(this.dataset.idx, 10), 1);

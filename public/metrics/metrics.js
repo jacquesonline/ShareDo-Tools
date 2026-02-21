@@ -78,9 +78,8 @@
             beforeDraw: function (chart) {
                 if (!_chartBackgrounds) return;
                 var ctx = chart.ctx;
-                var isDark = !document.body.classList.contains("light-theme");
                 ctx.save();
-                ctx.fillStyle = isDark ? "#22262e" : "#ffffff";
+                ctx.fillStyle = chartTheme.bgFill();
                 ctx.fillRect(0, 0, chart.width, chart.height);
                 ctx.restore();
             }
@@ -92,7 +91,7 @@
         document.getElementById("metEnvSelect").addEventListener("change", loadMetrics);
 
         // Quick range buttons
-        var quickBtns = document.querySelectorAll(".met-quick-btn");
+        var quickBtns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < quickBtns.length; i++) {
             quickBtns[i].addEventListener("click", function () {
                 selectQuickRange(this.getAttribute("data-range"));
@@ -193,9 +192,9 @@
         _activeRange = val;
 
         // Update active button
-        var btns = document.querySelectorAll(".met-quick-btn");
+        var btns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < btns.length; i++) {
-            btns[i].classList.toggle("met-quick-btn--active", btns[i].getAttribute("data-range") === val);
+            btns[i].classList.toggle("usd-quick-btn--active", btns[i].getAttribute("data-range") === val);
         }
 
         // Show/hide today slider
@@ -219,8 +218,8 @@
         _rangeBefore = to ? new Date(to).toISOString() : null;
 
         // Deselect quick buttons
-        var btns = document.querySelectorAll(".met-quick-btn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("met-quick-btn--active");
+        var btns = document.querySelectorAll(".usd-quick-btn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
 
         document.getElementById("metRangeBar").style.display = "none";
         document.getElementById("metNavPrev").disabled = !_rangeAfter;
@@ -268,8 +267,8 @@
         _rangeBefore = newBefore.toISOString();
 
         // Deselect quick buttons
-        var btns = document.querySelectorAll(".met-quick-btn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("met-quick-btn--active");
+        var btns = document.querySelectorAll(".usd-quick-btn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
 
         document.getElementById("metRangeBar").style.display = "none";
         document.getElementById("metNavPrev").disabled = false;
@@ -327,7 +326,7 @@
             var warnText = document.getElementById("metWarningText");
 
             if (!data.enabled) {
-                infoEl.innerHTML = '<span class="met-storage-off"><span class="fa fa-pause-circle"></span> Recording disabled</span>';
+                infoEl.innerHTML = '<span class="usd-storage-off"><span class="fa fa-pause-circle"></span> Recording disabled</span>';
                 return;
             }
 
@@ -339,7 +338,7 @@
                 if (f.capPct > maxPct) maxPct = f.capPct;
                 parts.push(f.metric + "-" + f.env + ": " + f.sizeMB + "MB (" + f.capPct + "%)");
             }
-            infoEl.innerHTML = '<span class="met-storage-info" title="' + esc(parts.join("\n")) + '">' + filteredFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
+            infoEl.innerHTML = '<span class="usd-storage-info" title="' + esc(parts.join("\n")) + '">' + filteredFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
 
             if (maxPct >= 90) {
                 warnEl.style.display = "";
@@ -513,7 +512,7 @@
         var chipsEl = document.getElementById("metFileChips");
         var clearBtn = document.getElementById("metFileClearBtn");
         var fileBtn = document.getElementById("metFileBtn");
-        var envGroup = document.querySelector(".met-controls__left");
+        var envGroup = document.querySelector(".usd-controls-bar__left");
 
         chipsEl.innerHTML = "";
 
@@ -522,7 +521,7 @@
         if (!hasAny) {
             chipsEl.style.display = "none";
             clearBtn.style.display = "none";
-            fileBtn.classList.remove("met-file-btn--active");
+            fileBtn.classList.remove("usd-file-btn--active");
             if (envGroup) envGroup.style.display = "";
             return;
         }
@@ -535,14 +534,14 @@
             if (!_fileNames[type]) continue;
 
             var chip = document.createElement("span");
-            chip.className = "met-file-chip";
+            chip.className = "usd-chip usd-chip--cyan";
 
             var label = document.createElement("span");
             label.textContent = _fileNames[type];
             chip.appendChild(label);
 
             var removeBtn = document.createElement("span");
-            removeBtn.className = "met-file-chip__remove";
+            removeBtn.className = "usd-chip__remove";
             removeBtn.innerHTML = "&times;";
             removeBtn.title = "Remove this file";
             (function (t) {
@@ -555,7 +554,7 @@
 
         chipsEl.style.display = "";
         clearBtn.style.display = "";
-        fileBtn.classList.add("met-file-btn--active");
+        fileBtn.classList.add("usd-file-btn--active");
     }
 
     function removeFile(type) {
@@ -799,7 +798,7 @@
             if (hiddenStreams[datasets[ri].label]) datasets[ri].hidden = true;
         }
 
-        var isDark = !document.body.classList.contains("light-theme");
+        var ct = chartTheme;
         _streamChart = new Chart(canvas, {
             type: "line",
             data: { datasets: datasets },
@@ -809,61 +808,19 @@
                 interaction: { mode: "nearest", intersect: false },
                 onClick: chartClickHandler,
                 scales: {
-                    x: {
-                        type: "time",
-                        time: { tooltipFormat: "dd MMM yyyy, HH:mm:ss" },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, maxTicksLimit: 12, autoSkip: true, maxRotation: 45 }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        suggestedMin: 0,
-                        suggestedMax: 10,
-                        title: { display: true, text: "Backlog", color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } }
-                    }
+                    x: ct.timeAxis(),
+                    y: ct.valueAxis("Backlog", { suggestedMin: 0, suggestedMax: 10 })
                 },
                 plugins: {
                     decimation: { enabled: true, algorithm: "lttb", samples: 500 },
                     zoom: getZoomPluginConfig("Stream"),
                     annotation: {
                         annotations: {
-                            thresholdLine: {
-                                type: "line",
-                                scaleID: "y",
-                                value: _backlogThreshold,
-                                borderColor: isDark ? "#ef5350" : "#d32f2f",
-                                borderWidth: 1.5,
-                                borderDash: [4, 3],
-                                display: _streamThresholdVisible,
-                                label: {
-                                    display: true,
-                                    content: "Threshold: " + _backlogThreshold,
-                                    position: "end",
-                                    yAdjust: -10,
-                                    backgroundColor: isDark ? "rgba(239,83,80,0.15)" : "rgba(211,47,47,0.12)",
-                                    color: isDark ? "#ef5350" : "#d32f2f",
-                                    font: { size: 9, family: "'Consolas', 'Courier New', monospace" },
-                                    padding: { top: 2, bottom: 2, left: 4, right: 4 }
-                                }
-                            }
+                            thresholdLine: ct.thresholdAnnotation(_backlogThreshold, _streamThresholdVisible)
                         }
                     },
-                    legend: {
-                        position: "bottom",
-                        labels: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 10, family: "'Consolas', 'Courier New', monospace" }, boxWidth: 12, padding: 10 },
-                        onClick: function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? "#22262e" : "#ffffff",
-                        titleColor: isDark ? "#e2e5ea" : "#1a1d23",
-                        bodyColor: isDark ? "#abb2bf" : "#5c6370",
-                        borderColor: isDark ? "#363c48" : "#d8dbe0",
-                        borderWidth: 1,
-                        titleFont: { size: 11 },
-                        bodyFont: { size: 11, family: "'Consolas', 'Courier New', monospace" }
-                    }
+                    legend: ct.legend(function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }),
+                    tooltip: ct.tooltip()
                 }
             }
         });
@@ -956,7 +913,7 @@
             if (hiddenStreams[datasets[ri].label]) datasets[ri].hidden = true;
         }
 
-        var isDark = !document.body.classList.contains("light-theme");
+        var ct = chartTheme;
         _connChart = new Chart(canvas, {
             type: "line",
             data: { datasets: datasets },
@@ -966,38 +923,14 @@
                 interaction: { mode: "nearest", intersect: false },
                 onClick: chartClickHandler,
                 scales: {
-                    x: {
-                        type: "time",
-                        time: { tooltipFormat: "dd MMM yyyy, HH:mm:ss" },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, maxTicksLimit: 12, autoSkip: true, maxRotation: 45 }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        suggestedMin: 0,
-                        suggestedMax: 3,
-                        title: { display: true, text: "Connections", color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, stepSize: 1 }
-                    }
+                    x: ct.timeAxis(),
+                    y: ct.valueAxis("Connections", { suggestedMin: 0, suggestedMax: 3, ticks: { color: ct.textMuted(), font: { size: 10 }, stepSize: 1 } })
                 },
                 plugins: {
                     decimation: { enabled: true, algorithm: "lttb", samples: 500 },
                     zoom: getZoomPluginConfig("Conn"),
-                    legend: {
-                        position: "bottom",
-                        labels: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 10, family: "'Consolas', 'Courier New', monospace" }, boxWidth: 12, padding: 10 },
-                        onClick: function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? "#22262e" : "#ffffff",
-                        titleColor: isDark ? "#e2e5ea" : "#1a1d23",
-                        bodyColor: isDark ? "#abb2bf" : "#5c6370",
-                        borderColor: isDark ? "#363c48" : "#d8dbe0",
-                        borderWidth: 1,
-                        titleFont: { size: 11 },
-                        bodyFont: { size: 11, family: "'Consolas', 'Courier New', monospace" }
-                    }
+                    legend: ct.legend(function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }),
+                    tooltip: ct.tooltip()
                 }
             }
         });
@@ -1090,7 +1023,21 @@
             if (hiddenNodes[datasets[ri].label]) datasets[ri].hidden = true;
         }
 
-        var isDark = !document.body.classList.contains("light-theme");
+        var ct = chartTheme;
+        var nodeTooltip = ct.tooltip();
+        nodeTooltip.callbacks = {
+            afterBody: function (items) {
+                if (!items.length) return "";
+                var idx = items[0].dataIndex;
+                var nn = items[0].dataset.label;
+                var entries2 = data.entries || [];
+                if (entries2[idx] && entries2[idx].nodes && entries2[idx].nodes[nn]) {
+                    var nd = entries2[idx].nodes[nn];
+                    return "Stopped: " + (nd.stopped || 0) + " | Restarting: " + (nd.restarting || 0);
+                }
+                return "";
+            }
+        };
         _nodeChart = new Chart(canvas, {
             type: "line",
             data: { datasets: datasets },
@@ -1100,49 +1047,14 @@
                 interaction: { mode: "nearest", intersect: false },
                 onClick: chartClickHandler,
                 scales: {
-                    x: {
-                        type: "time",
-                        time: { tooltipFormat: "dd MMM yyyy, HH:mm:ss" },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, maxTicksLimit: 12, autoSkip: true, maxRotation: 45 }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: "Running Processes", color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, stepSize: 1 }
-                    }
+                    x: ct.timeAxis(),
+                    y: ct.valueAxis("Running Processes", { ticks: { color: ct.textMuted(), font: { size: 10 }, stepSize: 1 } })
                 },
                 plugins: {
                     decimation: { enabled: true, algorithm: "lttb", samples: 500 },
                     zoom: getZoomPluginConfig("Node"),
-                    legend: {
-                        position: "bottom",
-                        labels: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 10, family: "'Consolas', 'Courier New', monospace" }, boxWidth: 12, padding: 10 },
-                        onClick: function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? "#22262e" : "#ffffff",
-                        titleColor: isDark ? "#e2e5ea" : "#1a1d23",
-                        bodyColor: isDark ? "#abb2bf" : "#5c6370",
-                        borderColor: isDark ? "#363c48" : "#d8dbe0",
-                        borderWidth: 1,
-                        titleFont: { size: 11 },
-                        bodyFont: { size: 11, family: "'Consolas', 'Courier New', monospace" },
-                        callbacks: {
-                            afterBody: function (items) {
-                                if (!items.length) return "";
-                                var idx = items[0].dataIndex;
-                                var nn = items[0].dataset.label;
-                                var entries2 = data.entries || [];
-                                if (entries2[idx] && entries2[idx].nodes && entries2[idx].nodes[nn]) {
-                                    var nd = entries2[idx].nodes[nn];
-                                    return "Stopped: " + (nd.stopped || 0) + " | Restarting: " + (nd.restarting || 0);
-                                }
-                                return "";
-                            }
-                        }
-                    }
+                    legend: ct.legend(function (e, legendItem, legend) { legendClickHandler(e, legendItem, legend); }),
+                    tooltip: nodeTooltip
                 }
             }
         });
@@ -1204,7 +1116,7 @@
 
         if (_eventsChart) _eventsChart.destroy();
 
-        var isDark = !document.body.classList.contains("light-theme");
+        var ct = chartTheme;
         _eventsChart = new Chart(canvas, {
             type: "bar",
             data: {
@@ -1213,7 +1125,7 @@
                     {
                         label: "Stopped",
                         data: stopData,
-                        backgroundColor: isDark ? "#ef5350" : "#d32f2f",
+                        backgroundColor: ct.accentRed(),
                         borderRadius: 3,
                         barPercentage: 0.7,
                         categoryPercentage: 0.8
@@ -1221,7 +1133,7 @@
                     {
                         label: "Restarting",
                         data: restartData,
-                        backgroundColor: isDark ? "#f0a840" : "#e6930e",
+                        backgroundColor: ct.accentAmber(),
                         borderRadius: 3,
                         barPercentage: 0.7,
                         categoryPercentage: 0.8
@@ -1234,29 +1146,13 @@
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 9, family: "'Consolas', 'Courier New', monospace" }, maxRotation: 45 }
+                        ticks: { color: ct.textSecondary(), font: { size: 9, family: ct.fontMono }, maxRotation: 45 }
                     },
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: "Event Count", color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 } },
-                        grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
-                        ticks: { color: isDark ? "#5c6370" : "#8b919e", font: { size: 10 }, stepSize: 1 }
-                    }
+                    y: ct.valueAxis("Event Count", { ticks: { color: ct.textMuted(), font: { size: 10 }, stepSize: 1 } })
                 },
                 plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: { color: isDark ? "#8b919e" : "#5c6370", font: { size: 10, family: "'Consolas', 'Courier New', monospace" }, boxWidth: 12, padding: 10 }
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? "#22262e" : "#ffffff",
-                        titleColor: isDark ? "#e2e5ea" : "#1a1d23",
-                        bodyColor: isDark ? "#abb2bf" : "#5c6370",
-                        borderColor: isDark ? "#363c48" : "#d8dbe0",
-                        borderWidth: 1,
-                        titleFont: { size: 11 },
-                        bodyFont: { size: 11, family: "'Consolas', 'Courier New', monospace" }
-                    }
+                    legend: ct.legend(),
+                    tooltip: ct.tooltip()
                 }
             }
         });
@@ -1565,16 +1461,7 @@
     // ─── Colour generation ───
 
     function generateColors(count) {
-        var base = [
-            "#4a9eff", "#3dd68c", "#ef5350", "#f0a840", "#a078ff",
-            "#56d4c0", "#ff7eb3", "#8bc34a", "#ff9800", "#7986cb",
-            "#26c6da", "#d4e157", "#ec407a", "#66bb6a", "#ffa726"
-        ];
-        var result = [];
-        for (var i = 0; i < count; i++) {
-            result.push(base[i % base.length]);
-        }
-        return result;
+        return chartTheme.palette(count);
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();

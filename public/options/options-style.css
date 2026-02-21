@@ -487,39 +487,11 @@
     flex-wrap: wrap;
     align-items: center;
     padding: 0 20px 10px;
+    gap: 6px;
     min-height: 0;
 }
 
 .opt-chip-row:empty { padding: 0; }
-
-.opt-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    margin: 3px 4px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    background: var(--accent-blue-bg);
-    color: var(--accent-blue);
-    border: 1px solid transparent;
-}
-
-.opt-chip--param {
-    background: var(--accent-cyan-bg);
-    color: var(--accent-cyan);
-}
-
-.opt-chip__text { margin-right: 6px; }
-
-.opt-chip__remove {
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    opacity: 0.6;
-}
-
-.opt-chip__remove:hover { opacity: 1; color: var(--accent-red, #e74c3c); }
 
 .opt-chip-note {
     font-size: 10px;
@@ -532,10 +504,7 @@
 .opt-chip-note .fa { margin-right: 5px; font-size: 11px; }
 .opt-chip-note code { font-family: 'Consolas', 'Courier New', monospace; background: var(--bg-card); padding: 1px 4px; border-radius: 3px; font-size: 10px; }
 
-.high-contrast .opt-chip { background: var(--accent-blue); color: #000; }
-.high-contrast .opt-chip--param { background: var(--accent-cyan); color: #000; }
-.high-contrast.light-theme .opt-chip { background: var(--accent-blue); color: #fff; }
-.high-contrast.light-theme .opt-chip--param { background: var(--accent-cyan); color: #fff; }
+/* ─── High Contrast: see /shared/style.css ─── */
 
 /* ─── Responsive ─── */
 @media (max-width: 640px) {

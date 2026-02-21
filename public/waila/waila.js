@@ -607,7 +607,7 @@
         _currentScript = "";
 
         // Show modal with loading state
-        bodyEl.innerHTML = '<div class="wla-modal__loading"><span class="fa fa-spinner fa-spin"></span> Generating script preview...</div>';
+        bodyEl.innerHTML = '<div class="usd-modal__loading"><span class="fa fa-spinner fa-spin"></span> Generating script preview...</div>';
         modal.style.display = "flex";
 
         fetch("/api/waila/workflow/" + encodeURIComponent(systemName) + "/preview", {
@@ -616,7 +616,7 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
             if (data.error) {
-                bodyEl.innerHTML = '<div class="wla-modal__error"><span class="fa fa-exclamation-triangle"></span> ' + esc(data.message || "Failed to load script preview") + '</div>';
+                bodyEl.innerHTML = '<div class="usd-modal__error"><span class="fa fa-exclamation-triangle"></span> ' + esc(data.message || "Failed to load script preview") + '</div>';
                 return;
             }
 
@@ -624,7 +624,7 @@
             _currentScript = script;
 
             if (!script) {
-                bodyEl.innerHTML = '<div class="wla-modal__error">No script content returned</div>';
+                bodyEl.innerHTML = '<div class="usd-modal__error">No script content returned</div>';
                 return;
             }
 
@@ -639,7 +639,7 @@
             }
         })
         .catch(function (err) {
-            bodyEl.innerHTML = '<div class="wla-modal__error"><span class="fa fa-exclamation-triangle"></span> ' + esc(err.message) + '</div>';
+            bodyEl.innerHTML = '<div class="usd-modal__error"><span class="fa fa-exclamation-triangle"></span> ' + esc(err.message) + '</div>';
         });
     }
 
