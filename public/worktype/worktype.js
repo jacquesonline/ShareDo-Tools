@@ -114,7 +114,7 @@
 
         fetch("/api/worktype/tree").then(function (r) { return r.json(); }).then(function (data) {
             if (data && data.error) {
-                container.innerHTML = '<div class="wt-tree__loading" style="color:var(--accent-red)">Failed to load tree: ' + esc(data.message || "Unknown error") + '</div>';
+                container.innerHTML = '<div class="wt-tree__loading usd-clr--red">Failed to load tree: ' + esc(data.message || "Unknown error") + '</div>';
                 return;
             }
             _tree = Array.isArray(data) ? data : (data.children || []);
@@ -124,7 +124,7 @@
             document.getElementById("treeCount").textContent = count + " types";
             renderTree();
         }).catch(function (err) {
-            container.innerHTML = '<div class="wt-tree__loading" style="color:var(--accent-red)">Error: ' + esc(err.message) + '</div>';
+            container.innerHTML = '<div class="wt-tree__loading usd-clr--red">Error: ' + esc(err.message) + '</div>';
         });
     }
 
@@ -273,7 +273,7 @@
     function updateInfoBar(treeInfo, aspectData) {
         var name = (aspectData && aspectData.sharedoTypeName) || (treeInfo && treeInfo.name) || _selectedType;
         var icon = (aspectData && aspectData.sharedoTypeIcon) || (treeInfo && treeInfo.icon) || "fa-cube";
-        var colour = (treeInfo && treeInfo.tileColour) || (aspectData && aspectData.sharedoTypeColour) || "#666";
+        var colour = (treeInfo && treeInfo.tileColour) || (aspectData && aspectData.sharedoTypeColour) || cssVar("--text-muted");
         if (icon.indexOf("fa-") !== 0) icon = "fa-" + icon;
 
         document.getElementById("infoName").textContent = name;
@@ -540,7 +540,7 @@
             for (var r = 0; r < ruleNames.length; r++) {
                 html += '<div class="wt-adet-rules__name">' + esc(ruleNames[r]) + '</div>';
             }
-            if (!ruleNames.length) html += '<div style="color:var(--text-muted);font-size:11px">No rule names specified</div>';
+            if (!ruleNames.length) html += '<div class="usd-clr--muted" style="font-size:11px">No rule names specified</div>';
             html += '</div></div>';
         }
 
@@ -593,7 +593,7 @@
                 if (data && data.error) {
                     var container = document.getElementById("formFieldsContainer");
                     if (container && container.dataset.formId === formId) {
-                        container.innerHTML = '<div style="color:var(--accent-red);font-size:11px">' + esc(data.message || "Failed to load form") + '</div>';
+                        container.innerHTML = '<div class="usd-clr--red" style="font-size:11px">' + esc(data.message || "Failed to load form") + '</div>';
                     }
                     return;
                 }
@@ -603,7 +603,7 @@
             .catch(function (err) {
                 var container = document.getElementById("formFieldsContainer");
                 if (container && container.dataset.formId === formId) {
-                    container.innerHTML = '<div style="color:var(--accent-red);font-size:11px">' + esc(err.message) + '</div>';
+                    container.innerHTML = '<div class="usd-clr--red" style="font-size:11px">' + esc(err.message) + '</div>';
                 }
             });
     }
@@ -614,7 +614,7 @@
 
         var fields = data.fields || [];
         if (!fields.length) {
-            container.innerHTML = '<div style="color:var(--text-muted);font-size:11px">No fields in this form</div>';
+            container.innerHTML = '<div class="usd-clr--muted" style="font-size:11px">No fields in this form</div>';
             return;
         }
 
@@ -637,7 +637,7 @@
                 html += '<button class="wt-form-attrs-toggle" data-target="' + uid + '">Show</button>';
                 html += '<div class="wt-form-attrs" id="' + uid + '">' + esc(JSON.stringify(f.attributes, null, 2)) + '</div>';
             } else {
-                html += '<span style="color:var(--text-muted)">--</span>';
+                html += '<span class="usd-clr--muted">--</span>';
             }
             html += '</td>';
             html += '</tr>';
@@ -913,7 +913,7 @@
                 for (var oi = 0; oi < outbound.length; oi++) {
                     var tr = outbound[oi];
                     var targetPhase = phaseMap[tr.toPhaseSystemName];
-                    var targetColour = targetPhase ? getPhaseColour(targetPhase) : "#666";
+                    var targetColour = targetPhase ? getPhaseColour(targetPhase) : cssVar("--text-muted");
                     var targetName = targetPhase ? (targetPhase.name || tr.toPhaseSystemName) : tr.toPhaseSystemName;
                     var isOpt = tr.isOptimumPath;
 
@@ -958,11 +958,14 @@
     }
 
     function getPhaseColour(ph) {
-        if (ph.isStart) return "#43a047";                // green
-        if (ph.isSystemClosedPhase) return "#d32f2f";    // red
-        if (ph.isOpen) return "#1976d2";                  // blue
-        // Not open = amber (covers removed and closed states)
-        return "#f57c00";
+        if (ph.isStart) return cssVar("--phase-start");
+        if (ph.isSystemClosedPhase) return cssVar("--phase-closed");
+        if (ph.isOpen) return cssVar("--phase-open");
+        return cssVar("--phase-default");
+    }
+
+    function cssVar(name) {
+        return getComputedStyle(document.body).getPropertyValue(name).trim();
     }
 
     function showPhaseDetail(phase, transition) {
@@ -1065,7 +1068,7 @@
                 else if (perms[p].labelCss && perms[p].labelCss.indexOf("default") !== -1) pillClass = "wt-perm-pill--byphase";
                 html += '<span class="wt-perm-pill ' + pillClass + '">' + esc(perms[p].text || "") + '</span>';
             }
-            if (!perms.length) html += '<span style="font-size:10px;color:var(--text-muted)">None</span>';
+            if (!perms.length) html += '<span class="usd-clr--muted" style="font-size:10px">None</span>';
 
             html += '</div></td>';
             html += '</tr>';
@@ -1098,7 +1101,7 @@
 
         var definitions = (data && data.definitions) || [];
         if (!definitions.length) {
-            container.innerHTML = '<div style="font-size:11px;color:var(--text-muted);font-style:italic;padding:8px 0">No key dates configured for this type</div>';
+            container.innerHTML = '<div class="usd-clr--muted" style="font-size:11px;font-style:italic;padding:8px 0">No key dates configured for this type</div>';
             return;
         }
 
@@ -1295,7 +1298,7 @@
                 renderCompareControls(container, data.current);
                 _compareInitDone = true;
             }).catch(function () {
-                container.innerHTML = '<div style="padding:16px;color:var(--accent-red)">Failed to load environments</div>';
+                container.innerHTML = '<div class="usd-clr--red" style="padding:16px">Failed to load environments</div>';
                 container.style.display = "";
             });
         } else {
@@ -1403,14 +1406,14 @@
             var targetData = results[1];
 
             if (targetData.error && !targetData.aspects) {
-                resultsEl.innerHTML = '<div class="wt-cmp-empty" style="color:var(--accent-red)">' + esc(targetData.message || "Failed to fetch target data") + '</div>';
+                resultsEl.innerHTML = '<div class="wt-cmp-empty usd-clr--red">' + esc(targetData.message || "Failed to fetch target data") + '</div>';
                 return;
             }
 
             var show = document.getElementById("cmpShowSelect").value;
             renderCompareResults(resultsEl, currentData, targetData, show);
         }).catch(function (err) {
-            resultsEl.innerHTML = '<div class="wt-cmp-empty" style="color:var(--accent-red)">' + esc(err.message) + '</div>';
+            resultsEl.innerHTML = '<div class="wt-cmp-empty usd-clr--red">' + esc(err.message) + '</div>';
         });
     }
 
@@ -1524,7 +1527,7 @@
         }
 
         if (targetAspectData && targetAspectData.error) {
-            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-th-list"></span> Aspects <span class="wt-cmp-section__count" style="color:var(--accent-red)">Failed to load from target</span></div></div>';
+            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-th-list"></span> Aspects <span class="wt-cmp-section__count usd-clr--red">Failed to load from target</span></div></div>';
         }
 
         var h = '<div class="wt-cmp-section">';
@@ -1593,8 +1596,8 @@
                         col += '<span class="wt-cmp-aspect-row__form"><span class="fa fa-wpforms"></span> ' + esc(formLabel) + '</span>';
                     }
                     col += '<span class="wt-cmp-aspect-row__dots">';
-                    if (asp.inherited) col += '<span class="wt-cmp-aspect-row__dot" style="background:var(--accent-blue)" title="Inherited"></span>';
-                    if (asp.sysName === "FormBuilder") col += '<span class="wt-cmp-aspect-row__dot" style="background:var(--accent-cyan)" title="FormBuilder"></span>';
+                    if (asp.inherited) col += '<span class="wt-cmp-aspect-row__dot usd-bg--blue" title="Inherited"></span>';
+                    if (asp.sysName === "FormBuilder") col += '<span class="wt-cmp-aspect-row__dot usd-bg--cyan" title="FormBuilder"></span>';
                     col += '</span></div>';
 
                     // Show change detail on target side
@@ -1649,7 +1652,7 @@
         }
 
         if (targetKdData && targetKdData.error) {
-            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-calendar"></span> Key Dates <span class="wt-cmp-section__count" style="color:var(--accent-red)">Failed to load from target</span></div></div>';
+            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-calendar"></span> Key Dates <span class="wt-cmp-section__count usd-clr--red">Failed to load from target</span></div></div>';
         }
 
         // Sort: changed/added/removed first, then same
@@ -1743,7 +1746,7 @@
         }
 
         if (targetRolesData && targetRolesData.error) {
-            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-users"></span> Roles <span class="wt-cmp-section__count" style="color:var(--accent-red)">Failed to load from target</span></div></div>';
+            return '<div class="wt-cmp-section"><div class="wt-cmp-section__header"><span class="fa fa-users"></span> Roles <span class="wt-cmp-section__count usd-clr--red">Failed to load from target</span></div></div>';
         }
 
         var order = { changed: 0, added: 1, removed: 2, same: 3 };
@@ -1948,7 +1951,7 @@
         }).then(function (r) { return r.json(); }).then(function (data) {
             renderConfigSearchResults(data);
         }).catch(function (err) {
-            document.getElementById("srList").innerHTML = '<div class="wt-sr__empty" style="color:var(--accent-red)">' + esc(err.message) + '</div>';
+            document.getElementById("srList").innerHTML = '<div class="wt-sr__empty usd-clr--red">' + esc(err.message) + '</div>';
         });
     }
 
@@ -2000,7 +2003,7 @@
 
         var icon = r.icon || "fa-cube";
         if (icon.indexOf("fa-") !== 0) icon = "fa-" + icon;
-        var colour = r.tileColour || "#666";
+        var colour = r.tileColour || cssVar("--text-muted");
 
         var h = '<div class="wt-sr-card' + collapsedCls + '" data-sn="' + esc(r.systemName) + '">';
 

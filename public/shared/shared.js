@@ -173,8 +173,8 @@ var shared = (function () {
                 var text = "Cookie set";
                 if (d.expiresInMin != null) text += " | Expires: ~" + d.expiresInMin + " min";
                 var icon = d.autoRefreshing
-                    ? '<span class="fa fa-recycle" style="color:var(--accent-green);margin-right:4px"></span>'
-                    : '<span class="fa fa-exclamation-circle" style="color:var(--accent-amber);margin-right:4px"></span>';
+                    ? '<span class="fa fa-recycle usd-clr--green usd-icon-mr"></span>'
+                    : '<span class="fa fa-exclamation-circle usd-clr--amber usd-icon-mr"></span>';
                 el.innerHTML = dot + icon + '<span>' + text + '</span>';
                 el.className = "usd-header__cookie-status usd-header__cookie-status--set";
             }).catch(function () {

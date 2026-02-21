@@ -255,9 +255,9 @@
     min-width: 40px;
 }
 
-.ux-modal__timing-seg--ttfb { background: rgba(74, 158, 255, 0.25); }
-.ux-modal__timing-seg--dom { background: rgba(61, 214, 140, 0.25); }
-.ux-modal__timing-seg--render { background: rgba(240, 168, 64, 0.25); }
+.ux-modal__timing-seg--ttfb { background: var(--accent-blue-bg); }
+.ux-modal__timing-seg--dom { background: var(--accent-green-bg); }
+.ux-modal__timing-seg--render { background: var(--accent-amber-bg); }
 
 .ux-modal__timing-val {
     font-size: 12px;
@@ -275,9 +275,9 @@
     color: var(--text-muted);
 }
 
-.ux-modal__timing-seg--ttfb .ux-modal__timing-val { color: #4a9eff; }
-.ux-modal__timing-seg--dom .ux-modal__timing-val { color: #3dd68c; }
-.ux-modal__timing-seg--render .ux-modal__timing-val { color: #f0a840; }
+.ux-modal__timing-seg--ttfb .ux-modal__timing-val { color: var(--accent-blue); }
+.ux-modal__timing-seg--dom .ux-modal__timing-val { color: var(--accent-green); }
+.ux-modal__timing-seg--render .ux-modal__timing-val { color: var(--accent-amber); }
 
 /* Web Vitals snapshot */
 .ux-modal__vitals {
@@ -343,3 +343,12 @@
 
 /* ─── Empty state ─── */
 .ux-empty { padding: 16px 20px; font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+/* ─── High Contrast: timing bar ─── */
+.high-contrast .ux-modal__timing-seg--ttfb { background: var(--accent-blue); }
+.high-contrast .ux-modal__timing-seg--dom { background: var(--accent-green); }
+.high-contrast .ux-modal__timing-seg--render { background: var(--accent-amber); }
+.high-contrast .ux-modal__timing-seg--ttfb .ux-modal__timing-val { color: var(--hc-pill-text-blue); }
+.high-contrast .ux-modal__timing-seg--dom .ux-modal__timing-val { color: var(--hc-pill-text-green); }
+.high-contrast .ux-modal__timing-seg--render .ux-modal__timing-val { color: var(--hc-pill-text-amber); }
+.high-contrast .ux-modal__timing-seg .ux-modal__timing-name { color: var(--hc-pill-text); }

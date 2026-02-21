@@ -129,7 +129,7 @@
             var lines = (consoles && consoles[nm]) ? consoles[nm] : [];
             h += '<div class="usd-node-card"><div class="usd-node-card__header"><div>';
             h += '<div class="usd-node-card__name">' + esc(nm) + '</div><div class="usd-node-card__meta">' + esc(v) + ' | Started: ' + esc(st) + '</div>';
-            h += '<div class="usd-node-card__meta">Roles: ' + run + ' running'; if (stop > 0) h += ', <span style="color:#ef5350">' + stop + ' stopped</span>'; if (rst > 0) h += ', <span style="color:#f0a840">' + rst + ' restarting</span>';
+            h += '<div class="usd-node-card__meta">Roles: ' + run + ' running'; if (stop > 0) h += ', <span class="usd-clr--red">' + stop + ' stopped</span>'; if (rst > 0) h += ', <span class="usd-clr--amber">' + rst + ' restarting</span>';
             h += '</div></div><span class="usd-node-card__status ' + (good ? "usd-node-card__status--ok" : "usd-node-card__status--error") + '"><span class="fa ' + (good ? "fa-check" : "fa-times") + '"></span></span></div>';
             h += '<div class="usd-node-console">'; for (var j = 0; j < lines.length; j++) h += '<div class="usd-node-console__line">' + esc(typeof lines[j] === "string" ? lines[j] : JSON.stringify(lines[j])) + '</div>';
             if (!lines.length) h += '<div class="usd-node-console__line">[No console output]</div>'; h += '</div></div>';
@@ -252,11 +252,11 @@
         var html = '<table class="usd-table"><thead><tr><th>Plan</th><th>Schedule</th><th>Last Run</th><th>Next Run</th><th>State</th></tr></thead><tbody>';
         for (var i = 0; i < rows.length; i++) {
             var d = rows[i].data || {}; var state = d.state || {};
-            var stateIcon = state.icon || "fa-question"; var stateColour = state.colour || "#5c6370"; var stateTooltip = state.tooltip || "Unknown";
+            var stateIcon = state.icon || "fa-question"; var stateColour = state.colour || ""; var stateTooltip = state.tooltip || "Unknown";
             var isError = stateTooltip.toLowerCase().indexOf("error") !== -1 || stateTooltip.toLowerCase().indexOf("disabled") !== -1;
             if (isError) issues++;
-            var colour = stateColour === "red" ? "#ef5350" : stateColour === "green" ? "#3dd68c" : stateColour || "#5c6370";
-            html += '<tr' + (isError ? ' style="background:rgba(239,83,80,0.04)"' : '') + '>';
+            var colour = stateColour === "red" ? "var(--accent-red)" : stateColour === "green" ? "var(--accent-green)" : stateColour || "var(--text-secondary)";
+            html += '<tr' + (isError ? ' style="background:var(--accent-red-bg)"' : '') + '>';
             html += '<td>' + esc(d.task || "--") + '</td>';
             html += '<td class="usd-table__muted">' + esc(d.schedule || "--") + '</td>';
             html += '<td class="usd-table__mono">' + fmtDate(d.lastRun) + '</td>';

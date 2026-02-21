@@ -461,7 +461,7 @@
         // Only in A
         if (data.onlyA.length) {
             h += '<div class="wla-diff-group">';
-            h += '<div class="wla-diff-group__header wla-diff-group__header--removed"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-minus-circle" style="color:#ef5350"></span> Only in ' + esc(data.envA.label) + ' <span class="wla-diff-group__count wla-diff-group__count--removed">' + data.onlyA.length + '</span></div>';
+            h += '<div class="wla-diff-group__header wla-diff-group__header--removed"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-minus-circle usd-clr--red"></span> Only in ' + esc(data.envA.label) + ' <span class="wla-diff-group__count wla-diff-group__count--removed">' + data.onlyA.length + '</span></div>';
             h += '<div class="wla-diff-group__body">';
             for (var a = 0; a < data.onlyA.length; a++) {
                 var wa = data.onlyA[a];
@@ -473,7 +473,7 @@
         // Only in B
         if (data.onlyB.length) {
             h += '<div class="wla-diff-group">';
-            h += '<div class="wla-diff-group__header wla-diff-group__header--added"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-plus-circle" style="color:#3dd68c"></span> Only in ' + esc(data.envB.label) + ' <span class="wla-diff-group__count wla-diff-group__count--added">' + data.onlyB.length + '</span></div>';
+            h += '<div class="wla-diff-group__header wla-diff-group__header--added"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-plus-circle usd-clr--green"></span> Only in ' + esc(data.envB.label) + ' <span class="wla-diff-group__count wla-diff-group__count--added">' + data.onlyB.length + '</span></div>';
             h += '<div class="wla-diff-group__body">';
             for (var b = 0; b < data.onlyB.length; b++) {
                 var wb = data.onlyB[b];
@@ -485,7 +485,7 @@
         // Changed
         if (data.changed.length) {
             h += '<div class="wla-diff-group">';
-            h += '<div class="wla-diff-group__header wla-diff-group__header--changed"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-pencil" style="color:#f0a840"></span> Changed <span class="wla-diff-group__count wla-diff-group__count--changed">' + data.changed.length + '</span></div>';
+            h += '<div class="wla-diff-group__header wla-diff-group__header--changed"><span class="fa fa-chevron-down wla-diff-group__chevron"></span><span class="fa fa-pencil usd-clr--amber"></span> Changed <span class="wla-diff-group__count wla-diff-group__count--changed">' + data.changed.length + '</span></div>';
             h += '<div class="wla-diff-group__body">';
             for (var c = 0; c < data.changed.length; c++) {
                 var wc = data.changed[c];
@@ -532,7 +532,7 @@
 
         // Identical count
         if (data.identicalCount > 0) {
-            h += '<div style="font-size:11px; color:#5c6370; padding:8px 0; font-family:Consolas,Courier New,monospace;">' + data.identicalCount + ' workflows identical across both environments</div>';
+            h += '<div class="usd-clr--muted" style="font-size:11px; padding:8px 0; font-family:Consolas,Courier New,monospace;">' + data.identicalCount + ' workflows identical across both environments</div>';
         }
 
         container.innerHTML = h;

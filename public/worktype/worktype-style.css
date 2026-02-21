@@ -53,7 +53,7 @@
 .wt-info__badge--abstract { background: var(--accent-blue-bg); color: var(--accent-blue); }
 .wt-info__badge--core { background: var(--accent-amber-bg); color: var(--accent-amber); }
 .wt-info__badge--portals { background: var(--accent-green-bg); color: var(--accent-green); }
-.wt-info__badge--has-derived { background: rgba(255, 188, 120, 0.12); color: #ffb378; }
+.wt-info__badge--has-derived { background: var(--accent-orange-bg); color: var(--accent-orange); }
 .wt-info__link { flex-shrink: 0; }
 
 /* ─── Tabs ─── */

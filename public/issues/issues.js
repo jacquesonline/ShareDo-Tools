@@ -494,7 +494,7 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data || data.error) {
-                    bodyEl.innerHTML = '<div class="iss-log-loading" style="color:var(--accent-red)"><span class="fa fa-exclamation-triangle"></span> ' + esc(data && data.message ? data.message : "Failed to load") + '</div>';
+                    bodyEl.innerHTML = '<div class="iss-log-loading usd-clr--red"><span class="fa fa-exclamation-triangle"></span> ' + esc(data && data.message ? data.message : "Failed to load") + '</div>';
                     return;
                 }
 
@@ -572,7 +572,7 @@
                 }
             })
             .catch(function (err) {
-                bodyEl.innerHTML = '<div class="iss-log-loading" style="color:var(--accent-red)"><span class="fa fa-exclamation-triangle"></span> ' + esc(err.message) + '</div>';
+                bodyEl.innerHTML = '<div class="iss-log-loading usd-clr--red"><span class="fa fa-exclamation-triangle"></span> ' + esc(err.message) + '</div>';
             });
     }
 
@@ -581,7 +581,7 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data || data.error) {
-                    logEl.innerHTML = '<div class="iss-log-loading" style="color:var(--accent-red)">' + esc(data && data.message ? data.message : "Failed to load log") + '</div>';
+                    logEl.innerHTML = '<div class="iss-log-loading usd-clr--red">' + esc(data && data.message ? data.message : "Failed to load log") + '</div>';
                     return;
                 }
 
@@ -610,7 +610,7 @@
                 logEl.dataset.loaded = "1";
             })
             .catch(function (err) {
-                logEl.innerHTML = '<div class="iss-log-loading" style="color:var(--accent-red)">' + esc(err.message) + '</div>';
+                logEl.innerHTML = '<div class="iss-log-loading usd-clr--red">' + esc(err.message) + '</div>';
             });
     }
 

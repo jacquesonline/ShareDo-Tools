@@ -486,6 +486,18 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .usd-empty-state__title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 .usd-empty-state__text { font-size: var(--font-size-base); max-width: 400px; line-height: 1.6; }
 
+/* ─── Colour utilities (inline style replacement) ─── */
+.usd-clr--red { color: var(--accent-red); }
+.usd-clr--green { color: var(--accent-green); }
+.usd-clr--amber { color: var(--accent-amber); }
+.usd-clr--blue { color: var(--accent-blue); }
+.usd-clr--cyan { color: var(--accent-cyan); }
+.usd-clr--muted { color: var(--text-muted); }
+.usd-clr--secondary { color: var(--text-secondary); }
+.usd-bg--blue { background: var(--accent-blue); }
+.usd-bg--cyan { background: var(--accent-cyan); }
+.usd-icon-mr { margin-right: 4px; }
+
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 
