@@ -474,6 +474,18 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .usd-chart-panel--narrow { flex: 0 0 360px; }
 @media (max-width: 900px) { .usd-chart-row { flex-direction: column; } .usd-chart-panel--narrow { flex: none; } }
 
+/* ─── Two-column layout split (document-flow variant) ─── */
+.usd-layout-split { display: flex; flex-direction: row; padding: 12px 16px; gap: 12px; align-items: flex-start; }
+.usd-layout-split__sidebar { width: 320px; flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.usd-layout-split__main { flex: 1; min-width: 0; }
+@media (max-width: 900px) { .usd-layout-split { flex-direction: column; } .usd-layout-split__sidebar { width: 100%; max-height: none !important; overflow-y: visible; } }
+
+/* ─── Empty state (hero placeholder) ─── */
+.usd-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; color: var(--text-muted); }
+.usd-empty-state__icon { font-size: 48px; opacity: 0.3; margin-bottom: 16px; }
+.usd-empty-state__title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.usd-empty-state__text { font-size: var(--font-size-base); max-width: 400px; line-height: 1.6; }
+
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 

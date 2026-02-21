@@ -279,20 +279,11 @@
     flex: 1;
 }
 
-/* ─── Empty / loading / no results ─── */
-.wla-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px;
-    color: var(--text-muted);
-    flex: 1;
-}
-
-.wla-empty-state__icon { font-size: 36px; margin-bottom: 16px; opacity: 0.3; }
-.wla-empty-state__title { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-.wla-empty-state__text { font-size: 12px; text-align: center; max-width: 360px; line-height: 1.6; }
+/* ─── Empty state: base in /shared/style.css, WAILA overrides ─── */
+.wla-main .usd-empty-state { flex: 1; }
+.wla-main .usd-empty-state__icon { font-size: 36px; }
+.wla-main .usd-empty-state__title { font-size: 15px; color: var(--text-secondary); margin-bottom: 6px; }
+.wla-main .usd-empty-state__text { max-width: 360px; }
 
 .wla-loading {
     display: flex;
