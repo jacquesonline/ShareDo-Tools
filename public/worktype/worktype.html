@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Type Visualiser - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/worktype/worktype-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+    </div>
+</div>
+<!-- Two-column layout -->
+<div class="wt-layout">
+
+    <!-- LEFT: Sidebar -->
+    <div class="wt-sidebar">
+        <div class="wt-panel">
+            <div class="wt-panel__header">
+                <span class="wt-panel__icon"><span class="fa fa-sitemap"></span></span>
+                <span class="wt-panel__title">Work Types</span>
+                <span class="wt-panel__badge" id="treeCount">--</span>
+            </div>
+
+            <!-- Mode toggle -->
+            <div class="wt-mode-toggle">
+                <button class="wt-mode-toggle__btn wt-mode-toggle__btn--active" data-mode="tree"><span class="fa fa-sitemap"></span> Tree</button>
+                <button class="wt-mode-toggle__btn" data-mode="search"><span class="fa fa-search"></span> Config Search</button>
+            </div>
+
+            <!-- Tree mode -->
+            <div class="wt-mode-tree" id="modeTree">
+                <div class="wt-tree-filter">
+                    <input type="text" class="wt-tree-filter__input" id="treeFilter" placeholder="Filter types..." />
+                </div>
+                <div class="wt-tree" id="treeContainer">
+                    <div class="wt-tree__loading"><span class="fa fa-spinner fa-spin"></span> Loading tree...</div>
+                </div>
+            </div>
+
+            <!-- Search mode -->
+            <div class="wt-mode-search" id="modeSearch" style="display:none">
+
+                <!-- Index status -->
+                <div class="wt-idx-panel">
+                    <div class="wt-idx-panel__row">
+                        <span class="wt-idx-panel__status" id="idxStatus">Not built</span>
+                        <span class="wt-idx-panel__meta" id="idxMeta"></span>
+                        <button class="usd-btn wt-idx-panel__btn" id="idxBuildBtn"><span class="fa fa-bolt"></span> Build</button>
+                    </div>
+                    <div class="wt-idx-panel__progress" id="idxProgress" style="display:none">
+                        <div class="wt-idx-panel__current" id="idxCurrent"></div>
+                        <div class="wt-idx-panel__track"><div class="wt-idx-panel__fill" id="idxFill"></div></div>
+                        <div class="wt-idx-panel__counter" id="idxCounter"></div>
+                    </div>
+                    <div class="wt-idx-panel__error" id="idxError" style="display:none"></div>
+                </div>
+
+                <!-- Search form -->
+                <div class="wt-csearch" id="csearchForm">
+                    <div class="wt-csearch__main">
+                        <input type="text" class="wt-csearch__input" id="csearchInput" placeholder="Search config..." />
+                        <button class="usd-btn wt-csearch__btn" id="csearchBtn"><span class="fa fa-search"></span></button>
+                    </div>
+                    <div class="wt-csearch__options">
+                        <label class="wt-csearch__toggle" title="Return types that do NOT match">
+                            <input type="checkbox" id="csearchExclude" /> Exclude
+                        </label>
+                        <button class="wt-csearch__filter-toggle" id="csearchAdvToggle"><span class="fa fa-sliders"></span> Filters</button>
+                    </div>
+                    <div class="wt-csearch__advanced" id="csearchAdvPanel" style="display:none">
+                        <div class="wt-csearch__field">
+                            <label class="wt-csearch__label">Aspect Name / Type</label>
+                            <input type="text" class="wt-csearch__filter-input" id="cfAspect" placeholder="e.g. CommentNav, FormBuilder" />
+                        </div>
+                        <div class="wt-csearch__field">
+                            <label class="wt-csearch__label">Form Title / System Name / ID</label>
+                            <input type="text" class="wt-csearch__filter-input" id="cfForm" placeholder="e.g. 1954 Act Status, core-re-*" />
+                        </div>
+                        <div class="wt-csearch__field">
+                            <label class="wt-csearch__label">Key Date Name</label>
+                            <input type="text" class="wt-csearch__filter-input" id="cfKeyDate" placeholder="e.g. limitation, date-of-injury" />
+                        </div>
+                        <div class="wt-csearch__field">
+                            <label class="wt-csearch__label">Role Name</label>
+                            <input type="text" class="wt-csearch__filter-input" id="cfRole" placeholder="e.g. sys-admin, Case Handler" />
+                        </div>
+                        <div class="wt-csearch__hint">AND logic between filters. Leave blank to skip.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Main panel -->
+    <div class="wt-main">
+
+        <!-- Empty state -->
+        <div class="wt-empty" id="emptyState">
+            <div class="wt-empty__icon"><span class="fa fa-cube"></span></div>
+            <div class="wt-empty__title">Work Type Visualiser</div>
+            <div class="wt-empty__text">Select a work type from the tree, or switch to Config Search to query across all work type configurations.</div>
+        </div>
+
+        <!-- Search results panel -->
+        <div class="wt-sr" id="searchResultsPanel" style="display:none">
+            <div class="wt-sr__bar">
+                <span class="wt-sr__count" id="srCount"></span>
+                <span class="wt-sr__time" id="srTime"></span>
+            </div>
+            <div class="wt-sr__list" id="srList"></div>
+        </div>
+
+        <!-- Type detail -->
+        <div class="wt-detail" id="detailPanel" style="display:none">
+
+            <button class="usd-btn wt-detail__back" id="backToResults" style="display:none"><span class="fa fa-arrow-left"></span> Back to results</button>
+
+            <div class="wt-info" id="infoBar">
+                <div class="wt-info__icon" id="infoIcon"><span class="fa fa-briefcase"></span></div>
+                <div class="wt-info__text">
+                    <div class="wt-info__name" id="infoName">--</div>
+                    <div class="wt-info__sysname" id="infoSysName">--</div>
+                </div>
+                <div class="wt-info__badges" id="infoBadges"></div>
+                <a class="usd-btn wt-info__link" id="infoLink" href="#" target="_blank" title="Open in ShareDo"><span class="fa fa-external-link"></span></a>
+            </div>
+
+            <div class="wt-tabs">
+                <button class="wt-tabs__btn wt-tabs__btn--active" data-tab="aspects"><span class="fa fa-th-list"></span> Aspects</button>
+                <button class="wt-tabs__btn" data-tab="phases"><span class="fa fa-random"></span> Phase Plan</button>
+                <button class="wt-tabs__btn" data-tab="roles"><span class="fa fa-users"></span> Roles</button>
+                <button class="wt-tabs__btn" data-tab="keydates"><span class="fa fa-calendar"></span> Key Dates</button>
+                <button class="wt-tabs__btn" data-tab="relationships"><span class="fa fa-link"></span> Relationships</button>
+                <button class="wt-tabs__btn" data-tab="compare"><span class="fa fa-exchange"></span> Compare</button>
+            </div>
+
+            <div class="wt-tab-content" id="tabContent">
+                <div class="wt-tab wt-tab--no-pad" id="tabAspects">
+                    <div class="wt-tab__loading" id="aspectsLoading"><span class="fa fa-spinner fa-spin"></span> Loading aspects...</div>
+                    <div class="wt-tab__error" id="aspectsError" style="display:none"></div>
+                    <div class="wt-aspects-split" id="aspectsContainer" style="display:none">
+                        <div class="wt-aspects-list" id="aspectsList"></div>
+                        <div class="wt-aspects-detail" id="aspectsDetail">
+                            <div class="wt-aspects-detail__empty"><span class="fa fa-mouse-pointer"></span><span>Click an aspect to view details</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wt-tab" id="tabPhases" style="display:none">
+                    <div class="wt-tab__loading" id="phasesLoading"><span class="fa fa-spinner fa-spin"></span> Loading phase plan...</div>
+                    <div class="wt-tab__error" id="phasesError" style="display:none"></div>
+                    <div class="wt-phases" id="phasesContainer" style="display:none"></div>
+                    <div class="wt-phase-detail" id="phaseDetail" style="display:none"></div>
+                </div>
+                <div class="wt-tab" id="tabRoles" style="display:none">
+                    <div class="wt-tab__loading" id="rolesLoading"><span class="fa fa-spinner fa-spin"></span> Loading roles...</div>
+                    <div class="wt-tab__error" id="rolesError" style="display:none"></div>
+                    <div class="wt-roles" id="rolesContainer" style="display:none"></div>
+                </div>
+                <div class="wt-tab" id="tabKeydates" style="display:none">
+                    <div class="wt-tab__loading" id="keydatesLoading"><span class="fa fa-spinner fa-spin"></span> Loading key dates...</div>
+                    <div class="wt-tab__error" id="keydatesError" style="display:none"></div>
+                    <div class="wt-keydates" id="keydatesContainer" style="display:none"></div>
+                </div>
+                <div class="wt-tab" id="tabRelationships" style="display:none">
+                    <div class="wt-tab__loading" id="relsLoading"><span class="fa fa-spinner fa-spin"></span> Loading relationships...</div>
+                    <div class="wt-tab__error" id="relsError" style="display:none"></div>
+                    <div class="wt-rels" id="relsContainer" style="display:none"></div>
+                </div>
+                <div class="wt-tab wt-tab--no-pad" id="tabCompare" style="display:none">
+                    <div class="wt-tab__loading" id="compareLoading" style="display:none"><span class="fa fa-spinner fa-spin"></span> Comparing environments...</div>
+                    <div class="wt-tab__error" id="compareError" style="display:none"></div>
+                    <div class="wt-compare" id="compareContainer" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/worktype/worktype.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareDo System Monitor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+</head>
+<body>
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+        <span class="usd-header__refresh-info">Last refreshed: <span id="lastRefresh">--</span></span>
+        <label class="usd-auto-toggle" id="autoRefreshToggle">
+            <span class="usd-toggle-track usd-toggle-track--active" id="toggleTrack"><span class="usd-toggle-knob"></span></span>
+            <span id="autoRefreshLabel">Auto 30s</span>
+        </label>
+        
+        <button class="usd-btn usd-btn--primary" id="refreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
+        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
+        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
+    </div>
+</div>
+
+<!-- Summary bar -->
+<div class="usd-summary">
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryEEStreamsDot"></span><span class="usd-summary__label">EE Streams</span><span class="usd-summary__value" id="summaryEEStreams">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryEENodesDot"></span><span class="usd-summary__label">EE Nodes</span><span class="usd-summary__value" id="summaryEENodes">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summarySearchIndexesDot"></span><span class="usd-summary__label">Search Indexes</span><span class="usd-summary__value" id="summarySearchIndexes">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryESClusterDot"></span><span class="usd-summary__label">ES Cluster</span><span class="usd-summary__value" id="summaryESCluster">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summarySQLAgentDot"></span><span class="usd-summary__label">SQL Agent</span><span class="usd-summary__value" id="summarySQLAgent">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryConfigDot"></span><span class="usd-summary__label">Diagnostic Config</span><span class="usd-summary__value" id="summaryConfigCount">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryMaintDot"></span><span class="usd-summary__label">Maintenance</span><span class="usd-summary__value" id="summaryMaint">--</span></div>
+    <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryLinkedDot"></span><span class="usd-summary__label">Linked Services</span><span class="usd-summary__value" id="summaryLinked">--</span></div>
+</div>
+
+<div class="usd-body">
+
+<!-- 1. Event Engine -->
+<div class="usd-section" id="sectionEE">
+    <div class="usd-section__header" onclick="toggleSection('sectionEE')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--ee"><span class="fa fa-bolt"></span></span><span class="usd-section__title">Event Engine -- Stream Stats</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/event-engine-config-service" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEE">Loading...</span></div>
+    </div>
+    <div class="usd-section__content">
+        <table class="usd-table"><thead><tr><th>Stream</th><th>Group</th><th>Description</th><th>Status</th><th class="usd-table__right">Connections</th><th class="usd-table__right">Backlog</th><th class="usd-table__right">Alert Duration</th></tr></thead><tbody id="streamTableBody"></tbody></table>
+        <div class="usd-sub-label">Event Engine Nodes</div>
+        <div class="usd-node-grid" id="nodeGrid"></div>
+    </div>
+</div>
+
+<!-- 2. Search Index -->
+<div class="usd-section" id="sectionSearch">
+    <div class="usd-section__header" onclick="toggleSection('sectionSearch')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--search"><span class="fa fa-search"></span></span><span class="usd-section__title">Search Index Health</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/search-indexes" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSearch">Loading...</span></div>
+    </div>
+    <div class="usd-section__content">
+        <div class="usd-sub-label">Cluster Health</div>
+        <div class="usd-cluster-bar" id="clusterBar"></div>
+        <div class="usd-sub-label">Index State</div>
+        <div class="usd-index-grid" id="indexGrid"></div>
+        <div class="usd-sub-label">Event Store Streams</div>
+        <div class="usd-es-grid" id="eventStoreGrid"></div>
+    </div>
+</div>
+
+<!-- 4. SQL Agent -->
+<div class="usd-section" id="sectionSQL">
+    <div class="usd-section__header" onclick="toggleSection('sectionSQL')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--sql"><span class="fa fa-database"></span></span><span class="usd-section__title">SQL Agent & Reporting Jobs</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/reports-jobs" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSQL">Loading...</span></div>
+    </div>
+    <div class="usd-section__content">
+        <div class="usd-sub-label">Jobs</div>
+        <table class="usd-table"><thead><tr><th>Job Name</th><th>Description</th><th>Status</th><th>Last Executed</th><th class="usd-table__right">Duration (min)</th><th>Next Run</th></tr></thead><tbody id="jobTableBody"></tbody></table>
+        <div id="checksSection" style="display:none">
+            <div class="usd-sub-label">Health Checks</div>
+            <table class="usd-table"><thead><tr><th>System Name</th><th>Description</th><th>Status</th><th>Last Run</th></tr></thead><tbody id="checkTableBody"></tbody></table>
+        </div>
+    </div>
+</div>
+
+<!-- 5. System Diagnostics Config -->
+<div class="usd-section" id="sectionConfig">
+    <div class="usd-section__header" onclick="toggleSection('sectionConfig')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--config"><span class="fa fa-cog"></span></span><span class="usd-section__title">System Diagnostics Config</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/diagnostics-config" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeConfig">Loading...</span></div>
+    </div>
+    <div class="usd-section__content"><div class="usd-config-grid" id="configGrid"></div></div>
+</div>
+
+<!-- 6. Maintenance Plans -->
+<div class="usd-section" id="sectionMaint">
+    <div class="usd-section__header" onclick="toggleSection('sectionMaint')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--maint"><span class="fa fa-wrench"></span></span><span class="usd-section__title">Maintenance Plans</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/maintenance-plans" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeMaint">Loading...</span></div>
+    </div>
+    <div class="usd-section__content"><div id="maintGrid"></div></div>
+</div>
+
+<!-- 7. Linked Services -->
+<div class="usd-section" id="sectionLinked">
+    <div class="usd-section__header" onclick="toggleSection('sectionLinked')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--linked"><span class="fa fa-link"></span></span><span class="usd-section__title">Linked Services</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/oauth" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeLinked">Loading...</span></div>
+    </div>
+    <div class="usd-section__content"><div class="usd-linked-grid" id="linkedGrid"></div></div>
+</div>
+
+<!-- 8. External Links -->
+<div class="usd-section" id="sectionExternal">
+    <div class="usd-section__header" onclick="toggleSection('sectionExternal')">
+        <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--external"><span class="fa fa-external-link"></span></span><span class="usd-section__title">External</span></div>
+    </div>
+    <div class="usd-section__content">
+        <div class="usd-external-links">
+            <a href="https://mauriceblackburn.sharedo.tech/outbound-comms-failures" target="_blank" class="usd-external-link"><span class="fa fa-times-circle"></span> Outbound Comms Failures</a>
+            <a href="https://mauriceblackburn.sharedo.tech/sharedo/e027def1-8b7e-4842-a8a6-b211001e25c1" target="_blank" class="usd-external-link"><span class="fa fa-user"></span> SYSADMIN</a>
+            <a href="https://mb-spm.imanagework-au.com/admin/monitoring-page" target="_blank" class="usd-external-link"><span class="fa fa-shield"></span> iManage Security Policy Manager</a>
+            <a href="https://mauriceblackburn.freshservice.com/a/tickets/view/76000023505?order_by=created_at&order_type=asc&page=1&per_page=100&query_hash=%5B%7B%22value%22%3A%5B%7B%22id%22%3A1%7D%5D%2C%22condition%22%3A%22workspace_id%22%2C%22operator%22%3A%22is_in%22%2C%22type%22%3A%22default%22%7D%2C%7B%22value%22%3A%5B%220%22%5D%2C%22condition%22%3A%22status%22%2C%22operator%22%3A%22is_in%22%2C%22type%22%3A%22default%22%7D%2C%7B%22value%22%3A%5B%2276000202392%22%2C%2276000210682%22%2C%2276000177962%22%5D%2C%22condition%22%3A%22group_id%22%2C%22operator%22%3A%22is_in%22%2C%22type%22%3A%22default%22%7D%2C%7B%22value%22%3A%5B%220%22%2C%22-1%22%5D%2C%22condition%22%3A%22responder_id%22%2C%22operator%22%3A%22is_in%22%2C%22type%22%3A%22default%22%7D%5D" target="_blank" class="usd-external-link"><span class="fa fa-ticket"></span> Freshservice Tickets (LSP Application Support)</a>
+
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="/shared/shared.js"></script>
+<script src="/monitor/app.js"></script>
+</body>
+</html>

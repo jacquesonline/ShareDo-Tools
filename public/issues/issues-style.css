@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════
+   Issues page
+   ═══════════════════════════════════════════ */
+
+.iss-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ─── Controls bar ─── */
+.iss-controls { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.iss-controls__group { display: flex; align-items: center; gap: 6px; }
+.iss-controls__group--right { margin-left: auto; }
+
+.iss-check { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); cursor: pointer; }
+.iss-check input[type="checkbox"] { accent-color: var(--accent-blue); }
+
+.iss-date-btn { font-size: 10px; padding: 4px 8px; }
+.iss-date-input { padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text-primary); font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; outline: none; }
+.iss-date-input:focus { border-color: var(--accent-blue); }
+
+.iss-rpp { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+.iss-rpp__input { width: 44px; padding: 4px 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text-primary); font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; text-align: center; outline: none; }
+.iss-rpp__input:focus { border-color: var(--accent-blue); }
+
+.iss-count { font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; color: var(--text-secondary); }
+
+/* ─── Table ─── */
+.iss-table-wrap { overflow-x: auto; }
+
+/* ─── Pagination ─── */
+.iss-pagination { display: flex; align-items: center; justify-content: center; padding: 10px 12px; gap: 8px; }
+
+/* ─── Row description (truncated) ─── */
+.iss-desc { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; color: var(--text-muted); }
+.iss-desc:hover { white-space: normal; overflow: visible; }
+
+/* ─── Tags ─── */
+.iss-tag { display: inline-block; font-size: 10px; font-family: 'Consolas', 'Courier New', monospace; padding: 1px 6px; border-radius: 3px; background: var(--accent-blue-bg); color: var(--accent-blue); margin-right: 3px; }
+
+/* ─── Open link ─── */
+.iss-open-link { color: var(--accent-blue); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; transition: color 0.15s ease; }
+.iss-open-link:hover { color: #7ab8ff; }
+.iss-open-link .fa { font-size: 9px; }
+
+/* ─── Clickable process rows ─── */
+.iss-proc-row { cursor: pointer; }
+.iss-proc-row:hover td { background: var(--hover-row); }
+
+/* ─── Process detail modal ─── */
+.iss-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7); z-index: 900;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+
+.iss-modal {
+    background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px;
+    width: 100%; max-width: 900px; height: 100%; max-height: calc(100vh - 48px);
+    display: flex; flex-direction: column; overflow: hidden;
+}
+
+.iss-modal__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-panel); flex-shrink: 0;
+}
+
+.iss-modal__title-group { min-width: 0; flex: 1; }
+.iss-modal__title { font-size: 13px; font-weight: 600; color: var(--text-primary); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iss-modal__subtitle { font-size: 11px; color: var(--text-muted); font-family: 'Consolas', 'Courier New', monospace; display: block; }
+.iss-modal__actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: 12px; }
+.iss-modal__body { flex: 1; overflow: auto; min-height: 0; padding: 0; }
+
+/* ─── Step list ─── */
+.iss-step {
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer; transition: background 0.1s ease;
+}
+
+.iss-step:last-child { border-bottom: none; }
+.iss-step:hover { background: var(--hover-row); }
+.iss-step--none { opacity: 0.5; cursor: default; }
+.iss-step--none:hover { background: transparent; }
+
+.iss-step__header {
+    display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+}
+
+.iss-step__state {
+    font-size: 10px; font-family: 'Consolas', 'Courier New', monospace;
+    padding: 2px 8px; border-radius: 10px; font-weight: 600; flex-shrink: 0; min-width: 72px; text-align: center;
+}
+
+.iss-step__state--complete { background: var(--accent-green-bg); color: var(--accent-green); }
+.iss-step__state--errored { background: var(--accent-red-bg); color: var(--accent-red); }
+.iss-step__state--running { background: var(--accent-blue-bg); color: var(--accent-blue); }
+.iss-step__state--none { background: var(--accent-neutral-bg); color: var(--text-muted); }
+
+.iss-step__name { font-size: 12px; font-weight: 600; flex: 1; }
+.iss-step__sysname { font-size: 10px; color: var(--text-muted); font-family: 'Consolas', 'Courier New', monospace; }
+
+.iss-step__chevron { color: var(--text-muted); font-size: 10px; transition: transform 0.2s ease; }
+.iss-step--expanded .iss-step__chevron { transform: rotate(90deg); }
+
+/* ─── Step log ─── */
+.iss-step__log {
+    display: none; padding: 0 16px 12px 16px;
+}
+
+.iss-step--expanded .iss-step__log { display: block; }
+
+.iss-log-entry {
+    display: flex; gap: 8px; padding: 3px 0; font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; line-height: 1.5;
+}
+
+.iss-log-entry__time { color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
+.iss-log-entry__level { flex-shrink: 0; min-width: 70px; font-weight: 600; }
+.iss-log-entry__level--system { color: var(--text-muted); }
+.iss-log-entry__level--information { color: var(--accent-blue); }
+.iss-log-entry__level--warning { color: var(--accent-amber); }
+.iss-log-entry__level--error { color: var(--accent-red); }
+.iss-log-entry__msg { color: var(--text-primary); white-space: pre-wrap; word-break: break-word; flex: 1; }
+
+.iss-log-loading { padding: 12px 16px; font-size: 11px; color: var(--text-muted); }
+
+/* ─── Phase badges ─── */
+.iss-phase { font-size: 10px; font-family: 'Consolas', 'Courier New', monospace; padding: 2px 6px; border-radius: 10px; }
+.iss-phase--failed { background: var(--accent-red-bg); color: var(--accent-red); }
+.iss-phase--errored { background: var(--accent-red-bg); color: var(--accent-red); }
+.iss-phase--running { background: var(--accent-blue-bg); color: var(--accent-blue); }
+.iss-phase--new { background: var(--accent-amber-bg); color: var(--accent-amber); }
+.iss-phase--default { background: var(--accent-neutral-bg); color: var(--text-secondary); }
+
+/* ─── High Contrast ─── */
+.high-contrast .iss-step__state--complete { background: var(--accent-green); color: #000; }
+.high-contrast .iss-step__state--errored { background: var(--accent-red); color: #000; }
+.high-contrast .iss-step__state--running { background: var(--accent-blue); color: #000; }
+.high-contrast .iss-step__state--none { background: var(--text-muted); color: #000; }
+.high-contrast .iss-phase--failed { background: var(--accent-red); color: #000; }
+.high-contrast .iss-phase--errored { background: var(--accent-red); color: #000; }
+.high-contrast .iss-phase--running { background: var(--accent-blue); color: #000; }
+.high-contrast .iss-phase--new { background: var(--accent-amber); color: #000; }
+.high-contrast .iss-phase--default { background: var(--text-muted); color: #000; }
+.high-contrast .iss-tag { background: var(--accent-blue); color: #000; }
+
+.high-contrast.light-theme .iss-step__state--complete,
+.high-contrast.light-theme .iss-step__state--errored,
+.high-contrast.light-theme .iss-step__state--running,
+.high-contrast.light-theme .iss-step__state--none,
+.high-contrast.light-theme .iss-phase--failed,
+.high-contrast.light-theme .iss-phase--errored,
+.high-contrast.light-theme .iss-phase--running,
+.high-contrast.light-theme .iss-phase--new,
+.high-contrast.light-theme .iss-phase--default,
+.high-contrast.light-theme .iss-tag { color: #fff; }

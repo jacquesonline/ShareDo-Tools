@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Issues - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/issues/issues-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+        <button class="usd-btn usd-btn--primary" id="refreshAllBtn"><span class="fa fa-refresh"></span> Refresh All</button>
+        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
+        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
+    </div>
+</div>
+<!-- Issues body -->
+<div class="iss-body">
+
+    <!-- 1. EE Processes -->
+    <div class="usd-section" id="sectionProcesses">
+        <div class="usd-section__header" onclick="toggleSection('sectionProcesses')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--errored"><span class="fa fa-cogs"></span></span>
+                <span class="usd-section__title">EE Processes</span>
+            </div>
+            <div class="usd-section__header-right">
+                <a class="iss-ext-link" data-path="/modeller/diagnostics-executionengine" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeProcesses">--</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="iss-controls">
+                <div class="iss-controls__group">
+                    <label class="iss-check"><input type="checkbox" id="procChkErrored" checked /> Errored</label>
+                    <label class="iss-check"><input type="checkbox" id="procChkRunning" /> Running</label>
+                </div>
+                <div class="iss-controls__group">
+                    <button class="usd-btn iss-date-btn" id="procBtnToday">Today</button>
+                    <button class="usd-btn iss-date-btn" id="procBtnWeek">7 Days</button>
+                    <input type="date" class="iss-date-input" id="procDatePicker" />
+                    <button class="usd-btn iss-date-btn" id="procBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                </div>
+                <div class="iss-controls__group iss-controls__group--right">
+                    <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="procRowsPerPage" value="10" min="1" max="100" /></label>
+                    <button class="usd-btn" id="procRefreshBtn"><span class="fa fa-refresh"></span></button>
+                    <span class="iss-count" id="procCount"></span>
+                </div>
+            </div>
+            <div class="iss-table-wrap">
+                <table class="usd-table">
+                    <thead><tr><th>Started</th><th>Title</th><th>Description</th><th>Work Item Ref</th><th>State</th></tr></thead>
+                    <tbody id="procBody"><tr><td colspan="5" class="usd-table__muted">Click Refresh to load</td></tr></tbody>
+                </table>
+            </div>
+            <div class="iss-pagination" id="procPagination"></div>
+        </div>
+    </div>
+
+    <!-- 2. Failed Outbound Emails -->
+    <div class="usd-section" id="sectionEmails">
+        <div class="usd-section__header" onclick="toggleSection('sectionEmails')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--config"><span class="fa fa-envelope-o"></span></span>
+                <span class="usd-section__title">Failed Outbound Emails</span>
+            </div>
+            <div class="usd-section__header-right">
+                <a class="iss-ext-link" data-path="/outbound-comms-failures" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEmails">--</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="iss-controls">
+                <div class="iss-controls__group">
+                    <button class="usd-btn iss-date-btn" id="emailBtnToday">Today</button>
+                    <button class="usd-btn iss-date-btn" id="emailBtnWeek">7 Days</button>
+                    <input type="date" class="iss-date-input" id="emailDatePicker" />
+                    <button class="usd-btn iss-date-btn" id="emailBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                </div>
+                <div class="iss-controls__group iss-controls__group--right">
+                    <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="emailRowsPerPage" value="10" min="1" max="100" /></label>
+                    <button class="usd-btn" id="emailRefreshBtn"><span class="fa fa-refresh"></span></button>
+                    <span class="iss-count" id="emailCount"></span>
+                </div>
+            </div>
+            <div class="iss-table-wrap">
+                <table class="usd-table">
+                    <thead><tr><th>Reference</th><th>Title</th><th>Created</th><th>Parent Matter</th></tr></thead>
+                    <tbody id="emailBody"><tr><td colspan="4" class="usd-table__muted">Click Refresh to load</td></tr></tbody>
+                </table>
+            </div>
+            <div class="iss-pagination" id="emailPagination"></div>
+        </div>
+    </div>
+
+    <!-- 3. Failed Outbound SMS -->
+    <div class="usd-section" id="sectionSms">
+        <div class="usd-section__header" onclick="toggleSection('sectionSms')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--config"><span class="fa fa-mobile"></span></span>
+                <span class="usd-section__title">Failed Outbound SMS</span>
+            </div>
+            <div class="usd-section__header-right">
+                <a class="iss-ext-link" data-path="/outbound-comms-failures" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSms">--</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="iss-controls">
+                <div class="iss-controls__group">
+                    <button class="usd-btn iss-date-btn" id="smsBtnToday">Today</button>
+                    <button class="usd-btn iss-date-btn" id="smsBtnWeek">7 Days</button>
+                    <input type="date" class="iss-date-input" id="smsDatePicker" />
+                    <button class="usd-btn iss-date-btn" id="smsBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                </div>
+                <div class="iss-controls__group iss-controls__group--right">
+                    <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="smsRowsPerPage" value="10" min="1" max="100" /></label>
+                    <button class="usd-btn" id="smsRefreshBtn"><span class="fa fa-refresh"></span></button>
+                    <span class="iss-count" id="smsCount"></span>
+                </div>
+            </div>
+            <div class="iss-table-wrap">
+                <table class="usd-table">
+                    <thead><tr><th>Reference</th><th>Title</th><th>Created</th><th>Parent Matter</th></tr></thead>
+                    <tbody id="smsBody"><tr><td colspan="4" class="usd-table__muted">Click Refresh to load</td></tr></tbody>
+                </table>
+            </div>
+            <div class="iss-pagination" id="smsPagination"></div>
+        </div>
+    </div>
+
+    <!-- 4. SYSADMIN Tasks (production only) -->
+    <div class="usd-section" id="sectionSysadmin" style="display:none">
+        <div class="usd-section__header" onclick="toggleSection('sectionSysadmin')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--ee"><span class="fa fa-user"></span></span>
+                <span class="usd-section__title">SYSADMIN Tasks</span>
+            </div>
+            <div class="usd-section__header-right">
+                <a class="iss-ext-link" data-path="/sharedo/e027def1-8b7e-4842-a8a6-b211001e25c1" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSysadmin">--</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="iss-controls">
+                <div class="iss-controls__group">
+                    <button class="usd-btn iss-date-btn" id="sysadminBtnToday">Today</button>
+                    <button class="usd-btn iss-date-btn" id="sysadminBtnWeek">7 Days</button>
+                    <input type="date" class="iss-date-input" id="sysadminDatePicker" />
+                    <button class="usd-btn iss-date-btn" id="sysadminBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                </div>
+                <div class="iss-controls__group iss-controls__group--right">
+                    <button class="usd-btn" id="sysadminRefreshBtn"><span class="fa fa-refresh"></span></button>
+                    <span class="iss-count" id="sysadminCount"></span>
+                </div>
+            </div>
+            <div class="iss-table-wrap">
+                <table class="usd-table">
+                    <thead><tr><th>Reference</th><th>Title</th><th>Description</th><th>Created</th><th>Tags</th><th>Owner</th></tr></thead>
+                    <tbody id="sysadminBody"><tr><td colspan="6" class="usd-table__muted">Production only</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Process detail modal -->
+<div class="iss-modal-overlay" id="procModal" style="display:none">
+    <div class="iss-modal">
+        <div class="iss-modal__header">
+            <div class="iss-modal__title-group">
+                <span class="iss-modal__title" id="procModalTitle"></span>
+                <span class="iss-modal__subtitle" id="procModalSubtitle"></span>
+            </div>
+            <div class="iss-modal__actions">
+                <a class="usd-btn" id="procModalLink" href="#" target="_blank" style="display:none"><span class="fa fa-external-link"></span> Open Work Item</a>
+                <button class="usd-btn" id="procModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+            </div>
+        </div>
+        <div class="iss-modal__body" id="procModalBody"></div>
+    </div>
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/issues/issues.js"></script>
+</body>
+</html>

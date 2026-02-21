@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Options - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/options/options-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right"></div>
+</div>
+
+<div class="opt-body">
+    <div class="opt-page-title">Settings</div>
+
+    <div class="opt-layout">
+
+        <!-- Left nav -->
+        <div class="opt-nav">
+            <div class="opt-nav__list">
+                <button class="opt-nav__item" data-opt-nav="appearance">Appearance</button>
+                <div class="opt-nav__separator"></div>
+                <div class="opt-nav__group-label">Statistics</div>
+                <button class="opt-nav__item" data-opt-nav="monitor">Monitor</button>
+                <button class="opt-nav__item" data-opt-nav="notifications">Notifications</button>
+                <button class="opt-nav__item" data-opt-nav="metrics">Metrics</button>
+                <button class="opt-nav__item" data-opt-nav="ux">UX Monitor</button>
+                <div class="opt-nav__separator"></div>
+                <div class="opt-nav__group-label">Tools</div>
+                <button class="opt-nav__item" data-opt-nav="waila">WAILA</button>
+                <button class="opt-nav__item" data-opt-nav="worktypes">Work Types</button>
+                <div class="opt-nav__separator"></div>
+                <button class="opt-nav__item" data-opt-nav="authentication">Authentication</button>
+            </div>
+            <div class="opt-save-bar">
+                <button class="usd-btn usd-btn--primary opt-save-btn" id="optSaveBtn">
+                    <span class="fa fa-check"></span> Save
+                </button>
+                <span class="opt-save-status" id="optSaveStatus"></span>
+            </div>
+        </div>
+
+        <!-- Content panels -->
+        <div class="opt-content">
+
+            <!-- Appearance -->
+            <div class="opt-panel" data-opt-panel="appearance">
+                <div class="opt-panel__title">Appearance</div>
+                <div class="opt-panel__desc">Display and theme settings applied across all pages.</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Theme</div>
+                            <div class="opt-row__desc">Switch between dark and light mode across all pages.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-theme-btn" id="optThemeBtn">
+                                <span class="opt-theme-btn__icon" id="optThemeIcon"><span class="fa fa-moon-o"></span></span>
+                                <span class="opt-theme-btn__label" id="optThemeLabel">Dark</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">High Contrast</div>
+                            <div class="opt-row__desc">Increases colour contrast on badges, pills, chips, and status indicators for improved readability.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optHcBtn">
+                                <span class="opt-toggle-btn__label" id="optHcLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitor -->
+            <div class="opt-panel" data-opt-panel="monitor">
+                <div class="opt-panel__title">Monitor</div>
+                <div class="opt-panel__desc">Health check and session management settings.</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Backlog Threshold</div>
+                            <div class="opt-row__desc">Stream backlogs above this value show as critical (red). Alert duration timer starts at this threshold.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <input type="number" class="opt-input" id="optBacklogThreshold" min="1" />
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Auto-refresh Interval</div>
+                            <div class="opt-row__desc">How often the Monitor page refreshes automatically, in seconds.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optAutoRefresh" min="5" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Cookie Refresh Interval</div>
+                            <div class="opt-row__desc">How often the server refreshes admin session cookies to keep them alive, in minutes.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optCookieRefresh" min="1" />
+                                <span class="opt-input-suffix">min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="opt-panel" data-opt-panel="notifications">
+                <div class="opt-panel__title">Notifications</div>
+                <div class="opt-panel__desc">Alert delivery settings. The server monitors all environments independently -- notifications work from any page.</div>
+
+                <!-- Desktop -->
+                <div class="opt-panel__sub-title">Desktop</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Desktop Notifications</div>
+                            <div class="opt-row__desc">Master toggle. Requires browser permission.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-notify-controls">
+                                <button class="opt-toggle-btn" id="optNotifyBtn">
+                                    <span class="opt-toggle-btn__label" id="optNotifyLabel">Off</span>
+                                </button>
+                                <button class="usd-btn opt-test-btn" id="optTestNotifyBtn" style="display:none" title="Send test notifications">
+                                    <span class="fa fa-bell-o"></span> Test
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-notify-status" id="optNotifyStatus"></div>
+                    <div id="optNotifySubs" style="display:none">
+                        <div class="opt-divider"></div>
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">Production Only</div>
+                                <div class="opt-row__desc">Only send notifications for the Production environment. All environments are still monitored but non-production alerts are suppressed.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optProdOnlyBtn">
+                                    <span class="opt-toggle-btn__label" id="optProdOnlyLabel">Off</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-divider"></div>
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">Stream Backlog Over Threshold</div>
+                                <div class="opt-row__desc">Alert when a stream backlog exceeds the configured threshold.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optNotifyStreamsBtn">
+                                    <span class="opt-toggle-btn__label" id="optNotifyStreamsLabel">On</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-row opt-row--sub" id="optStreamsDurRow">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label opt-row__label--sub">Use Alert Duration Threshold</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <label class="usd-auto-toggle" id="optStreamsDurToggle">
+                                    <span class="usd-toggle-track" id="optStreamsDurTrack"><span class="usd-toggle-knob"></span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="opt-divider"></div>
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">Stream Zero Connections</div>
+                                <div class="opt-row__desc">Alert when a monitored stream has no active connections. Configure which streams to monitor in the field below.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optNotifyConnectionsBtn">
+                                    <span class="opt-toggle-btn__label" id="optNotifyConnectionsLabel">On</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-row opt-row--sub" id="optConnectionsDurRow">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label opt-row__label--sub">Use Alert Duration Threshold</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <label class="usd-auto-toggle" id="optConnectionsDurToggle">
+                                    <span class="usd-toggle-track" id="optConnectionsDurTrack"><span class="usd-toggle-knob"></span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="opt-row opt-row--sub" id="optConnectionsStreamsRow">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label opt-row__label--sub">Monitored Streams</div>
+                                <div class="opt-row__desc" style="margin-top:2px">Comma-separated stream names. Leave blank to monitor all streams.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <input type="text" class="opt-input opt-input--wide" id="optZeroConnectionStreams" placeholder="all streams" />
+                            </div>
+                        </div>
+                        <div class="opt-divider"></div>
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">EE Node Down</div>
+                                <div class="opt-row__desc">Alert when an Event Engine node stops or starts restarting.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optNotifyNodesBtn">
+                                    <span class="opt-toggle-btn__label" id="optNotifyNodesLabel">On</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-row opt-row--sub" id="optNodesDurRow">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label opt-row__label--sub">Use Alert Duration Threshold</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <label class="usd-auto-toggle" id="optNodesDurToggle">
+                                    <span class="usd-toggle-track" id="optNodesDurTrack"><span class="usd-toggle-knob"></span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="opt-divider"></div>
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">Linked Services</div>
+                                <div class="opt-row__desc">Alert when iManage, DocuSign, or other critical linked services become unhealthy.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optNotifyServicesBtn">
+                                    <span class="opt-toggle-btn__label" id="optNotifyServicesLabel">On</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-row opt-row--sub" id="optServicesDurRow">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label opt-row__label--sub">Use Alert Duration Threshold</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <label class="usd-auto-toggle" id="optServicesDurToggle">
+                                    <span class="usd-toggle-track" id="optServicesDurTrack"><span class="usd-toggle-knob"></span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Noise Reduction -->
+                <div class="opt-panel__sub-title">Notification Noise Reduction</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Alert Duration Threshold</div>
+                            <div class="opt-row__desc">Seconds a condition must persist before alerting. Applied per-condition when "Use Alert Duration Threshold" is enabled above. Set to 0 for immediate alerts.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optAlertDuration" min="0" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Recovery Threshold</div>
+                            <div class="opt-row__desc">Alert condition clears only when the backlog drops by this percentage below the backlog threshold. Prevents alerts re-triggering when a backlog hovers around the threshold. Set to 0 to disable.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optRecoveryThreshold" min="0" max="100" />
+                                <span class="opt-input-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Reset Grace Period</div>
+                            <div class="opt-row__desc">Alert duration timer is not reset if a condition clears and re-triggers within this window. Prevents transient spikes from restarting the timer. Set to 0 to disable.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optGracePeriod" min="0" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teams -->
+                <div class="opt-panel__sub-title">Teams</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Teams Webhook</div>
+                            <div class="opt-row__desc">Sends alerts to a configured Microsoft Teams channel. Enabled and configured via TEAMS_WEBHOOK_ENABLED and TEAMS_WEBHOOK_URL in .env. Only one running instance should have this enabled.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <span class="opt-status-badge" id="optTeamsStatus">
+                                <span class="usd-status-dot usd-status-dot--warn"></span>
+                                <span id="optTeamsStatusLabel">Disabled</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Test Teams Delivery</div>
+                            <div class="opt-row__desc">Send test notifications to both the Teams channel and desktop. Requires Teams webhook to be enabled.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-notify-controls">
+                                <button class="usd-btn opt-test-btn" id="optTestTeamsBtn">Test</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-notify-status" id="optTeamsTestStatus"></div>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="opt-panel" data-opt-panel="metrics">
+                <div class="opt-panel__title">Metrics</div>
+                <div class="opt-panel__desc">Historical data recording settings. Files stored in cache/metrics/.</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Record Metrics</div>
+                            <div class="opt-row__desc">Record stream backlog and node status data to disk for historical charting. Data is recorded during health checks and monitor refreshes.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optMetricsBtn">
+                                <span class="opt-toggle-btn__label" id="optMetricsLabel">On</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Recording Interval</div>
+                            <div class="opt-row__desc">Minimum seconds between metric writes per environment. Lower values produce more granular data but increase file growth. Minimum 5 seconds.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optMetricsInterval" min="5" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Chart Backgrounds</div>
+                            <div class="opt-row__desc">Fill chart backgrounds with the current theme colour. When enabled, right-click saving a chart image will include the background instead of transparency.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optChartBgBtn">
+                                <span class="opt-toggle-btn__label" id="optChartBgLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UX Monitor -->
+            <div class="opt-panel" data-opt-panel="ux">
+                <div class="opt-panel__title">UX Monitor</div>
+                <div class="opt-panel__desc">API response time probes and page load performance checks. Runs independently of the health monitor, targeting a single environment.</div>
+
+                <div class="opt-panel__sub-title">General</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Enable UX Monitor</div>
+                            <div class="opt-row__desc">Enable UX monitoring capabilities. When on, manual probe runs and results are available. Required for automatic probes.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optUxEnabledBtn">
+                                <span class="opt-toggle-btn__label" id="optUxEnabledLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Enable Automatic Probes</div>
+                            <div class="opt-row__desc">Run API probes automatically on an interval. Requires UX Monitor to be enabled.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optUxAutoProbesBtn">
+                                <span class="opt-toggle-btn__label" id="optUxAutoProbesLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Enable Automatic Page Checks</div>
+                            <div class="opt-row__desc">Run Playwright page checks automatically on an interval, cycling through all configured targets. Requires UX Monitor to be enabled and Playwright to be installed.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optUxAutoPagesBtn">
+                                <span class="opt-toggle-btn__label" id="optUxAutoPagesLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Target Environment</div>
+                            <div class="opt-row__desc">Environment to run UX checks against. Must have a valid cookie session.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <select class="opt-input" id="optUxEnv"></select>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Fire Alerts</div>
+                            <div class="opt-row__desc">Send desktop and Teams notifications when UX thresholds are breached.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optUxAlertsBtn">
+                                <span class="opt-toggle-btn__label" id="optUxAlertsLabel">On</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Work Item GUID</div>
+                            <div class="opt-row__desc">GUID of a specific work item to include in API probes and page checks. Leave empty to skip work item monitoring.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <input type="text" class="opt-input opt-input--wide" id="optUxWorkItemId" placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opt-panel__sub-title">Page Check Targets</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Page Check Interval</div>
+                            <div class="opt-row__desc">Seconds between page check cycles. Each cycle loads all targets sequentially in Playwright. Minimum 60 seconds.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxPageInterval" min="60" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Monitored Pages</div>
+                            <div class="opt-row__desc">URL paths to check during page check cycles. Each path is loaded in a Playwright browser and measured for Web Vitals, navigation timing, and AJAX performance.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="text" class="opt-input opt-input--wide" id="optUxPageTargetInput" placeholder="e.g. /admin or /sharedo/{guid}" />
+                                <button class="usd-btn" id="optUxPageTargetAddBtn"><span class="fa fa-plus"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="optUxPageTargetChips" class="opt-chip-row"></div>
+                    <div class="opt-chip-note"><span class="fa fa-info-circle"></span> Paths containing <code>{guid}</code> use the Work Item GUID value above. They are skipped if no GUID is set.</div>
+                </div>
+
+                <div class="opt-panel__sub-title">API Probes</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Probe Interval</div>
+                            <div class="opt-row__desc">Seconds between API probe cycles. Each cycle runs all enabled probes sequentially. Minimum 10 seconds.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxProbeInterval" min="10" />
+                                <span class="opt-input-suffix">sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Warning Threshold</div>
+                            <div class="opt-row__desc">Response time (ms) above which a probe result triggers a warning alert.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxThresholdWarn" min="100" />
+                                <span class="opt-input-suffix">ms</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Critical Threshold</div>
+                            <div class="opt-row__desc">Response time (ms) above which a probe result triggers a critical alert.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxThresholdCrit" min="100" />
+                                <span class="opt-input-suffix">ms</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Run Probes Now</div>
+                            <div class="opt-row__desc">Trigger an immediate probe cycle without waiting for the interval timer.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="usd-btn" id="optUxRunProbesBtn"><span class="fa fa-play"></span> Run</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opt-panel__sub-title">Enabled Probes</div>
+                <div class="opt-card">
+                    <div id="optUxProbeList"></div>
+                </div>
+
+                <div class="opt-panel__sub-title">Latest Results</div>
+                <div class="opt-card">
+                    <div id="optUxLatestResults" class="opt-ux-results">
+                        <div class="opt-row"><div class="opt-row__text"><div class="opt-row__desc">No results yet.</div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WAILA -->
+            <div class="opt-panel" data-opt-panel="waila">
+                <div class="opt-panel__title">WAILA</div>
+                <div class="opt-panel__desc">Workflow Analyser index build settings.</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Fetch Delay</div>
+                            <div class="opt-row__desc">Delay between individual workflow plan fetches during index build. Lower is faster but may trigger rate limiting.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optWailaDelay" min="0" />
+                                <span class="opt-input-suffix">ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Types -->
+            <div class="opt-panel" data-opt-panel="worktypes">
+                <div class="opt-panel__title">Work Types</div>
+                <div class="opt-panel__desc">Work type config index build settings.</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Config Index Fetch Delay</div>
+                            <div class="opt-row__desc">Delay between API calls during work type config index build. Applied between each endpoint call (aspects, key dates, roles, forms) and between types.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optWtIndexDelay" min="0" />
+                                <span class="opt-input-suffix">ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication -->
+            <div class="opt-panel" data-opt-panel="authentication">
+                <div class="opt-panel__title">Authentication</div>
+                <div class="opt-panel__desc">Cookie-based sessions for admin endpoints. Environments can authenticate via auto-auth (.env credentials), browser login (Playwright), or manual cookie paste.</div>
+                <div class="opt-card" id="optAuthRows"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/options/options.js"></script>
+</body>
+</html>

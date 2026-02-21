@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareDo Search</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/search/search-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header (same structure as monitor) -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+    </div>
+</div>
+<!-- Two-column layout -->
+<div class="srch-layout">
+
+    <!-- LEFT: Sidebar -->
+    <div class="srch-sidebar" id="srchSidebar">
+
+        <!-- Presets -->
+        <div class="srch-section srch-section--collapsed" id="secPresets">
+            <div class="srch-section__header" onclick="toggleSection('secPresets')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Presets</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-field">
+                    <label class="srch-label">Saved Presets</label>
+                    <select class="srch-input" id="presetSelect">
+                        <option value="">-- Select a preset --</option>
+                    </select>
+                    <div class="srch-preset-actions">
+                        <button class="usd-btn usd-btn--primary srch-preset-actions__btn" id="presetLoadBtn" disabled>
+                            <span class="fa fa-folder-open-o"></span> Load
+                        </button>
+                        <button class="usd-btn srch-preset-actions__btn srch-preset-actions__btn--delete" id="presetDeleteBtn" disabled>
+                            <span class="fa fa-trash-o"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Save Current Filters As</label>
+                    <div class="srch-preset-save">
+                        <input type="text" class="srch-input" id="presetNameInput" placeholder="Preset name..." />
+                        <button class="usd-btn" id="presetSaveBtn">
+                            <span class="fa fa-floppy-o"></span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types & Phase -->
+        <div class="srch-section srch-section--collapsed" id="secTypesPhase">
+            <div class="srch-section__header" onclick="toggleSection('secTypesPhase')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Types & Phase</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-field">
+                    <label class="srch-label">Work Types</label>
+                    <input type="text" class="srch-input" id="typeFilter" placeholder="Search work types..." />
+                    <div class="srch-type-mode">
+                        <button class="usd-btn usd-btn--active srch-type-mode__btn" id="typeModeDerive" title="Search includes this type and all types derived from it">Derived From</button>
+                        <button class="usd-btn srch-type-mode__btn" id="typeModeExact" title="Search includes only this exact type">Exact Match</button>
+                    </div>
+                    <div class="srch-type-dropdown" id="typeDropdown" style="display:none"></div>
+                    <div class="srch-chips" id="selectedTypesChips"></div>
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Phase</label>
+                    <div class="srch-checkboxes">
+                        <label><input type="checkbox" id="phaseOpen" checked /> Open</label>
+                        <label><input type="checkbox" id="phaseClosed" checked /> Closed</label>
+                        <label><input type="checkbox" id="phaseRemoved" /> Removed</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Search -->
+        <div class="srch-section srch-section--collapsed" id="secTextSearch">
+            <div class="srch-section__header" onclick="toggleSection('secTextSearch')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Text Search</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-field">
+                    <label class="srch-label">Title</label>
+                    <input type="text" class="srch-input" id="searchTitle" placeholder="Work item title" />
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Reference</label>
+                    <input type="text" class="srch-input" id="searchReference" placeholder="Reference number" />
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Free Text</label>
+                    <input type="text" class="srch-input" id="searchFreeText" placeholder="Search across all text fields" />
+                    <div class="srch-checkboxes" style="margin-top:4px">
+                        <label><input type="checkbox" id="freeTextWildStart" checked /> Wildcard start</label>
+                        <label><input type="checkbox" id="freeTextWildEnd" checked /> Wildcard end</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ID & Attributes (collapsed) -->
+        <div class="srch-section srch-section--collapsed" id="secIdFilters">
+            <div class="srch-section__header" onclick="toggleSection('secIdFilters')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">ID & Attributes</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-field">
+                    <label class="srch-label">Work Item IDs</label>
+                    <input type="text" class="srch-input" id="idInput" placeholder="Paste GUID and press Enter" />
+                    <div class="srch-chips" id="idChips"></div>
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">External Reference</label>
+                    <input type="text" class="srch-input" id="searchExternalRef" placeholder="External reference value" />
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Attributes</label>
+                    <input type="text" class="srch-input" id="attrKeyInput" placeholder="Attribute key (system name)" />
+                    <input type="text" class="srch-input srch-attr-val" id="attrValueInput" placeholder="Search value" />
+                    <div class="srch-attr-controls">
+                        <select class="srch-input srch-attr-controls__mode" id="attrMode">
+                            <option value="search">Contains</option>
+                            <option value="exact">Exact</option>
+                        </select>
+                        <button class="usd-btn srch-attr-controls__add" id="attrAddBtn">
+                            <span class="fa fa-plus"></span> Add
+                        </button>
+                    </div>
+                    <div class="srch-hint">Contains: partial text match. Exact: comma-separate multiple values.</div>
+                    <div class="srch-chips" id="attrChips"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dates (collapsed) -->
+        <div class="srch-section srch-section--collapsed" id="secDates">
+            <div class="srch-section__header" onclick="toggleSection('secDates')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Dates</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-date-row">
+                    <div class="srch-field">
+                        <label class="srch-label">Created From</label>
+                        <input type="date" class="srch-input" id="createdFrom" />
+                    </div>
+                    <div class="srch-field">
+                        <label class="srch-label">Created To</label>
+                        <input type="date" class="srch-input" id="createdTo" />
+                    </div>
+                </div>
+                <div class="srch-date-row">
+                    <div class="srch-field">
+                        <label class="srch-label">Updated From</label>
+                        <input type="date" class="srch-input" id="updatedFrom" />
+                    </div>
+                    <div class="srch-field">
+                        <label class="srch-label">Updated To</label>
+                        <input type="date" class="srch-input" id="updatedTo" />
+                    </div>
+                </div>
+                <div class="srch-hint">Leave blank to not filter by date. Dates are inclusive of the full day.</div>
+            </div>
+        </div>
+
+        <!-- Ancestor Search (collapsed) -->
+        <div class="srch-section srch-section--collapsed" id="secAncestor">
+            <div class="srch-section__header" onclick="toggleSection('secAncestor')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Ancestor Search</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-field">
+                    <label class="srch-label">Ancestor IDs</label>
+                    <input type="text" class="srch-input" id="ancestorInput" placeholder="Paste ancestor GUID and press Enter" />
+                    <div class="srch-chips" id="ancestorChips"></div>
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Max Distance</label>
+                    <input type="number" class="srch-input srch-input--short" id="ancestorMaxDistance" min="1" placeholder="e.g. 3" />
+                </div>
+                <div class="srch-checkboxes">
+                    <label><input type="checkbox" id="ancestorIncludeRelated" /> Include related</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sort & Enrichment -->
+        <div class="srch-section srch-section--collapsed" id="secSortEnrich">
+            <div class="srch-section__header" onclick="toggleSection('secSortEnrich')">
+                <span class="fa fa-chevron-down srch-section__chevron"></span>
+                <span class="srch-section__title">Sort & Enrichment</span>
+            </div>
+            <div class="srch-section__content">
+                <div class="srch-date-row">
+                    <div class="srch-field">
+                        <label class="srch-label">Sort By</label>
+                        <select class="srch-input" id="sortField">
+                            <option value="createdDate">Created Date</option>
+                            <option value="updatedDate">Updated Date</option>
+                            <option value="title">Title</option>
+                            <option value="reference">Reference</option>
+                        </select>
+                    </div>
+                    <div class="srch-field">
+                        <label class="srch-label">Direction</label>
+                        <select class="srch-input" id="sortDirection">
+                            <option value="descending">Descending</option>
+                            <option value="ascending">Ascending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="srch-field">
+                    <label class="srch-label">Enrich Paths</label>
+                    <div class="srch-chips" id="enrichChips"></div>
+                    <div class="srch-enrich-add">
+                        <input type="text" class="srch-input" id="enrichInput" placeholder="e.g. parent.reference" />
+                        <button class="usd-btn" id="enrichAddBtn">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="srch-actions">
+            <button class="usd-btn usd-btn--primary srch-search-btn" id="searchBtn">
+                <span class="fa fa-search"></span> Search
+            </button>
+            <button class="usd-btn" id="clearBtn">
+                <span class="fa fa-eraser"></span> Clear All
+            </button>
+            <button class="usd-btn" id="csvBtn" disabled>
+                <span class="fa fa-download"></span> Export CSV
+            </button>
+            <span class="srch-result-count" id="resultCount"></span>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div class="srch-main">
+        <div class="srch-results">
+            <div class="srch-results__controls">
+                <label class="srch-rpp">
+                    Rows per page:
+                    <input type="number" min="1" max="100" value="20" class="srch-rpp__input" id="srchRowsPerPage" />
+                </label>
+            </div>
+            <div class="srch-results__table-wrap">
+                <table class="usd-table" id="resultsTable">
+                    <thead id="resultsHead"></thead>
+                    <tbody id="resultsBody">
+                        <tr><td class="usd-table__muted">Run a search to see results</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="srch-pagination" id="srchPagination"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/search/search.js"></script>
+</body>
+</html>

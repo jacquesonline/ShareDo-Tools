@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAILA - Workflow Analyser</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/waila/waila-style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+    </div>
+</div>
+<!-- WAILA two-column layout -->
+<div class="wla-layout">
+
+    <!-- LEFT: Sidebar -->
+    <div class="wla-sidebar">
+
+        <!-- Index status -->
+        <div class="wla-panel" id="indexBar">
+            <div class="wla-panel__header">
+                <span class="wla-panel__icon"><span class="fa fa-database"></span></span>
+                <span class="wla-panel__title">Index</span>
+                <span class="wla-panel__badge" id="indexStatus">Not built</span>
+            </div>
+            <div class="wla-index-meta" id="indexMeta">
+                <span id="indexCount"></span>
+                <span id="indexTime"></span>
+            </div>
+            <div class="wla-index-progress" id="indexProgress" style="display:none">
+                <div class="wla-index-progress__current" id="progressCurrent"></div>
+                <div class="wla-progress-track"><div class="wla-progress-fill" id="progressFill"></div></div>
+                <div class="wla-progress-counter" id="progressText"></div>
+            </div>
+            <button class="usd-btn usd-btn--primary wla-panel__action" id="buildBtn">
+                <span class="fa fa-bolt"></span> Build Index
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="wla-panel">
+            <div class="wla-panel__header">
+                <span class="wla-panel__icon wla-panel__icon--search"><span class="fa fa-search"></span></span>
+                <span class="wla-panel__title">Search</span>
+            </div>
+            <div class="wla-search-input-wrap">
+                <input type="text" class="wla-search-input" id="unifiedSearch"
+                       placeholder="System names, steps, blocks, config, variables..." />
+            </div>
+            <div class="wla-search-actions">
+                <button class="usd-btn usd-btn--primary wla-search-actions__go" id="searchBtn">
+                    <span class="fa fa-search"></span> Search
+                </button>
+                <button class="usd-btn" id="advancedToggle" title="Toggle advanced filters">
+                    <span class="fa fa-sliders"></span> Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Advanced filters -->
+        <div class="wla-panel wla-panel--filters" id="advancedPanel" style="display:none">
+            <div class="wla-panel__header">
+                <span class="wla-panel__icon wla-panel__icon--filter"><span class="fa fa-filter"></span></span>
+                <span class="wla-panel__title">Advanced Filters</span>
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">System Name / Workflow Name</label>
+                <input type="text" class="wla-filter-input" id="filterSysName" placeholder="e.g. pre-litigation" />
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">Step Name / System Name</label>
+                <input type="text" class="wla-filter-input" id="filterStepName" placeholder="e.g. main, claimPreChecks" />
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">Block Type (actionSystemName)</label>
+                <input type="text" class="wla-filter-input" id="filterBlockType" placeholder="e.g. createTask, script, ifBlock" />
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">Block Display Name</label>
+                <input type="text" class="wla-filter-input" id="filterBlockName" placeholder="e.g. JavaScript, Create Task" />
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">Config Content</label>
+                <input type="text" class="wla-filter-input" id="filterConfig" placeholder="e.g. work type system name, role" />
+            </div>
+            <div class="wla-filter-field">
+                <label class="wla-filter-label">Variable</label>
+                <input type="text" class="wla-filter-input" id="filterVariable" placeholder="e.g. sharedoID, /Identifier" />
+            </div>
+            <div class="wla-filter-toggles">
+                <label class="wla-filter-toggle">
+                    <input type="checkbox" id="filterExactMatch" />
+                    <span class="wla-filter-toggle__label">Exact Match</span>
+                </label>
+                <label class="wla-filter-toggle" id="caseSensitiveWrap" style="display:none">
+                    <input type="checkbox" id="filterCaseSensitive" />
+                    <span class="wla-filter-toggle__label">Case Sensitive</span>
+                </label>
+            </div>
+            <div class="wla-filter-hint">AND logic between fields. Leave blank to skip.</div>
+        </div>
+
+        <!-- Export -->
+        <div class="wla-panel wla-panel--export" id="exportPanel" style="display:none">
+            <div class="wla-panel__header">
+                <span class="wla-panel__icon wla-panel__icon--export"><span class="fa fa-download"></span></span>
+                <span class="wla-panel__title">Export</span>
+                <span class="wla-export-count" id="exportCount"></span>
+            </div>
+            <button class="usd-btn wla-panel__action" id="exportBtn">
+                <span class="fa fa-file-text-o"></span> Export to CSV
+            </button>
+        </div>
+
+        <!-- Environment Diff -->
+        <div class="wla-panel">
+            <div class="wla-panel__header">
+                <span class="wla-panel__icon wla-panel__icon--diff"><span class="fa fa-exchange"></span></span>
+                <span class="wla-panel__title">Env Diff</span>
+            </div>
+            <div class="wla-diff-controls">
+                <div class="wla-diff-envs">
+                    <span class="wla-diff-env-label" id="diffEnvCurrentLabel">--</span>
+                    <span class="wla-diff-vs">vs</span>
+                    <select class="wla-diff-select" id="diffEnvTarget"></select>
+                </div>
+                <button class="usd-btn usd-btn--primary wla-panel__action" id="diffBtn">
+                    <span class="fa fa-exchange"></span> Compare
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div class="wla-main">
+
+        <!-- Results bar -->
+        <div class="wla-results-bar" id="resultsMeta" style="display:none">
+            <span class="wla-results-bar__count" id="resultsCount"></span>
+            <span class="wla-results-bar__time" id="resultsTime"></span>
+            <div class="wla-results-bar__actions">
+                <button class="usd-btn" id="expandAllResults" title="Expand all"><span class="fa fa-expand"></span></button>
+                <button class="usd-btn" id="collapseAllResults" title="Collapse all"><span class="fa fa-compress"></span></button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="wla-results" id="resultsContainer">
+            <div class="wla-empty-state">
+                <div class="wla-empty-state__icon"><span class="fa fa-binoculars"></span></div>
+                <div class="wla-empty-state__title">What Am I Looking At?</div>
+                <div class="wla-empty-state__text">Build the workflow index, then search across system names, steps, blocks, config, and variables.</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Script preview modal -->
+<div class="wla-modal-overlay" id="scriptModal" style="display:none">
+    <div class="wla-modal">
+        <div class="wla-modal__header">
+            <div class="wla-modal__title-group">
+                <span class="wla-modal__title" id="scriptModalTitle"></span>
+                <span class="wla-modal__subtitle" id="scriptModalSubtitle"></span>
+            </div>
+            <div class="wla-modal__actions">
+                <button class="usd-btn" id="scriptModalCopy" title="Copy script to clipboard"><span class="fa fa-clipboard"></span> Copy</button>
+                <button class="usd-btn" id="scriptModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+            </div>
+        </div>
+        <div class="wla-modal__body" id="scriptModalBody">
+            <pre class="wla-modal__pre"><code class="language-javascript" id="scriptModalCode"></code></pre>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script src="/shared/shared.js"></script>
+<script src="/waila/waila.js"></script>
+</body>
+</html>

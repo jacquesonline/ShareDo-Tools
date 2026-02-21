@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Env - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/mock/mock-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right"></div>
+</div>
+
+<div class="mck-body">
+
+    <div class="mck-header">
+        <div class="mck-header__left">
+            <span class="mck-header__icon"><span class="fa fa-flask"></span></span>
+            <div>
+                <div class="mck-header__title">Test Environment Controls</div>
+                <div class="mck-header__desc">Adjust mock state to test notification delivery, alert duration thresholds, recovery threshold, and grace period behaviour. Changes apply immediately on the next health check poll.</div>
+            </div>
+        </div>
+        <div class="mck-header__right">
+            <span class="mck-status-pill" id="mckMonitorStatus">
+                <span class="usd-status-dot usd-status-dot--warn"></span>
+                <span id="mckMonitorLabel">Loading...</span>
+            </span>
+            <button class="usd-btn" id="mckResetBtn" title="Reset all mock state to defaults"><span class="fa fa-undo"></span> Reset</button>
+        </div>
+    </div>
+
+    <div class="mck-settings-bar" id="mckSettingsBar">
+        <span class="mck-settings-bar__item"><span class="mck-settings-bar__label">Backlog Threshold</span><span class="mck-settings-bar__value" id="mckThreshold">--</span></span>
+        <span class="mck-settings-bar__sep"></span>
+        <span class="mck-settings-bar__item"><span class="mck-settings-bar__label">Alert Duration</span><span class="mck-settings-bar__value" id="mckAlertDuration">--</span></span>
+        <span class="mck-settings-bar__sep"></span>
+        <span class="mck-settings-bar__item"><span class="mck-settings-bar__label">Recovery Threshold</span><span class="mck-settings-bar__value" id="mckRecovery">--</span></span>
+        <span class="mck-settings-bar__sep"></span>
+        <span class="mck-settings-bar__item"><span class="mck-settings-bar__label">Grace Period</span><span class="mck-settings-bar__value" id="mckGrace">--</span></span>
+        <span class="mck-settings-bar__sep"></span>
+        <span class="mck-settings-bar__item mck-settings-bar__hint"><span class="fa fa-info-circle"></span> Change these in <a href="/options" class="mck-link">Options &rsaquo; Notifications</a></span>
+    </div>
+
+    <div class="mck-grid">
+
+        <!-- Stream Backlogs -->
+        <div class="mck-card">
+            <div class="mck-card__header">
+                <span class="mck-card__icon mck-card__icon--stream"><span class="fa fa-bolt"></span></span>
+                <span class="mck-card__title">Stream Backlogs</span>
+                <span class="mck-card__hint">Threshold: <span id="mckThresholdInline">--</span></span>
+            </div>
+            <div class="mck-card__body" id="mckStreamsBody">
+                <div class="mck-loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- EE Nodes -->
+        <div class="mck-card">
+            <div class="mck-card__header">
+                <span class="mck-card__icon mck-card__icon--node"><span class="fa fa-server"></span></span>
+                <span class="mck-card__title">EE Nodes</span>
+            </div>
+            <div class="mck-card__body" id="mckNodesBody">
+                <div class="mck-loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Linked Services -->
+        <div class="mck-card">
+            <div class="mck-card__header">
+                <span class="mck-card__icon mck-card__icon--service"><span class="fa fa-link"></span></span>
+                <span class="mck-card__title">Linked Services</span>
+            </div>
+            <div class="mck-card__body" id="mckServicesBody">
+                <div class="mck-loading">Loading...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Stream Stats (backlog + alert duration observer) -->
+    <div class="mck-stats-panel">
+        <div class="mck-stats-panel__header">
+            <span class="fa fa-line-chart"></span> Stream Stats
+            <span class="mck-stats-panel__hint" id="mckStatsTimestamp">Not yet loaded</span>
+            <button class="usd-btn mck-stats-panel__refresh" id="mckStatsRefreshBtn">
+                <span class="fa fa-refresh"></span> Refresh
+            </button>
+        </div>
+        <div class="mck-stats-panel__body">
+            <table class="usd-table">
+                <thead>
+                    <tr>
+                        <th>Stream</th>
+                        <th class="usd-table__right">Backlog</th>
+                        <th class="usd-table__right">Alert Duration</th>
+                    </tr>
+                </thead>
+                <tbody id="mckStatsBody">
+                    <tr><td colspan="3" class="usd-table__muted">Click Refresh to load</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mck-alert-log">
+        <div class="mck-alert-log__header">
+            <span class="fa fa-bell-o"></span> Alert Log
+            <span class="mck-alert-log__hint">Alerts fired this session</span>
+            <button class="usd-btn mck-alert-log__clear" id="mckClearLog"><span class="fa fa-times"></span> Clear</button>
+        </div>
+        <div class="mck-alert-log__body" id="mckAlertLog">
+            <div class="mck-alert-log__empty">No alerts fired yet. Adjust the mock state above to trigger conditions.</div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/mock/mock.js"></script>
+</body>
+</html>

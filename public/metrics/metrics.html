@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metrics - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/metrics/metrics-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+    </div>
+</div>
+
+<!-- Metrics body -->
+<div class="met-body">
+
+    <!-- Controls bar -->
+    <div class="met-controls">
+        <div class="met-controls__title">
+            <span class="met-controls__icon"><span class="fa fa-line-chart"></span></span>
+            <span class="met-controls__name">Metrics</span>
+            <span class="met-controls__info" title="Select an environment and time range then click Load to refresh Metrics. Click+Drag to zoom a region, Ctrl+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it."><span class="fa fa-info-circle"></span></span>
+        </div>
+        <div class="met-controls__left">
+            <select class="met-controls__select" id="metEnvSelect"></select>
+        </div>
+        <button class="usd-btn usd-btn--primary" id="metLoadBtn"><span class="fa fa-refresh"></span> Load</button>
+        <button class="usd-btn met-file-btn" id="metFileBtn" title="Load metrics from local JSONL file(s). Accepted: streamstats-{env}.jsonl, nodestatus-{env}.jsonl, with optional -backup or -backup-DD-MM-YYYY suffix."><span class="fa fa-folder-open-o"></span></button>
+        <input type="file" id="metFileInput" accept=".jsonl" multiple style="display:none" />
+        <div class="met-file-chips" id="metFileChips" style="display:none"></div>
+        <button class="usd-btn met-file-clear-btn" id="metFileClearBtn" style="display:none">Clear Files</button>
+        <div class="met-controls__right" id="metStorageInfo"></div>
+    </div>
+
+    <!-- Time range controls -->
+    <div class="met-time-bar">
+        <div class="met-time-bar__quick">
+            <button class="usd-btn met-quick-btn met-quick-btn--active" data-range="1">1h</button>
+            <button class="usd-btn met-quick-btn" data-range="6">6h</button>
+            <button class="usd-btn met-quick-btn" data-range="24">24h</button>
+            <button class="usd-btn met-quick-btn" data-range="72">3d</button>
+            <button class="usd-btn met-quick-btn" data-range="168">7d</button>
+            <button class="usd-btn met-quick-btn" data-range="0">All</button>
+            <button class="usd-btn met-quick-btn" data-range="today">Today</button>
+        </div>
+        <div class="met-time-bar__sep"></div>
+        <div class="met-time-bar__nav">
+            <button class="usd-btn met-nav-btn" id="metNavPrev" title="Step backward"><span class="fa fa-chevron-left"></span></button>
+            <button class="usd-btn met-nav-btn" id="metNavNext" title="Step forward"><span class="fa fa-chevron-right"></span></button>
+        </div>
+        <div class="met-time-bar__sep"></div>
+        <div class="met-time-bar__dates">
+            <label class="met-controls__label">From</label>
+            <input type="datetime-local" class="met-date-input" id="metDateFrom" />
+        </div>
+        <div class="met-time-bar__dates">
+            <label class="met-controls__label">To</label>
+            <input type="datetime-local" class="met-date-input" id="metDateTo" />
+        </div>
+        <div class="met-range-inline" id="metRangeBar" style="display:none">
+            <span class="met-range-inline__label" id="metRangeFromLabel">12:00 AM</span>
+            <div class="met-range-slider">
+                <div class="met-range-slider__track"></div>
+                <div class="met-range-slider__fill" id="metRangeFill"></div>
+                <input type="range" class="met-range-slider__input" id="metRangeFrom" min="0" max="24" value="0" step="1" />
+                <input type="range" class="met-range-slider__input" id="metRangeTo" min="0" max="24" value="24" step="1" />
+            </div>
+            <span class="met-range-inline__label" id="metRangeToLabel">12:00 AM</span>
+        </div>
+    </div>
+
+    <!-- Storage warning -->
+    <div class="met-warning" id="metWarning" style="display:none">
+        <span class="fa fa-exclamation-triangle"></span>
+        <span id="metWarningText"></span>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="met-summary" id="metSummary" style="display:none">
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumVelocity">--</div>
+            <div class="met-summary__label">Avg Velocity</div>
+            <div class="met-summary__sub" id="metSumVelocitySub"></div>
+        </div>
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumPeak">--</div>
+            <div class="met-summary__label">Peak Backlog</div>
+            <div class="met-summary__sub" id="metSumPeakSub"></div>
+        </div>
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumBreach">--</div>
+            <div class="met-summary__label">Streams Above Threshold</div>
+            <div class="met-summary__sub" id="metSumBreachSub"></div>
+        </div>
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumBreachTime">--</div>
+            <div class="met-summary__label">Time Above Threshold</div>
+            <div class="met-summary__sub" id="metSumBreachTimeSub"></div>
+        </div>
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumUptime">--</div>
+            <div class="met-summary__label">Node Uptime</div>
+            <div class="met-summary__sub" id="metSumUptimeSub"></div>
+        </div>
+        <div class="met-summary__card">
+            <div class="met-summary__value" id="metSumConnDrops">--</div>
+            <div class="met-summary__label">Connection Drops</div>
+            <div class="met-summary__sub" id="metSumConnDropsSub"></div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="met-charts">
+
+        <!-- Stream backlogs -->
+        <div class="met-chart-panel">
+            <div class="met-chart-panel__header">
+                <span class="fa fa-bolt"></span> Stream Backlogs
+                <span class="met-chart-panel__count" id="metStreamCount"></span>
+                <div class="met-chart-panel__actions" id="metStreamActions" style="display:none">
+                    <button class="usd-btn met-chart-panel__toggle" id="metStreamResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn met-chart-panel__toggle" id="metStreamShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn met-chart-panel__toggle" id="metStreamHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                    <button class="usd-btn met-chart-panel__toggle" id="metStreamThresholdBtn" title="Toggle backlog threshold line"><span class="fa fa-bar-chart fa-rotate-90"></span></button>
+                </div>
+            </div>
+            <div class="met-chart-panel__body">
+                <div class="met-chart-empty" id="metStreamEmpty">Select an environment and click Load</div>
+                <canvas id="metStreamChart" style="display:none"></canvas>
+            </div>
+        </div>
+
+        <!-- Node status (line + bar side by side) -->
+        <div class="met-chart-row">
+            <div class="met-chart-panel met-chart-panel--flex">
+                <div class="met-chart-panel__header">
+                    <span class="fa fa-server"></span> EE Node Status
+                    <span class="met-chart-panel__count" id="metNodeCount"></span>
+                    <div class="met-chart-panel__actions" id="metNodeActions" style="display:none">
+                        <button class="usd-btn met-chart-panel__toggle" id="metNodeResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                        <button class="usd-btn met-chart-panel__toggle" id="metNodeShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                        <button class="usd-btn met-chart-panel__toggle" id="metNodeHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                    </div>
+                </div>
+                <div class="met-chart-panel__body">
+                    <div class="met-chart-empty" id="metNodeEmpty">Select an environment and click Load</div>
+                    <canvas id="metNodeChart" style="display:none"></canvas>
+                </div>
+            </div>
+            <div class="met-chart-panel met-chart-panel--flex met-chart-panel--narrow">
+                <div class="met-chart-panel__header">
+                    <span class="fa fa-exclamation-triangle"></span> Stop / Restart Events
+                    <span class="met-chart-panel__count" id="metEventsCount"></span>
+                </div>
+                <div class="met-chart-panel__body">
+                    <div class="met-chart-empty" id="metEventsEmpty">Select an environment and click Load</div>
+                    <canvas id="metEventsChart" style="display:none"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stream connections -->
+        <div class="met-chart-panel">
+            <div class="met-chart-panel__header">
+                <span class="fa fa-plug"></span> Stream Connections
+                <span class="met-chart-panel__count" id="metConnCount"></span>
+                <div class="met-chart-panel__actions" id="metConnActions" style="display:none">
+                    <button class="usd-btn met-chart-panel__toggle" id="metConnResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn met-chart-panel__toggle" id="metConnShowAll" title="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn met-chart-panel__toggle" id="metConnHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                </div>
+            </div>
+            <div class="met-chart-panel__body">
+                <div class="met-chart-empty" id="metConnEmpty">Select an environment and click Load</div>
+                <canvas id="metConnChart" style="display:none"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/4.1.0/cdn.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.1.0/chartjs-plugin-annotation.min.js"></script>
+<script src="/shared/shared.js"></script>
+<script src="/metrics/metrics.js"></script>
+</body>
+</html>
