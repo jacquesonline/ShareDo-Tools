@@ -16,12 +16,12 @@ var shared = (function () {
     // To add a new page, add an entry here -- no HTML changes needed.
     var NAV_ITEMS = [
         { href: "/",         page: "monitor",      label: "Monitor" },
-        { href: "/metrics",  page: "metrics",      label: "Metrics" },
         { href: "/issues",   page: "issues",       label: "Issues" },
+        { href: "/metrics",  page: "metrics",      label: "Metrics" },
+        { href: "/ux",       page: "ux",            label: "UX" },
         { href: "/search",   page: "search",       label: "Search" },
         { href: "/waila",    page: "waila",        label: "WAILA" },
         { href: "/worktype", page: "worktype",     label: "Work Types" },
-        { href: "/ux",       page: "ux",            label: "UX" },
         { href: "/options",  page: "options",       label: null, icon: "fa-cog", title: "Options" }
     ];
 
@@ -77,17 +77,39 @@ var shared = (function () {
     // ─── Theme ───
     var THEME_KEY = "sharedo-tools-theme";
     var HC_KEY = "sharedo-tools-high-contrast";
+    var _themeManifest = null;
+    var _themeManifestPromise = fetch("/shared/themes/manifest.json").then(function (r) { return r.json(); }).then(function (data) {
+        _themeManifest = data;
+        return data;
+    }).catch(function () { return []; });
+
+    function isLightBased(themeId) {
+        if (!_themeManifest) return themeId === "light"; // fallback before manifest loads
+        for (var i = 0; i < _themeManifest.length; i++) {
+            if (_themeManifest[i].id === themeId) return !!_themeManifest[i].lightBased;
+        }
+        return false;
+    }
+
+    function isValidTheme(themeId) {
+        if (!_themeManifest) return themeId === "dark" || themeId === "light";
+        for (var i = 0; i < _themeManifest.length; i++) {
+            if (_themeManifest[i].id === themeId) return true;
+        }
+        return false;
+    }
 
     function applyThemeAttr(theme) {
         document.body.dataset.theme = theme;
-        if (theme === "light") document.body.classList.add("light-theme");
+        if (isLightBased(theme)) document.body.classList.add("light-theme");
         else document.body.classList.remove("light-theme");
     }
 
     function initTheme() {
         var saved = null;
         try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
-        applyThemeAttr(saved === "light" ? "light" : "dark");
+        // Fast path from localStorage (manifest may not be loaded yet)
+        applyThemeAttr(saved || "dark");
 
         var hcSaved = null;
         try { hcSaved = localStorage.getItem(HC_KEY); } catch (e) {}
@@ -95,12 +117,9 @@ var shared = (function () {
 
         // Sync with server (this fetch is shared with initAlertStream via _settingsPromise)
         _settingsPromise.then(function (data) {
-            if (data.theme === "light") {
-                applyThemeAttr("light");
-                try { localStorage.setItem(THEME_KEY, "light"); } catch (e) {}
-            } else if (data.theme === "dark") {
-                applyThemeAttr("dark");
-                try { localStorage.setItem(THEME_KEY, "dark"); } catch (e) {}
+            if (data.theme) {
+                applyThemeAttr(data.theme);
+                try { localStorage.setItem(THEME_KEY, data.theme); } catch (e) {}
             }
             if (data.highContrast) {
                 document.body.classList.add("high-contrast");
@@ -348,6 +367,7 @@ var shared = (function () {
         refreshCookieStatus: refreshCookieStatus,
         initGuidance: initGuidance,
         initTooltips: initTooltips,
+        themeManifest: function () { return _themeManifestPromise; },
         esc: esc,
         fmtNum: fmtNum,
         fmtDate: fmtDate

@@ -4,16 +4,10 @@
 
 /* ─── Page body ─── */
 .opt-body {
-    padding: 40px 24px;
+    padding: 16px 24px;
 }
 
-.opt-page-title {
-    font-size: var(--font-size-xxl);
-    font-weight: 700;
-    color: var(--text-primary);
-    max-width: 860px;
-    margin: 0 auto 24px auto;
-}
+/* ─── Page title: now in /shared/style.css as .usd-page-header ─── */
 
 /* ─── Centred layout container ─── */
 .opt-layout {
@@ -230,12 +224,9 @@
     font-family: var(--font-mono);
 }
 
-/* ─── Theme button ─── */
-.opt-theme-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
+/* ─── Theme select ─── */
+.opt-theme-select {
+    padding: 6px 12px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--bg-card);
@@ -243,22 +234,11 @@
     font-size: var(--font-size-base);
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.15s ease;
+    outline: none;
+    min-width: 120px;
 }
-
-.opt-theme-btn:hover {
-    border-color: var(--accent-blue);
-    background: var(--accent-blue-bg);
-}
-
-.opt-theme-btn__icon {
-    font-size: 14px;
-    color: var(--accent-amber);
-}
-
-.light-theme .opt-theme-btn__icon {
-    color: var(--accent-blue);
-}
+.opt-theme-select:focus { border-color: var(--accent-blue); }
+.opt-theme-select option { background: var(--bg-panel); color: var(--text-primary); }
 
 /* ─── Toggle button (on/off) ─── */
 .opt-toggle-btn {

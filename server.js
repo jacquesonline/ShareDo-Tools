@@ -117,6 +117,14 @@ let BACKLOG_THRESHOLD = parseInt(process.env.BACKLOG_THRESHOLD, 10) || 250;
 const LOG_401 = (process.env.LOG_401 || "false").toLowerCase() === "true";
 const SETTINGS_PATH = path.join(__dirname, "cache", "settings.json");
 
+// Load valid theme IDs from manifest
+var _validThemes = new Set(["dark", "light"]); // fallback
+try {
+    var manifestPath = path.join(__dirname, "public", "shared", "themes", "manifest.json");
+    var manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    _validThemes = new Set(manifest.map(function (t) { return t.id; }));
+} catch (e) { console.warn("Could not load theme manifest, using defaults"); }
+
 function loadSettings() {
     try {
         if (fs.existsSync(SETTINGS_PATH)) {
@@ -303,6 +311,7 @@ app.get("/issues", (_req, res) => { res.sendFile(path.join(__dirname, "public", 
 app.get("/metrics", (_req, res) => { res.sendFile(path.join(__dirname, "public", "metrics", "metrics.html")); });
 app.get("/worktype", (_req, res) => { res.sendFile(path.join(__dirname, "public", "worktype", "worktype.html")); });
 app.get("/ux", (_req, res) => { res.sendFile(path.join(__dirname, "public", "ux", "ux.html")); });
+app.get("/theme-builder", (_req, res) => { res.sendFile(path.join(__dirname, "public", "theme-builder", "theme-builder.html")); });
 
 app.get("/api/env", (_req, res) => {
     const env = environments[currentEnv];
@@ -492,7 +501,7 @@ app.post("/api/settings", (req, res) => {
         var ad = parseInt(s.alertDurationThreshold, 10);
         if (!isNaN(ad) && ad >= 0) _alertDurationThreshold = ad;
     }
-    if (s.theme && (s.theme === "dark" || s.theme === "light")) {
+    if (s.theme && _validThemes.has(s.theme)) {
         _theme = s.theme;
     }
     if (s.desktopNotifications != null) {

@@ -6,6 +6,7 @@
 <title>Test Env - ShareDo Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/mock/mock-style.css">
 </head>
 <body>
@@ -25,15 +26,15 @@
 
 <div class="mck-body">
 
-    <div class="mck-header">
-        <div class="mck-header__left">
-            <span class="mck-header__icon"><span class="fa fa-flask"></span></span>
+    <div class="usd-page-header">
+        <div class="usd-page-header__identity">
+            <span class="usd-page-header__icon usd-page-header__icon--purple"><span class="fa fa-flask"></span></span>
             <div>
-                <div class="mck-header__title">Test Environment Controls</div>
-                <div class="mck-header__desc">Adjust mock state to test notification delivery, alert duration thresholds, recovery threshold, and grace period behaviour. Changes apply immediately on the next health check poll.</div>
+                <div class="usd-page-header__title">Test Environment Controls</div>
+                <div class="usd-page-header__desc">Adjust mock state to test notification delivery, alert duration thresholds, recovery threshold, and grace period behaviour. Changes apply immediately on the next health check poll.</div>
             </div>
         </div>
-        <div class="mck-header__right">
+        <div class="usd-page-header__actions">
             <span class="mck-status-pill" id="mckMonitorStatus">
                 <span class="usd-status-dot usd-status-dot--warn"></span>
                 <span id="mckMonitorLabel">Loading...</span>

@@ -1,0 +1,5 @@
+[
+    { "id": "dark",     "label": "Dark",     "icon": "fa-moon-o",     "lightBased": false },
+    { "id": "light",    "label": "Light",    "icon": "fa-sun-o",      "lightBased": true  },
+    { "id": "mb-brand", "label": "MB Brand", "icon": "fa-briefcase",  "lightBased": true  }
+]

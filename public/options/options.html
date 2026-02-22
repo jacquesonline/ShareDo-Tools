@@ -6,6 +6,7 @@
 <title>Options - ShareDo Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/options/options-style.css">
 </head>
 <body>
@@ -23,8 +24,18 @@
     <div class="usd-header__right"></div>
 </div>
 
+<!-- Page header -->
+<div class="usd-page-header" style="padding:24px 24px 0;max-width:908px;margin:0 auto">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--blue"><span class="fa fa-cog"></span></span>
+        <div>
+            <div class="usd-page-header__title">Settings</div>
+            <div class="usd-page-header__desc">Appearance, recording, notifications, authentication, and UX monitoring configuration.</div>
+        </div>
+    </div>
+</div>
+
 <div class="opt-body">
-    <div class="opt-page-title">Settings</div>
 
     <div class="opt-layout">
 
@@ -64,13 +75,10 @@
                     <div class="opt-row">
                         <div class="opt-row__text">
                             <div class="opt-row__label">Theme</div>
-                            <div class="opt-row__desc">Switch between dark and light mode across all pages.</div>
+                            <div class="opt-row__desc">Choose a colour theme. Custom themes can be added via the <a href="/theme-builder" style="color:var(--accent-blue)">Theme Builder</a>.</div>
                         </div>
                         <div class="opt-row__control">
-                            <button class="opt-theme-btn" id="optThemeBtn">
-                                <span class="opt-theme-btn__icon" id="optThemeIcon"><span class="fa fa-moon-o"></span></span>
-                                <span class="opt-theme-btn__label" id="optThemeLabel">Dark</span>
-                            </button>
+                            <select class="opt-theme-select" id="optThemeSelect"></select>
                         </div>
                     </div>
                     <div class="opt-divider"></div>

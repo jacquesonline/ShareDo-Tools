@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════
+   Dark theme (default)
+   ═══════════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+    /* ── Surfaces ── */
+    --bg-body: #1a1d23;
+    --bg-panel: #22262e;
+    --bg-card: #2a2f38;
+    --bg-input: #1a1d23;
+    --bg-console: #0d0f12;
+
+    /* ── Borders ── */
+    --border: #363c48;
+    --border-subtle: rgba(54,60,72,0.5);
+
+    /* ── Text ── */
+    --text-primary: #e2e5ea;
+    --text-secondary: #8b919e;
+    --text-muted: #7d8590;
+
+    /* ── Accents (foreground) ── */
+    --accent-blue: #4a9eff;
+    --accent-green: #3dd68c;
+    --accent-red: #ef5350;
+    --accent-amber: #f0a840;
+    --accent-purple: #a078ff;
+    --accent-cyan: #56d4c0;
+    --accent-orange: #ffb378;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(74,158,255,0.12);
+    --accent-green-bg: rgba(61,214,140,0.12);
+    --accent-red-bg: rgba(239,83,80,0.12);
+    --accent-amber-bg: rgba(240,168,64,0.12);
+    --accent-purple-bg: rgba(160,120,255,0.12);
+    --accent-cyan-bg: rgba(86,212,192,0.12);
+    --accent-orange-bg: rgba(255,179,120,0.12);
+    --accent-neutral-bg: rgba(92,99,112,0.12);
+
+    /* ── Interaction ── */
+    --hover-row: rgba(74,158,255,0.03);
+    --hover-bg: rgba(255,255,255,0.05);
+    --link-hover: #7ab8ff;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #363c48;
+    --scrollbar-hover: #4a5264;
+
+    /* ── Phase colours (semantic, for Work Types) ── */
+    --phase-start: #43a047;
+    --phase-open: #1976d2;
+    --phase-closed: #d32f2f;
+    --phase-default: #f57c00;
+
+    /* ── Guidance ── */
+    --guidance-bg: #1a3352;
+    --guidance-text: #8ec4f0;
+    --guidance-border: #2a5a80;
+
+    /* ── Navigation header ── */
+    --nav-bg: var(--bg-panel);
+    --nav-border: var(--border);
+    --nav-text: var(--text-muted);
+    --nav-text-active: var(--accent-blue);
+    --nav-active-bg: var(--accent-blue-bg);
+    --nav-env-bg: var(--accent-blue-bg);
+    --nav-env-text: var(--accent-blue);
+    --nav-env-border: rgba(74,158,255,0.3);
+    --nav-primary-bg: var(--accent-blue);
+    --nav-primary-text: #fff;
+}

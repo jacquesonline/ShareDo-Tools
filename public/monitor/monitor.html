@@ -6,6 +6,7 @@
 <title>ShareDo System Monitor</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/monitor/monitor-style.css">
 </head>
 <body>
@@ -21,15 +22,6 @@
         <span class="usd-header__cookie-status" id="cookieStatus"></span>
     </div>
     <div class="usd-header__right">
-        <span class="usd-header__refresh-info">Last refreshed: <span id="lastRefresh">--</span></span>
-        <label class="usd-auto-toggle" id="autoRefreshToggle">
-            <span class="usd-toggle-track usd-toggle-track--active" id="toggleTrack"><span class="usd-toggle-knob"></span></span>
-            <span id="autoRefreshLabel">Auto 30s</span>
-        </label>
-        
-        <button class="usd-btn usd-btn--primary" id="refreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
-        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
-        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
     </div>
 </div>
 
@@ -45,11 +37,25 @@
     <div class="usd-summary__pill"><span class="usd-summary__dot usd-summary-dot--ok" id="summaryLinkedDot"></span><span class="usd-summary__label">Linked Services</span><span class="usd-summary__value" id="summaryLinked">--</span></div>
 </div>
 
-<!-- Summary guidance -->
-<div class="usd-guidance mon-guidance" data-guidance-id="monitor-summary">
-    <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
-    <div class="usd-guidance__text">Summary pills show aggregate health for each system area. Green = all OK, amber = warnings present, red = errors detected. Click a section header to expand details.</div>
-    <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
+<!-- Page header -->
+<div class="usd-page-header">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--blue"><span class="fa fa-bolt"></span></span>
+        <div>
+            <div class="usd-page-header__title">Monitor</div>
+            <div class="usd-page-header__desc">System health overview. Summary pills show aggregate status for each area -- green is OK, amber means warnings, red means errors. Click a section header to expand.</div>
+        </div>
+    </div>
+    <div class="usd-page-header__actions">
+        <span class="usd-header__refresh-info">Last refreshed: <span id="lastRefresh">--</span></span>
+        <label class="usd-auto-toggle" id="autoRefreshToggle">
+            <span class="usd-toggle-track usd-toggle-track--active" id="toggleTrack"><span class="usd-toggle-knob"></span></span>
+            <span id="autoRefreshLabel">Auto 30s</span>
+        </label>
+        <button class="usd-btn usd-btn--primary" id="refreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
+        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
+        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
+    </div>
 </div>
 
 <div class="usd-body">

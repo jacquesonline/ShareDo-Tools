@@ -6,6 +6,7 @@
 <title>Metrics - ShareDo Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/metrics/metrics-style.css">
 </head>
 <body>
@@ -28,13 +29,19 @@
 <!-- Metrics body -->
 <div class="met-body">
 
+    <!-- Page header -->
+    <div class="usd-page-header" style="padding:0">
+        <div class="usd-page-header__identity">
+            <span class="usd-page-header__icon usd-page-header__icon--blue"><span class="fa fa-line-chart"></span></span>
+            <div>
+                <div class="usd-page-header__title">Metrics</div>
+                <div class="usd-page-header__desc">Stream backlogs, node status, and connections over time. Click+Drag to zoom a region, Ctrl+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it.</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Controls bar -->
     <div class="usd-controls-bar">
-        <div class="usd-page-title">
-            <span class="usd-page-icon"><span class="fa fa-line-chart"></span></span>
-            <span class="usd-page-name">Metrics</span>
-            <span class="usd-help usd-page-info" data-tooltip="Select an environment and time range, then click Load to view stream backlogs, node status, and connections."><span class="fa fa-info-circle"></span></span>
-        </div>
         <div class="usd-controls-bar__left">
             <select class="usd-controls-bar__select" id="metEnvSelect"></select>
         </div>
@@ -44,13 +51,6 @@
         <div class="usd-file-chips" id="metFileChips" style="display:none"></div>
         <button class="usd-btn usd-file-clear-btn" id="metFileClearBtn" style="display:none">Clear Files</button>
         <div class="usd-controls-bar__right" id="metStorageInfo"></div>
-    </div>
-
-    <!-- Chart interaction guidance -->
-    <div class="usd-guidance" data-guidance-id="metrics-shortcuts">
-        <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
-        <div class="usd-guidance__text"><kbd>Click+Drag</kbd> to zoom a region, <kbd>Ctrl+Drag</kbd> to pan, <kbd>Ctrl+Scroll</kbd> to zoom. <kbd>Ctrl</kbd>/<kbd>Shift</kbd>/<kbd>Cmd</kbd> + click a legend item to solo it.</div>
-        <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
     </div>
 
     <!-- Time range controls -->

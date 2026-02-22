@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareDo Tools - Theme Builder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
+<link rel="stylesheet" href="/theme-builder/theme-builder-style.css">
+</head>
+<body>
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right">
+    </div>
+</div>
+
+<!-- Page header -->
+<div class="usd-page-header">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--purple"><span class="fa fa-paint-brush"></span></span>
+        <div>
+            <div class="usd-page-header__title">Theme Builder</div>
+            <div class="usd-page-header__desc">Create custom themes by choosing colours and previewing the result. Export the generated CSS and manifest entry, then add them to your <code style="font-family:var(--font-mono);font-size:var(--font-size-sm)">/shared/themes/</code> folder.</div>
+        </div>
+    </div>
+</div>
+
+<!-- Layout -->
+<div class="tb-layout">
+
+    <!-- Left: Editor -->
+    <div class="tb-editor">
+        <!-- Start from -->
+        <div class="tb-start-from">
+            <span class="tb-start-from__label">Start from:</span>
+            <select class="tb-start-from__select" id="tbStartFrom">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+            <button class="usd-btn" id="tbLoadBase"><span class="fa fa-download"></span> Load</button>
+        </div>
+
+        <!-- Metadata -->
+        <div class="tb-panel" id="panelMeta">
+            <div class="tb-panel__header" onclick="tbToggle('panelMeta')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Metadata</span>
+            </div>
+            <div class="tb-panel__body">
+                <div class="tb-meta-row"><span class="tb-meta-row__label">ID</span><input class="tb-meta-row__input" id="metaId" value="my-theme" /></div>
+                <div class="tb-meta-row"><span class="tb-meta-row__label">Label</span><input class="tb-meta-row__input" id="metaLabel" value="My Theme" /></div>
+                <div class="tb-meta-row"><span class="tb-meta-row__label">Icon</span><input class="tb-meta-row__input" id="metaIcon" value="fa-paint-brush" /></div>
+                <div class="tb-meta-row"><label class="tb-meta-row__check"><input type="checkbox" id="metaLightBased" checked /> Light-based (affects HC pill text)</label></div>
+            </div>
+        </div>
+
+        <!-- Surfaces -->
+        <div class="tb-panel" id="panelSurfaces">
+            <div class="tb-panel__header" onclick="tbToggle('panelSurfaces')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Surfaces</span>
+            </div>
+            <div class="tb-panel__body" id="surfaceRows"></div>
+        </div>
+
+        <!-- Borders -->
+        <div class="tb-panel" id="panelBorders">
+            <div class="tb-panel__header" onclick="tbToggle('panelBorders')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Borders</span>
+            </div>
+            <div class="tb-panel__body" id="borderRows"></div>
+        </div>
+
+        <!-- Text -->
+        <div class="tb-panel" id="panelText">
+            <div class="tb-panel__header" onclick="tbToggle('panelText')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Text</span>
+            </div>
+            <div class="tb-panel__body" id="textRows"></div>
+        </div>
+
+        <!-- Accents -->
+        <div class="tb-panel" id="panelAccents">
+            <div class="tb-panel__header" onclick="tbToggle('panelAccents')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Accents</span>
+            </div>
+            <div class="tb-panel__body" id="accentRows"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="tb-panel" id="panelNav">
+            <div class="tb-panel__header" onclick="tbToggle('panelNav')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Navigation</span>
+            </div>
+            <div class="tb-panel__body" id="navRows"></div>
+        </div>
+
+        <!-- Guidance -->
+        <div class="tb-panel" id="panelGuidance">
+            <div class="tb-panel__header" onclick="tbToggle('panelGuidance')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Guidance</span>
+            </div>
+            <div class="tb-panel__body" id="guidanceRows"></div>
+        </div>
+
+        <!-- Misc -->
+        <div class="tb-panel" id="panelMisc">
+            <div class="tb-panel__header" onclick="tbToggle('panelMisc')">
+                <span class="fa fa-chevron-down tb-panel__chevron"></span>
+                <span>Scrollbar &amp; Phase</span>
+            </div>
+            <div class="tb-panel__body" id="miscRows"></div>
+        </div>
+    </div>
+
+    <!-- Right: Preview + Contrast + Export -->
+    <div class="tb-preview">
+
+        <!-- Contrast Report -->
+        <div class="tb-contrast">
+            <div class="tb-contrast__header">Contrast Report</div>
+            <div class="tb-contrast__body" id="contrastReport"></div>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="tb-preview-card__label">Live Preview</div>
+        <div class="tb-preview-card" id="previewFrame"></div>
+
+        <!-- Export -->
+        <div class="tb-export">
+            <div class="tb-export__actions">
+                <button class="usd-btn usd-btn--primary" id="tbCopyCSS"><span class="fa fa-clipboard"></span> Copy CSS</button>
+                <button class="usd-btn" id="tbCopyManifest"><span class="fa fa-clipboard"></span> Copy Manifest Entry</button>
+                <button class="usd-btn" id="tbDownloadCSS"><span class="fa fa-download"></span> Download CSS</button>
+            </div>
+            <div class="tb-export__pre" id="exportOutput"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/theme-builder/theme-builder.js"></script>
+</body>
+</html>

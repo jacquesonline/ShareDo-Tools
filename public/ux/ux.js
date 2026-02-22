@@ -78,16 +78,25 @@
         fetch("/api/ux/status").then(function (r) { return r.json(); }).then(function (data) {
             _uxProbeEnv = data.probeEnv || "prod";
             if (Array.isArray(data.pageTargets)) _pageTargets = data.pageTargets;
-            // Look up full environment label
+            // Populate read-only env select
             fetch("/api/env").then(function (r) { return r.json(); }).then(function (envData) {
-                var envLabel = _uxProbeEnv;
+                var sel = document.getElementById("uxEnvSelect");
+                sel.innerHTML = "";
                 if (envData.environments) {
                     for (var i = 0; i < envData.environments.length; i++) {
-                        if (envData.environments[i].name === _uxProbeEnv) { envLabel = envData.environments[i].label; break; }
+                        var o = document.createElement("option");
+                        o.value = envData.environments[i].name;
+                        o.textContent = envData.environments[i].label;
+                        if (envData.environments[i].name === _uxProbeEnv) o.selected = true;
+                        sel.appendChild(o);
                     }
                 }
-                document.getElementById("uxEnvLabel").textContent = envLabel;
-            }).catch(function () { document.getElementById("uxEnvLabel").textContent = _uxProbeEnv; });
+            }).catch(function () {
+                var sel = document.getElementById("uxEnvSelect");
+                var o = document.createElement("option");
+                o.textContent = _uxProbeEnv;
+                sel.appendChild(o);
+            });
         }).catch(function () {});
         fetch("/api/settings").then(function (r) { return r.json(); }).then(function (data) {
             if (data.chartBackgrounds != null) _chartBackgrounds = !!data.chartBackgrounds;

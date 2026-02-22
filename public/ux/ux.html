@@ -6,6 +6,7 @@
 <title>UX Monitor - ShareDo Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/ux/ux-style.css">
 </head>
 <body>
@@ -28,15 +29,21 @@
 <!-- UX Monitor body -->
 <div class="ux-body">
 
+    <!-- Page header -->
+    <div class="usd-page-header" style="padding:0">
+        <div class="usd-page-header__identity">
+            <span class="usd-page-header__icon usd-page-header__icon--cyan"><span class="fa fa-tachometer"></span></span>
+            <div>
+                <div class="usd-page-header__title">UX Monitor</div>
+                <div class="usd-page-header__desc">API probe and page load performance data. Shift+Drag to zoom, Alt+Drag to pan, Ctrl+Scroll to zoom. Ctrl/Shift/Cmd + click a legend item to solo it. Click a data point on a page check chart to view the AJAX breakdown.</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Controls bar -->
     <div class="usd-controls-bar">
-        <div class="usd-page-title">
-            <span class="usd-page-icon"><span class="fa fa-tachometer"></span></span>
-            <span class="usd-page-name">UX Monitor</span>
-            <span class="usd-help usd-page-info" data-tooltip="API probe and page load performance data. Click a data point on a page check chart to view the AJAX request breakdown."><span class="fa fa-info-circle"></span></span>
-        </div>
         <div class="usd-controls-bar__left">
-            <span id="uxEnvLabel">--</span>
+            <select class="usd-controls-bar__select" id="uxEnvSelect" disabled></select>
         </div>
         <button class="usd-btn usd-btn--primary" id="uxLoadBtn"><span class="fa fa-refresh"></span> Load</button>
         <button class="usd-btn usd-file-btn usd-help" id="uxFileBtn" data-tooltip="Load UX metrics from local JSONL file(s).&#10;Accepted: ux-pages.jsonl, ux-api.jsonl&#10;Optional suffix: -backup or env name" data-tooltip-pos="below"><span class="fa fa-folder-open-o"></span></button>
@@ -44,13 +51,6 @@
         <div class="usd-file-chips" id="uxFileChips" style="display:none"></div>
         <button class="usd-btn usd-file-clear-btn" id="uxFileClearBtn" style="display:none">Clear Files</button>
         <div class="usd-controls-bar__right" id="uxStorageInfo"></div>
-    </div>
-
-    <!-- Chart interaction guidance -->
-    <div class="usd-guidance" data-guidance-id="ux-shortcuts">
-        <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
-        <div class="usd-guidance__text"><kbd>Shift+Drag</kbd> to zoom, <kbd>Alt+Drag</kbd> to pan, <kbd>Ctrl+Scroll</kbd> to zoom. <kbd>Ctrl</kbd>/<kbd>Shift</kbd>/<kbd>Cmd</kbd> + click a legend item to solo it. Click a data point on a page check chart to view the full AJAX breakdown.</div>
-        <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
     </div>
 
     <!-- Time range controls -->

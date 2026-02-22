@@ -6,6 +6,7 @@
 <title>Issues - ShareDo Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
 <link rel="stylesheet" href="/issues/issues-style.css">
 </head>
 <body>
@@ -22,6 +23,18 @@
         <span class="usd-header__cookie-status" id="cookieStatus"></span>
     </div>
     <div class="usd-header__right">
+    </div>
+</div>
+<!-- Page header -->
+<div class="usd-page-header" style="padding-left:20px;padding-right:20px">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--red"><span class="fa fa-exclamation-circle"></span></span>
+        <div>
+            <div class="usd-page-header__title">Issues</div>
+            <div class="usd-page-header__desc">Errored EE processes, failed outbound emails and SMS, and SYSADMIN tasks. Use the date quick filters or picker within each section to narrow results. External link icons open the corresponding page in ShareDo.</div>
+        </div>
+    </div>
+    <div class="usd-page-header__actions">
         <button class="usd-btn usd-btn--primary" id="refreshAllBtn"><span class="fa fa-refresh"></span> Refresh All</button>
         <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
         <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
@@ -29,13 +42,6 @@
 </div>
 <!-- Issues body -->
 <div class="iss-body">
-
-    <!-- Date filter guidance -->
-    <div class="usd-guidance" data-guidance-id="issues-dates">
-        <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
-        <div class="usd-guidance__text">Use <kbd>Today</kbd> and <kbd>7 Days</kbd> quick filters or the date picker within each section to narrow results. External link icons open the corresponding page directly in ShareDo.</div>
-        <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
-    </div>
 
     <!-- 1. EE Processes -->
     <div class="usd-section" id="sectionProcesses">

@@ -11,55 +11,7 @@
     margin: 0 auto;
 }
 
-/* ─── Page header ─── */
-.mck-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.mck-header__left {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-}
-
-.mck-header__icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    background: var(--accent-purple-bg);
-    color: var(--accent-purple);
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.mck-header__title {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 3px;
-}
-
-.mck-header__desc {
-    font-size: var(--font-size-md);
-    color: var(--text-muted);
-    line-height: 1.5;
-    max-width: 580px;
-}
-
-.mck-header__right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
+/* ─── Page header: now in /shared/style.css as .usd-page-header ─── */
 
 .mck-status-pill {
     display: flex;

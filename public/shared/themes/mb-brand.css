@@ -1,0 +1,90 @@
+/* ═══════════════════════════════════════════
+   Maurice Blackburn brand theme
+   Light-based: requires .light-theme class for HC pill text
+   ═══════════════════════════════════════════ */
+[data-theme="mb-brand"] {
+    /* ── Surfaces ── */
+    --bg-body: #f8f5f0;
+    --bg-panel: #ffffff;
+    --bg-card: #f0ede8;
+    --bg-input: #ffffff;
+    --bg-console: #f8f5f0;
+
+    /* ── Borders ── */
+    --border: #ddd5cc;
+    --border-subtle: rgba(70,28,47,0.06);
+
+    /* ── Text ── */
+    --text-primary: #461C2F;
+    --text-secondary: #6b5060;
+    --text-muted: #7d6a74;
+
+    /* ── Accents (foreground) ── */
+    --accent-blue: #1a6b9c;
+    --accent-green: #2d7a3a;
+    --accent-red: #DB333C;
+    --accent-amber: #a05a00;
+    --accent-purple: #75264F;
+    --accent-cyan: #0e7c6b;
+    --accent-orange: #b84c00;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(26,107,156,0.08);
+    --accent-green-bg: rgba(45,122,58,0.08);
+    --accent-red-bg: rgba(219,51,60,0.08);
+    --accent-amber-bg: rgba(160,90,0,0.08);
+    --accent-purple-bg: rgba(117,38,79,0.08);
+    --accent-cyan-bg: rgba(14,124,107,0.08);
+    --accent-orange-bg: rgba(184,76,0,0.08);
+    --accent-neutral-bg: rgba(70,28,47,0.04);
+
+    /* ── Interaction ── */
+    --hover-row: rgba(70,28,47,0.03);
+    --hover-bg: rgba(70,28,47,0.04);
+    --link-hover: #A82660;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #c4b8be;
+    --scrollbar-hover: #a0959a;
+
+    /* ── Phase colours ── */
+    --phase-start: #2d7a3a;
+    --phase-open: #1a6b9c;
+    --phase-closed: #DB333C;
+    --phase-default: #b84c00;
+
+    /* ── Guidance ── */
+    --guidance-bg: #fdf0f4;
+    --guidance-text: #A82660;
+    --guidance-border: #e8b0c8;
+
+    /* ── Navigation header ── */
+    --nav-bg: #461C2F;
+    --nav-border: #3a1527;
+    --nav-text: rgba(248,245,240,0.6);
+    --nav-text-active: #ffffff;
+    --nav-active-bg: #CC2E57;
+    --nav-env-bg: rgba(204,46,87,0.25);
+    --nav-env-text: #ffffff;
+    --nav-env-border: rgba(204,46,87,0.4);
+    --nav-primary-bg: #CC2E57;
+    --nav-primary-text: #fff;
+}
+
+/* ── Nav text overrides (title, host, cookie inherit from body, not nav) ── */
+[data-theme="mb-brand"] .usd-header__title { color: var(--nav-text-active); }
+[data-theme="mb-brand"] .usd-header__host { color: var(--nav-text); }
+[data-theme="mb-brand"] .usd-header__cookie-status { color: var(--nav-text); }
+[data-theme="mb-brand"] .usd-nav__link:hover { color: var(--nav-text-active); background: rgba(255,255,255,0.08); }
+
+/* ── Primary button: solid rose instead of tinted blue ── */
+[data-theme="mb-brand"] .usd-btn--primary { background: #CC2E57; border-color: #CC2E57; color: #fff; }
+[data-theme="mb-brand"] .usd-btn--primary:hover { background: #CC2E57; border-color: #CC2E57; opacity: 0.85; }
+
+/* ── MB + High Contrast: maintain brand colours ── */
+[data-theme="mb-brand"].high-contrast .usd-btn--primary { background: #CC2E57; color: #fff; border-color: #CC2E57; }
+[data-theme="mb-brand"].high-contrast .usd-btn--primary:hover { background: #CC2E57; opacity: 0.85; }
+[data-theme="mb-brand"].high-contrast .usd-btn--active { background: #CC2E57; color: #fff; border-color: #CC2E57; }
+[data-theme="mb-brand"].high-contrast .usd-nav__link--active { background: #CC2E57; color: #fff; }
+[data-theme="mb-brand"].high-contrast .usd-header__env-select { background: #75264F; color: #fff; border-color: #75264F; }
+[data-theme="mb-brand"].high-contrast .usd-quick-btn--active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }

@@ -33,7 +33,7 @@
 
         initNav();
 
-        document.getElementById("optThemeBtn").addEventListener("click", toggleTheme);
+        document.getElementById("optThemeSelect").addEventListener("change", onThemeChange);
         document.getElementById("optHcBtn").addEventListener("click", toggleHighContrast);
         document.getElementById("optNotifyBtn").addEventListener("click", toggleNotifications);
         document.getElementById("optTestNotifyBtn").addEventListener("click", sendTestNotification);
@@ -104,9 +104,10 @@
             document.getElementById("optRecoveryThreshold").value = data.notifyRecoveryThreshold != null ? data.notifyRecoveryThreshold : 0;
             document.getElementById("optGracePeriod").value = data.notifyGracePeriod != null ? data.notifyGracePeriod : 0;
 
-            // Theme & High Contrast -- display state only.
+            // Theme & High Contrast -- sync display with current state.
             // DOM application is handled by shared.js > initTheme().
-            updateThemeDisplay();
+            var sel = document.getElementById("optThemeSelect");
+            if (sel) sel.value = document.body.dataset.theme || "dark";
             updateHcDisplay();
 
             // Notifications
@@ -172,7 +173,7 @@
             alertDurationThreshold: parseInt(document.getElementById("optAlertDuration").value, 10) || 0,
             notifyRecoveryThreshold: isNaN(recoveryThreshold) ? 0 : Math.min(100, Math.max(0, recoveryThreshold)),
             notifyGracePeriod: isNaN(gracePeriod) ? 0 : Math.max(0, gracePeriod),
-            theme: document.body.classList.contains("light-theme") ? "light" : "dark",
+            theme: document.body.dataset.theme || "dark",
             desktopNotifications: _notifyOn,
             notifyStreams: _notifyStreams,
             notifyStreamsDuration: _notifyStreamsDuration,
@@ -217,18 +218,33 @@
 
     // ─── Theme ───
 
-    function toggleTheme() {
-        document.body.classList.toggle("light-theme");
-        var isLight = document.body.classList.contains("light-theme");
-        document.body.dataset.theme = isLight ? "light" : "dark";
-        try { localStorage.setItem("sharedo-tools-theme", isLight ? "light" : "dark"); } catch (e) {}
-        updateThemeDisplay();
-    }
+    var _themeMeta = {};
 
-    function updateThemeDisplay() {
-        var isLight = document.body.classList.contains("light-theme");
-        document.getElementById("optThemeIcon").innerHTML = '<span class="fa fa-' + (isLight ? "sun-o" : "moon-o") + '"></span>';
-        document.getElementById("optThemeLabel").textContent = isLight ? "Light" : "Dark";
+    // Populate theme select from manifest
+    shared.themeManifest().then(function (manifest) {
+        if (!manifest || !manifest.length) return;
+        var sel = document.getElementById("optThemeSelect");
+        var current = document.body.dataset.theme || "dark";
+        sel.innerHTML = "";
+        for (var i = 0; i < manifest.length; i++) {
+            var t = manifest[i];
+            _themeMeta[t.id] = { icon: t.icon, label: t.label, lightBased: t.lightBased };
+            var o = document.createElement("option");
+            o.value = t.id;
+            o.textContent = t.label;
+            if (t.id === current) o.selected = true;
+            sel.appendChild(o);
+        }
+    });
+
+    function onThemeChange() {
+        var sel = document.getElementById("optThemeSelect");
+        var themeId = sel.value;
+        var meta = _themeMeta[themeId];
+        document.body.dataset.theme = themeId;
+        if (meta && meta.lightBased) document.body.classList.add("light-theme");
+        else document.body.classList.remove("light-theme");
+        try { localStorage.setItem("sharedo-tools-theme", themeId); } catch (e) {}
     }
 
     // ─── High contrast ───
