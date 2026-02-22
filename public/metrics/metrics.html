@@ -39,7 +39,7 @@
             <select class="usd-controls-bar__select" id="metEnvSelect"></select>
         </div>
         <button class="usd-btn usd-btn--primary" id="metLoadBtn"><span class="fa fa-refresh"></span> Load</button>
-        <button class="usd-btn usd-file-btn" id="metFileBtn" title="Load metrics from local JSONL file(s). Accepted: streamstats-{env}.jsonl, nodestatus-{env}.jsonl, with optional -backup or -backup-DD-MM-YYYY suffix."><span class="fa fa-folder-open-o"></span></button>
+        <button class="usd-btn usd-file-btn usd-help" id="metFileBtn" data-tooltip="Load metrics from local JSONL file(s).&#10;Accepted: streamstats-{env}.jsonl, nodestatus-{env}.jsonl&#10;Optional suffix: -backup or -backup-DD-MM-YYYY" data-tooltip-pos="below"><span class="fa fa-folder-open-o"></span></button>
         <input type="file" id="metFileInput" accept=".jsonl" multiple style="display:none" />
         <div class="usd-file-chips" id="metFileChips" style="display:none"></div>
         <button class="usd-btn usd-file-clear-btn" id="metFileClearBtn" style="display:none">Clear Files</button>

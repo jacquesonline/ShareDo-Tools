@@ -41,14 +41,14 @@
 }
 
 .mck-header__title {
-    font-size: 15px;
+    font-size: var(--font-size-xl);
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 3px;
 }
 
 .mck-header__desc {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
     line-height: 1.5;
     max-width: 580px;
@@ -65,8 +65,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
+    font-size: var(--font-size-md);
     padding: 2px 12px;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .mck-settings-bar__value {
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -116,7 +116,7 @@
 }
 
 .mck-settings-bar__hint .fa {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     margin-right: 2px;
 }
 
@@ -148,7 +148,7 @@
     gap: 8px;
     padding: 10px 14px;
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
 }
 
@@ -159,7 +159,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     flex-shrink: 0;
 }
 
@@ -168,9 +168,9 @@
 .mck-card__icon--service { background: var(--accent-amber-bg);  color: var(--accent-amber); }
 
 .mck-card__hint {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 400;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-muted);
     margin-left: auto;
 }
@@ -183,7 +183,7 @@
 }
 
 .mck-loading {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
     font-style: italic;
 }
@@ -196,8 +196,8 @@
 }
 
 .mck-stream__label {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
 }
 
@@ -215,8 +215,8 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 12px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-base);
+    font-family: var(--font-mono);
     text-align: center;
     outline: none;
 }
@@ -224,15 +224,15 @@
 .mck-stream__input:focus { border-color: var(--accent-blue); }
 
 .mck-quick-btn {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     padding: 4px 8px;
     min-width: 0;
 }
 
 .mck-stream__field-label {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     min-width: 62px;
 }
 
@@ -257,8 +257,8 @@
 }
 
 .mck-stream__status {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 600;
@@ -275,8 +275,8 @@
 }
 
 .mck-node__name {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
 }
 
@@ -286,7 +286,7 @@
 }
 
 .mck-node-btn {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     padding: 4px 10px;
     min-width: 0;
 }
@@ -296,8 +296,8 @@
 .mck-node-btn--restarting { background: var(--accent-amber-bg); border-color: var(--accent-amber); color: var(--accent-amber); }
 
 .mck-node__detail {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
 }
 
@@ -310,7 +310,7 @@
 }
 
 .mck-service__name {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 500;
     color: var(--text-secondary);
     flex: 1;
@@ -322,7 +322,7 @@
 }
 
 .mck-svc-btn {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     padding: 4px 10px;
     min-width: 0;
 }
@@ -344,25 +344,25 @@
     gap: 8px;
     padding: 10px 14px;
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
 }
 
 .mck-stats-panel__header .fa {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
 }
 
 .mck-stats-panel__hint {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 400;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-muted);
     margin-left: auto;
 }
 
 .mck-stats-panel__refresh {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     padding: 3px 10px;
     margin-left: 8px;
 }
@@ -385,17 +385,17 @@
     gap: 8px;
     padding: 10px 14px;
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
 }
 
 .mck-alert-log__header .fa {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
 }
 
 .mck-alert-log__hint {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 400;
     color: var(--text-muted);
     margin-left: 4px;
@@ -403,7 +403,7 @@
 }
 
 .mck-alert-log__clear {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     padding: 3px 8px;
 }
 
@@ -417,7 +417,7 @@
 }
 
 .mck-alert-log__empty {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
     font-style: italic;
     padding: 4px 0;
@@ -427,8 +427,8 @@
     display: flex;
     align-items: baseline;
     gap: 10px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     padding: 3px 0;
     border-bottom: 1px solid var(--border-subtle);
 }

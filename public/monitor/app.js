@@ -119,9 +119,9 @@
     // ─── Nodes ───
     function renderNodes(data, consoles) {
         var c = document.getElementById("nodeGrid"), sE = document.getElementById("summaryEENodes"), sD = document.getElementById("summaryEENodesDot");
-        if (!data || data.error) { c.innerHTML = '<div class="usd-table__muted" style="padding:12px">Failed to load</div>'; return; }
+        if (!data || data.error) { c.innerHTML = '<div class="usd-table__muted mon-empty-msg">Failed to load</div>'; return; }
         var nodes = Array.isArray(data) ? data : (data.nodes && Array.isArray(data.nodes) ? data.nodes : []);
-        if (!nodes.length) { c.innerHTML = '<div class="usd-table__muted" style="padding:12px">No nodes</div>'; return; }
+        if (!nodes.length) { c.innerHTML = '<div class="usd-table__muted mon-empty-msg">No nodes</div>'; return; }
         var h = "", ok = 0;
         for (var i = 0; i < nodes.length; i++) {
             var n = nodes[i], nm = n.systemName || n.name || "Unknown", v = n.version || "--", st = n.lastStarted ? fmtDate(n.lastStarted) : "--";
@@ -140,7 +140,7 @@
     // ─── ES Cluster ───
     function renderESCluster(data) {
         var c = document.getElementById("clusterBar"), sE = document.getElementById("summaryESCluster"), sD = document.getElementById("summaryESClusterDot");
-        if (!data || data.error) { c.innerHTML = '<div class="usd-table__muted" style="padding:4px 12px 8px">Failed to load' + errMsg(data) + '</div>'; sE.textContent = "ERR"; setDot(sD, "usd-summary-dot--error"); return; }
+        if (!data || data.error) { c.innerHTML = '<div class="usd-table__muted mon-empty-msg--compact">Failed to load' + errMsg(data) + '</div>'; sE.textContent = "ERR"; setDot(sD, "usd-summary-dot--error"); return; }
         var isH = (data.healthStatus || "").toLowerCase() === "green"; var lbl = isH ? "Healthy" : "Unhealthy";
         c.innerHTML = '<div class="usd-cluster-info"><span class="usd-status-indicator"><span class="usd-status-dot ' + (isH ? "usd-status-dot--live" : "usd-status-dot--warn") + '"></span> <span class="' + (isH ? "usd-cluster--healthy" : "usd-cluster--unhealthy") + '">' + esc(lbl) + '</span></span><span class="usd-cluster-detail">' + (data.numberOfNodes || 0) + ' nodes | ' + fmtNum(data.numberOfActiveShards) + ' active shards | ' + fmtNum(data.numberOfUnassignedShards) + ' unassigned</span></div>';
         sE.textContent = lbl; setDot(sD, isH ? "usd-summary-dot--ok" : "usd-summary-dot--error");
@@ -150,7 +150,7 @@
     function renderSearchIndex(data) {
         var ig = document.getElementById("indexGrid"), eg = document.getElementById("eventStoreGrid");
         var b = document.getElementById("badgeSearch"), sE = document.getElementById("summarySearchIndexes"), sD = document.getElementById("summarySearchIndexesDot");
-        if (!data || data.error) { ig.innerHTML = '<div class="usd-table__muted" style="padding:12px">Failed to load' + errMsg(data) + '</div>'; eg.innerHTML = ""; setBadge(b, "Error", "usd-badge--error"); setDot(sD, "usd-summary-dot--error"); sE.textContent = "ERR"; return; }
+        if (!data || data.error) { ig.innerHTML = '<div class="usd-table__muted mon-empty-msg">Failed to load' + errMsg(data) + '</div>'; eg.innerHTML = ""; setBadge(b, "Error", "usd-badge--error"); setDot(sD, "usd-summary-dot--error"); sE.textContent = "ERR"; return; }
         var idxs = data.indexData || [], h = "", hI = 0;
         for (var i = 0; i < idxs.length; i++) { var x = idxs[i]; if (x.indexBacklog === 0 && x.elasticCountValid) hI++;
             h += '<div class="usd-index-card"><div class="usd-index-card__header"><span class="usd-index-card__type"><span class="fa ' + (x.icon || "fa-list-alt") + '"></span> ' + esc(x.type) + '</span>' + (x.elasticCountValid ? '<span class="usd-idx-valid"><span class="fa fa-check"></span></span>' : '<span class="usd-idx-invalid"><span class="fa fa-times"></span></span>') + '</div>';
@@ -175,7 +175,7 @@
     function renderDiagConfig(data) {
         var container = document.getElementById("configGrid"), badge = document.getElementById("badgeConfig");
         var summaryEl = document.getElementById("summaryConfigCount"), summaryDot = document.getElementById("summaryConfigDot");
-        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted" style="padding:12px">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
+        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted mon-empty-msg">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
         var orgName = data.defaultOrganisationNames || "Unknown", orgAct = data.defaultOrganisationCount || 0, orgInact = data.defaultInactiveOrganisationCount || 0;
         var singleOrg = orgAct === 1; var orgDisp, orgCls;
         if (orgInact > 0) { orgDisp = orgName + " (Inactive)"; orgCls = "usd-cfg-val--fail"; } else if (orgAct > 0) { orgDisp = orgName + " (Active)"; orgCls = "usd-cfg-val--pass"; } else { orgDisp = orgName + " (Unknown)"; orgCls = "usd-cfg-val--fail"; }
@@ -247,7 +247,7 @@
     function renderMaintenancePlans(data) {
         var container = document.getElementById("maintGrid"), badge = document.getElementById("badgeMaint");
         var summaryEl = document.getElementById("summaryMaint"), summaryDot = document.getElementById("summaryMaintDot");
-        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted" style="padding:12px">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
+        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted mon-empty-msg">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
         var rows = data.rows || []; var issues = 0;
         var html = '<table class="usd-table"><thead><tr><th>Plan</th><th>Schedule</th><th>Last Run</th><th>Next Run</th><th>State</th></tr></thead><tbody>';
         for (var i = 0; i < rows.length; i++) {
@@ -276,7 +276,7 @@
     function renderLinkedServices(data) {
         var container = document.getElementById("linkedGrid"), badge = document.getElementById("badgeLinked");
         var summaryEl = document.getElementById("summaryLinked"), summaryDot = document.getElementById("summaryLinkedDot");
-        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted" style="padding:12px">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
+        if (!data || data.error) { container.innerHTML = '<div class="usd-table__muted mon-empty-msg">Failed to load' + errMsg(data) + '</div>'; setBadge(badge, "Error", "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); summaryEl.textContent = "ERR"; return; }
         var allServices = []; if (Array.isArray(data)) { for (var g = 0; g < data.length; g++) { var grp = data[g]; if (grp.services) { for (var s = 0; s < grp.services.length; s++) { grp.services[s]._group = grp.title; allServices.push(grp.services[s]); } } } }
 
         // Filter: always show critical services; only show non-critical if they have issues (unlinked when linkable, or invalid provider/config)
@@ -308,7 +308,7 @@
             html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Config Valid</span><span class="usd-linked-card__value ' + (cfgValid ? "usd-cfg-val--pass" : "usd-cfg-val--fail") + '">' + (cfgValid ? "Yes" : "No") + '</span></div>';
             html += '</div>';
         }
-        container.innerHTML = html || '<div class="usd-table__muted" style="padding:12px">All non-critical services healthy</div>';
+        container.innerHTML = html || '<div class="usd-table__muted mon-empty-msg">All non-critical services healthy</div>';
         summaryEl.textContent = issues === 0 ? "OK" : issues + " issue" + (issues > 1 ? "s" : "");
         if (issues === 0) { setBadge(badge, "All OK", "usd-badge--ok"); setDot(summaryDot, "usd-summary-dot--ok"); }
         else { setBadge(badge, issues + " Issue" + (issues > 1 ? "s" : ""), "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); }

@@ -8,7 +8,7 @@
 }
 
 .opt-page-title {
-    font-size: 20px;
+    font-size: var(--font-size-xxl);
     font-weight: 700;
     color: var(--text-primary);
     max-width: 860px;
@@ -46,7 +46,7 @@
     border-radius: 6px;
     background: none;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: var(--font-size-lg);
     font-family: inherit;
     text-align: left;
     cursor: pointer;
@@ -69,7 +69,7 @@
 }
 
 .opt-nav__group-label {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -94,14 +94,14 @@
 
 .opt-save-btn {
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: var(--font-size-base);
     justify-content: center;
     width: 100%;
 }
 
 .opt-save-status {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--accent-green);
     text-align: center;
     opacity: 0;
@@ -132,14 +132,14 @@
 }
 
 .opt-panel__desc {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     color: var(--text-muted);
     margin-bottom: 20px;
     line-height: 1.5;
 }
 
 .opt-panel__sub-title {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -172,14 +172,14 @@
 }
 
 .opt-row__label {
-    font-size: 13px;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 2px;
 }
 
 .opt-row__desc {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
     line-height: 1.5;
 }
@@ -203,8 +203,8 @@
     border-radius: 6px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 13px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-lg);
+    font-family: var(--font-mono);
     text-align: center;
     outline: none;
     transition: border-color 0.15s ease;
@@ -215,7 +215,7 @@
 .opt-input--wide {
     width: 200px;
     text-align: left;
-    font-size: 11px;
+    font-size: var(--font-size-md);
 }
 
 .opt-input-group {
@@ -225,9 +225,9 @@
 }
 
 .opt-input-suffix {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
 }
 
 /* ─── Theme button ─── */
@@ -240,7 +240,7 @@
     border-radius: 6px;
     background: var(--bg-card);
     color: var(--text-primary);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-family: inherit;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -270,7 +270,7 @@
     border-radius: 6px;
     background: var(--bg-card);
     color: var(--text-secondary);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-family: inherit;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -283,10 +283,10 @@
 
 /* ─── Notifications ─── */
 .opt-notify-controls { display: flex; gap: 6px; align-items: center; }
-.opt-test-btn { font-size: 10px; padding: 6px 10px; }
+.opt-test-btn { font-size: var(--font-size-sm); padding: 6px 10px; }
 
 .opt-notify-status {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     padding: 0 20px 10px;
     display: none;
@@ -296,16 +296,16 @@
 
 /* ─── Sub-rows (indented, for conditional toggles) ─── */
 .opt-row--sub { padding: 6px 20px 6px 40px; }
-.opt-row__label--sub { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
-.opt-toggle-btn--small { padding: 4px 12px; font-size: 11px; min-width: 50px; }
+.opt-row__label--sub { font-size: var(--font-size-md); font-weight: 500; color: var(--text-secondary); }
+.opt-toggle-btn--small { padding: 4px 12px; font-size: var(--font-size-md); min-width: 50px; }
 
 /* ─── Status badge (readonly indicators e.g. Teams) ─── */
 .opt-status-badge {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
 }
 
@@ -332,21 +332,21 @@
 }
 
 .opt-auth-row__label {
-    font-size: 13px;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     white-space: nowrap;
 }
 
 .opt-auth-row__source {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     white-space: nowrap;
 }
 
 .opt-auth-row__identity {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     white-space: nowrap;
 }
@@ -395,8 +395,8 @@
 }
 
 .opt-auth-status-text {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     white-space: nowrap;
 }
@@ -414,8 +414,8 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     outline: none;
 }
 
@@ -425,8 +425,8 @@
 /* ─── UX Monitor results ─── */
 .opt-ux-results__header {
     padding: 8px 16px;
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
 }
@@ -434,13 +434,13 @@
 .opt-ux-results__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-base);
+    font-family: var(--font-mono);
 }
 
 .opt-ux-results__table thead th {
     padding: 6px 16px;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     color: var(--text-muted);
     text-align: left;
@@ -473,8 +473,8 @@
 .opt-ux-probe-config-input {
     width: 320px;
     padding: 4px 8px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
 }
 
 #optUxEnv {
@@ -494,15 +494,15 @@
 .opt-chip-row:empty { padding: 0; }
 
 .opt-chip-note {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     padding: 4px 20px 10px;
     display: flex;
     align-items: center;
 }
 
-.opt-chip-note .fa { margin-right: 5px; font-size: 11px; }
-.opt-chip-note code { font-family: 'Consolas', 'Courier New', monospace; background: var(--bg-card); padding: 1px 4px; border-radius: 3px; font-size: 10px; }
+.opt-chip-note .fa { margin-right: 5px; font-size: var(--font-size-md); }
+.opt-chip-note code { font-family: var(--font-mono); background: var(--bg-card); padding: 1px 4px; border-radius: 3px; font-size: var(--font-size-sm); }
 
 /* ─── High Contrast: see /shared/style.css ─── */
 

@@ -338,7 +338,7 @@
                 if (f.capPct > maxPct) maxPct = f.capPct;
                 parts.push(f.metric + "-" + f.env + ": " + f.sizeMB + "MB (" + f.capPct + "%)");
             }
-            infoEl.innerHTML = '<span class="usd-storage-info" title="' + esc(parts.join("\n")) + '">' + filteredFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
+            infoEl.innerHTML = '<span class="usd-storage-info usd-help" data-tooltip="' + esc(parts.join("\n")) + '">' + filteredFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
 
             if (maxPct >= 90) {
                 warnEl.style.display = "";

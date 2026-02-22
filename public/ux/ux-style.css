@@ -59,15 +59,15 @@
 .ux-url-card__dot--bad { background: var(--accent-red); }
 
 .ux-url-card__label {
-    font-size: 13px;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--text-primary);
     margin-right: 6px;
 }
 
 .ux-url-card__path {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     flex: 1;
     min-width: 0;
@@ -77,8 +77,8 @@
 }
 
 .ux-url-card__count {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     flex-shrink: 0;
     margin-left: 8px;
@@ -92,7 +92,7 @@
 .ux-url-card__hero-value {
     font-size: 26px;
     font-weight: 700;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-primary);
     line-height: 1.2;
 }
@@ -102,7 +102,7 @@
 .ux-url-card__hero-value--bad { color: var(--accent-red); }
 
 .ux-url-card__hero-label {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -111,8 +111,8 @@
 }
 
 .ux-url-card__hero-sub {
-    font-size: 9px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     margin-top: 1px;
     min-height: 13px;
@@ -133,9 +133,9 @@
 .ux-url-card__stat:last-child { border-right: none; }
 
 .ux-url-card__stat-value {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-primary);
 }
 
@@ -154,26 +154,26 @@
 
 .ux-url-card__footer {
     padding: 6px 14px;
-    font-size: 9px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     border-top: 1px solid var(--border);
 }
 
 .ux-summary__guide {
     width: 100%;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     padding: 4px 8px 0;
     line-height: 1.8;
 }
 
-.ux-summary__guide .fa { font-size: 10px; margin-right: 3px; }
+.ux-summary__guide .fa { font-size: var(--font-size-sm); margin-right: 3px; }
 .ux-summary__guide strong { color: var(--text-secondary); font-weight: 600; margin-left: 6px; }
 
 /* ─── Detail filter indicator ─── */
 .ux-detail-filter {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-secondary);
     padding: 6px 12px;
     background: var(--bg-panel);
@@ -184,13 +184,13 @@
     gap: 6px;
 }
 
-.ux-detail-filter .fa { color: var(--accent-blue); font-size: 10px; }
+.ux-detail-filter .fa { color: var(--accent-blue); font-size: var(--font-size-sm); }
 
 .ux-detail-filter__clear {
     margin-left: auto;
     cursor: pointer;
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--font-size-sm);
 }
 
 .ux-detail-filter__clear:hover { color: var(--accent-red); }
@@ -204,8 +204,8 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     outline: none;
     cursor: pointer;
 }
@@ -215,21 +215,21 @@
 /* ─── AJAX Modal: structural rules now in /shared/style.css ─── */
 .ux-modal__summary { display: flex; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
 .ux-modal__stat { flex: 1; background: var(--bg-panel); padding: 10px 12px; text-align: center; }
-.ux-modal__stat-value { font-size: 16px; font-weight: 700; color: var(--text-primary); font-family: 'Consolas','Courier New',monospace; }
-.ux-modal__stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
-.ux-modal__table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'Consolas','Courier New',monospace; }
-.ux-modal__table th { padding: 7px 16px; font-size: 10px; font-weight: 600; color: var(--text-muted); text-align: left; border-bottom: 1px solid var(--border); }
+.ux-modal__stat-value { font-size: 16px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
+.ux-modal__stat-label { font-size: var(--font-size-xs); color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+.ux-modal__table { width: 100%; border-collapse: collapse; font-size: var(--font-size-base); font-family: var(--font-mono); }
+.ux-modal__table th { padding: 7px 16px; font-size: var(--font-size-sm); font-weight: 600; color: var(--text-muted); text-align: left; border-bottom: 1px solid var(--border); }
 .ux-modal__table td { padding: 6px 16px; border-top: 1px solid var(--border); color: var(--text-primary); }
 .ux-modal__table tr:first-child td { border-top: none; }
 .ux-modal__td-rank { width: 30px; text-align: center; color: var(--text-muted); }
-.ux-modal__td-url { max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.ux-modal__td-url { max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-size-md); }
 .ux-modal__td-ms { text-align: right; white-space: nowrap; }
 .ux-modal__row--warn .ux-modal__td-ms { color: var(--accent-amber); }
 .ux-modal__row--crit .ux-modal__td-ms { color: var(--accent-red, #e74c3c); }
 
 /* Modal section titles */
 .ux-modal__section-title {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -260,9 +260,9 @@
 .ux-modal__timing-seg--render { background: var(--accent-amber-bg); }
 
 .ux-modal__timing-val {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-primary);
     line-height: 1.2;
 }
@@ -299,7 +299,7 @@
 .ux-modal__vital-value {
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-primary);
 }
 
@@ -323,8 +323,8 @@
     border-radius: 6px;
     padding: 12px 16px;
 }
-.ux-manual__header { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
-.ux-manual__header .fa { font-size: 11px; color: var(--text-muted); }
+.ux-manual__header { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: var(--font-size-base); font-weight: 600; }
+.ux-manual__header .fa { font-size: var(--font-size-md); color: var(--text-muted); }
 .ux-manual__controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ux-manual__sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
 .ux-manual__input {
@@ -333,8 +333,8 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 12px;
-    font-family: 'Consolas','Courier New',monospace;
+    font-size: var(--font-size-base);
+    font-family: var(--font-mono);
     outline: none;
     width: 300px;
 }
@@ -342,7 +342,7 @@
 .ux-manual__input::placeholder { color: var(--text-muted); }
 
 /* ─── Empty state ─── */
-.ux-empty { padding: 16px 20px; font-size: 12px; color: var(--text-muted); font-style: italic; }
+.ux-empty { padding: 16px 20px; font-size: var(--font-size-base); color: var(--text-muted); font-style: italic; }
 
 /* ─── High Contrast: timing bar ─── */
 .high-contrast .ux-modal__timing-seg--ttfb { background: var(--accent-blue); }

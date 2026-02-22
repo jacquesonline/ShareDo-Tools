@@ -1,0 +1,10 @@
+/* ═══════════════════════════════════════════
+   Monitor page
+   ═══════════════════════════════════════════ */
+
+/* ─── Empty / error message (used in section content areas) ─── */
+.mon-empty-msg { padding: 12px; }
+.mon-empty-msg--compact { padding: 4px 12px 8px; }
+
+/* ─── Guidance spacing (between summary bar and body) ─── */
+.mon-guidance { margin: 8px 20px 0; }

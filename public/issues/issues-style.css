@@ -9,28 +9,28 @@
 .iss-controls__group { display: flex; align-items: center; gap: 6px; }
 .iss-controls__group--right { margin-left: auto; }
 
-.iss-check { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); cursor: pointer; }
+.iss-check { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-md); color: var(--text-secondary); cursor: pointer; }
 .iss-check input[type="checkbox"] { accent-color: var(--accent-blue); }
 
-.iss-date-btn { font-size: 10px; padding: 4px 8px; }
+.iss-date-btn { font-size: var(--font-size-sm); padding: 4px 8px; }
 /* ─── Date input: now in /shared/style.css as .usd-date-input ─── */
 
-.iss-count { font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; color: var(--text-secondary); }
+.iss-count { font-size: var(--font-size-md); font-family: var(--font-mono); color: var(--text-secondary); }
 
 /* ─── Table ─── */
 .iss-table-wrap { overflow-x: auto; }
 
 /* ─── Row description (truncated) ─── */
-.iss-desc { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; color: var(--text-muted); }
+.iss-desc { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--font-size-md); color: var(--text-muted); }
 .iss-desc:hover { white-space: normal; overflow: visible; }
 
 /* ─── Tags ─── */
-.iss-tag { display: inline-block; font-size: 10px; font-family: 'Consolas', 'Courier New', monospace; padding: 1px 6px; border-radius: 3px; background: var(--accent-blue-bg); color: var(--accent-blue); margin-right: 3px; }
+.iss-tag { display: inline-block; font-size: var(--font-size-sm); font-family: var(--font-mono); padding: 1px 6px; border-radius: 3px; background: var(--accent-blue-bg); color: var(--accent-blue); margin-right: 3px; }
 
 /* ─── Open link ─── */
-.iss-open-link { color: var(--accent-blue); text-decoration: none; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; transition: color 0.15s ease; }
+.iss-open-link { color: var(--accent-blue); text-decoration: none; font-size: var(--font-size-md); display: inline-flex; align-items: center; gap: 4px; transition: color 0.15s ease; }
 .iss-open-link:hover { color: var(--link-hover); }
-.iss-open-link .fa { font-size: 9px; }
+.iss-open-link .fa { font-size: var(--font-size-xs); }
 
 /* ─── Clickable process rows ─── */
 .iss-proc-row { cursor: pointer; }
@@ -54,7 +54,7 @@
 }
 
 .iss-step__state {
-    font-size: 10px; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm); font-family: var(--font-mono);
     padding: 2px 8px; border-radius: 10px; font-weight: 600; flex-shrink: 0; min-width: 72px; text-align: center;
 }
 
@@ -63,10 +63,10 @@
 .iss-step__state--running { background: var(--accent-blue-bg); color: var(--accent-blue); }
 .iss-step__state--none { background: var(--accent-neutral-bg); color: var(--text-muted); }
 
-.iss-step__name { font-size: 12px; font-weight: 600; flex: 1; }
-.iss-step__sysname { font-size: 10px; color: var(--text-muted); font-family: 'Consolas', 'Courier New', monospace; }
+.iss-step__name { font-size: var(--font-size-base); font-weight: 600; flex: 1; }
+.iss-step__sysname { font-size: var(--font-size-sm); color: var(--text-muted); font-family: var(--font-mono); }
 
-.iss-step__chevron { color: var(--text-muted); font-size: 10px; transition: transform 0.2s ease; }
+.iss-step__chevron { color: var(--text-muted); font-size: var(--font-size-sm); transition: transform 0.2s ease; }
 .iss-step--expanded .iss-step__chevron { transform: rotate(90deg); }
 
 /* ─── Step log ─── */
@@ -77,7 +77,7 @@
 .iss-step--expanded .iss-step__log { display: block; }
 
 .iss-log-entry {
-    display: flex; gap: 8px; padding: 3px 0; font-size: 11px; font-family: 'Consolas', 'Courier New', monospace; line-height: 1.5;
+    display: flex; gap: 8px; padding: 3px 0; font-size: var(--font-size-md); font-family: var(--font-mono); line-height: 1.5;
 }
 
 .iss-log-entry__time { color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
@@ -88,10 +88,10 @@
 .iss-log-entry__level--error { color: var(--accent-red); }
 .iss-log-entry__msg { color: var(--text-primary); white-space: pre-wrap; word-break: break-word; flex: 1; }
 
-.iss-log-loading { padding: 12px 16px; font-size: 11px; color: var(--text-muted); }
+.iss-log-loading { padding: 12px 16px; font-size: var(--font-size-md); color: var(--text-muted); }
 
 /* ─── Phase badges ─── */
-.iss-phase { font-size: 10px; font-family: 'Consolas', 'Courier New', monospace; padding: 2px 6px; border-radius: 10px; }
+.iss-phase { font-size: var(--font-size-sm); font-family: var(--font-mono); padding: 2px 6px; border-radius: 10px; }
 .iss-phase--failed { background: var(--accent-red-bg); color: var(--accent-red); }
 .iss-phase--errored { background: var(--accent-red-bg); color: var(--accent-red); }
 .iss-phase--running { background: var(--accent-blue-bg); color: var(--accent-blue); }

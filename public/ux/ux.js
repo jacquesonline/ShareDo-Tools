@@ -184,7 +184,7 @@
             var maxPct = 0; var parts = [];
             var uxFiles = (data.files || []).filter(function (f) { return f.metric.indexOf("ux-") === 0; });
             for (var i = 0; i < uxFiles.length; i++) { var f = uxFiles[i]; if (f.capPct > maxPct) maxPct = f.capPct; parts.push(f.env + "/" + f.metric + ": " + f.sizeMB + "MB (" + f.capPct + "%)"); }
-            infoEl.innerHTML = '<span class="usd-storage-info" title="' + esc(parts.join("\n")) + '">' + uxFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
+            infoEl.innerHTML = '<span class="usd-storage-info usd-help" data-tooltip="' + esc(parts.join("\n")) + '">' + uxFiles.length + ' files | ' + (maxPct > 0 ? 'largest at ' + maxPct + '% of ' + data.capMB + 'MB cap' : 'all under cap') + '</span>';
             if (maxPct >= 90) { warnEl.style.display = ""; warnText.textContent = "A UX metrics file is at " + maxPct + "% of the " + data.capMB + "MB cap."; }
             else if (maxPct >= 75) { warnEl.style.display = ""; warnText.textContent = "A UX metrics file is at " + maxPct + "% of the " + data.capMB + "MB cap."; }
             else { warnEl.style.display = "none"; }

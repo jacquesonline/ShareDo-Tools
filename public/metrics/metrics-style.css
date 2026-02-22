@@ -28,9 +28,9 @@
 }
 
 .met-summary__value {
-    font-size: 20px;
+    font-size: var(--font-size-xxl);
     font-weight: 700;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-primary);
     line-height: 1.2;
 }
@@ -43,7 +43,7 @@
 .met-summary__value--bad { color: var(--accent-red); }
 
 .met-summary__label {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -52,8 +52,8 @@
 }
 
 .met-summary__sub {
-    font-size: 9px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     margin-top: 2px;
     min-height: 13px;

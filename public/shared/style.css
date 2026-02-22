@@ -510,6 +510,7 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 
 /* ─── Tooltip (JS-positioned, see shared.js initTooltips) ─── */
 .usd-help { display: inline-flex; align-items: center; cursor: help; }
+button.usd-help { cursor: pointer; }
 .usd-tooltip {
     position: fixed; z-index: 10000; pointer-events: none;
     background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px;
@@ -629,6 +630,11 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .high-contrast .mck-node-btn--restarting { background: var(--accent-amber); color: var(--hc-pill-text-amber); }
 .high-contrast .mck-svc-btn--healthy     { background: var(--accent-green); color: var(--hc-pill-text-green); }
 .high-contrast .mck-svc-btn--unhealthy   { background: var(--accent-red);   color: var(--hc-pill-text-red); }
+.high-contrast .mck-quick-btn--thresh    { background: var(--accent-amber); color: var(--hc-pill-text-amber); }
+.high-contrast .mck-quick-btn--conn      { background: var(--accent-green); color: var(--hc-pill-text-green); }
+
+/* Options page */
+.high-contrast .opt-toggle-btn--on       { background: var(--accent-green); color: var(--hc-pill-text-green); }
 
 /* WAILA */
 .high-contrast .wla-panel__badge--ready    { background: var(--accent-green); color: var(--hc-pill-text-green); }

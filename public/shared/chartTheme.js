@@ -35,6 +35,11 @@ var chartTheme = (function () {
     function accentCyan()   { return get("--accent-cyan"); }
     function accentRedBg()  { return get("--accent-red-bg"); }
 
+    // ─── High contrast detection ───
+
+    function isHC() { return document.body.classList.contains("high-contrast"); }
+    function hcPillText(colour) { return get("--hc-pill-text-" + colour); }
+
     // ─── Fonts ───
 
     var fontMono = "'Consolas', 'Courier New', monospace";
@@ -117,21 +122,22 @@ var chartTheme = (function () {
      * @param {boolean} display - whether to show the line
      */
     function thresholdAnnotation(value, display) {
+        var hc = isHC();
         return {
             type: "line",
             scaleID: "y",
             value: value,
             borderColor: accentRed(),
-            borderWidth: 1.5,
-            borderDash: [4, 3],
+            borderWidth: hc ? 2 : 1.5,
+            borderDash: hc ? [] : [4, 3],
             display: display,
             label: {
                 display: true,
                 content: "Threshold: " + value,
                 position: "end",
                 yAdjust: -10,
-                backgroundColor: accentRedBg(),
-                color: accentRed(),
+                backgroundColor: hc ? accentRed() : accentRedBg(),
+                color: hc ? hcPillText("red") : accentRed(),
                 font: { size: 9, family: fontMono },
                 padding: { top: 2, bottom: 2, left: 4, right: 4 }
             }

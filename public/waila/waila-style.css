@@ -53,7 +53,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     background: var(--accent-purple-bg);
     color: var(--accent-purple);
     flex-shrink: 0;
@@ -63,15 +63,15 @@
 .wla-panel__icon--filter { background: var(--accent-amber-bg); color: var(--accent-amber); }
 
 .wla-panel__title {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: 0.02em;
 }
 
 .wla-panel__badge {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     padding: 1px 7px;
     border-radius: 10px;
     font-weight: 600;
@@ -95,9 +95,9 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 4px;
 }
 
@@ -109,8 +109,8 @@
 }
 
 .wla-index-progress__current {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--accent-blue);
     white-space: nowrap;
     overflow: hidden;
@@ -137,9 +137,9 @@
 }
 
 .wla-progress-counter {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     margin-top: 3px;
 }
 
@@ -155,13 +155,13 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 12px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-base);
+    font-family: var(--font-mono);
     outline: none;
 }
 
 .wla-search-input:focus { border-color: var(--accent-blue); }
-.wla-search-input::placeholder { color: var(--text-muted); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 11px; }
+.wla-search-input::placeholder { color: var(--text-muted); font-family: var(--font-ui); font-size: var(--font-size-md); }
 
 .wla-search-actions {
     display: flex;
@@ -179,7 +179,7 @@
 
 .wla-filter-label {
     display: block;
-    font-size: 9px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -194,8 +194,8 @@
     border-radius: 4px;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     outline: none;
 }
 
@@ -215,7 +215,7 @@
     align-items: center;
     gap: 5px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-secondary);
 }
 
@@ -224,7 +224,7 @@
 .wla-filter-toggle__label { user-select: none; }
 
 .wla-filter-hint {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
     color: var(--text-muted);
     margin-top: 8px;
     font-style: italic;
@@ -234,8 +234,8 @@
 .wla-panel__icon--export { background: var(--accent-green-bg); color: var(--accent-green); }
 
 .wla-export-count {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-muted);
     margin-left: auto;
 }
@@ -253,16 +253,16 @@
 }
 
 .wla-results-bar__count {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--text-primary);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
 }
 
 .wla-results-bar__time {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
 }
 
 .wla-results-bar__actions {
@@ -282,7 +282,7 @@
 /* ─── Empty state: base in /shared/style.css, WAILA overrides ─── */
 .wla-main .usd-empty-state { flex: 1; }
 .wla-main .usd-empty-state__icon { font-size: 36px; }
-.wla-main .usd-empty-state__title { font-size: 15px; color: var(--text-secondary); margin-bottom: 6px; }
+.wla-main .usd-empty-state__title { font-size: var(--font-size-xl); color: var(--text-secondary); margin-bottom: 6px; }
 .wla-main .usd-empty-state__text { max-width: 360px; }
 
 .wla-loading {
@@ -291,7 +291,7 @@
     justify-content: center;
     padding: 60px 20px;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--font-size-base);
     gap: 8px;
     flex: 1;
 }
@@ -306,7 +306,7 @@
 }
 
 .wla-no-results__icon { font-size: 24px; margin-bottom: 8px; opacity: 0.4; }
-.wla-no-results__text { font-size: 12px; }
+.wla-no-results__text { font-size: var(--font-size-base); }
 
 /* ─── Result cards ─── */
 .wla-card {
@@ -333,7 +333,7 @@
 
 .wla-card__chevron {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     transition: transform 0.2s ease;
     width: 12px;
     text-align: center;
@@ -346,7 +346,7 @@
 .wla-card__title-group { flex: 1; min-width: 0; }
 
 .wla-card__name {
-    font-size: 12px;
+    font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
@@ -355,9 +355,9 @@
 }
 
 .wla-card__sysname {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -366,18 +366,18 @@
 .wla-card__stats {
     display: flex;
     gap: 10px;
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     white-space: nowrap;
     flex-shrink: 0;
 }
 
 .wla-card__stat { display: flex; align-items: center; gap: 3px; }
-.wla-card__stat .fa { font-size: 9px; }
+.wla-card__stat .fa { font-size: var(--font-size-xs); }
 
 .wla-card__actions { display: flex; gap: 3px; flex-shrink: 0; }
-.wla-card__copy-btn, .wla-card__cmd-btn, .wla-card__script-btn { padding: 3px 7px; font-size: 10px; }
+.wla-card__copy-btn, .wla-card__cmd-btn, .wla-card__script-btn { padding: 3px 7px; font-size: var(--font-size-sm); }
 
 /* ─── Card body ─── */
 .wla-card__body { border-top: 1px solid var(--border); }
@@ -386,7 +386,7 @@
 .wla-card__match-section + .wla-card__match-section { border-top: 1px solid var(--border-subtle); }
 
 .wla-card__match-label {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -397,13 +397,13 @@
     gap: 5px;
 }
 
-.wla-card__match-label .fa { font-size: 9px; }
+.wla-card__match-label .fa { font-size: var(--font-size-xs); }
 
 .wla-card__match-list { list-style: none; padding: 0; margin: 0; }
 
 .wla-card__match-item {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     padding: 2px 0;
     line-height: 1.5;
@@ -422,8 +422,8 @@
 .wla-match-hl { color: var(--accent-amber); font-weight: 600; }
 
 .wla-card__config-excerpt {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     background: var(--bg-input);
     border: 1px solid var(--bg-card);
@@ -438,7 +438,7 @@
 }
 
 .wla-card__description {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     color: var(--text-muted);
     padding: 6px 12px;
     border-top: 1px solid var(--border-subtle);
@@ -457,8 +457,8 @@
 }
 
 .wla-diff-env-label {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--accent-blue);
     font-weight: 600;
     flex: 1;
@@ -469,15 +469,15 @@
 }
 
 .wla-diff-vs {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .wla-diff-select {
     flex: 1;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     padding: 4px 8px;
     border-radius: 4px;
     background: var(--bg-input);
@@ -505,22 +505,22 @@
 }
 
 .wla-diff-header__env {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-primary);
 }
 
 .wla-diff-header__env strong { color: var(--accent-blue); }
 
 .wla-diff-header__vs {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .wla-diff-header__stat {
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 600;
@@ -534,7 +534,7 @@
 }
 
 .wla-diff-group__header {
-    font-size: 11px;
+    font-size: var(--font-size-md);
     font-weight: 600;
     padding: 6px 12px;
     display: flex;
@@ -551,7 +551,7 @@
 
 .wla-diff-group__chevron {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--font-size-sm);
     transition: transform 0.2s ease;
     width: 12px;
     text-align: center;
@@ -567,8 +567,8 @@
 .wla-diff-group__header--changed { border-left: 3px solid var(--accent-amber); }
 
 .wla-diff-group__count {
-    font-size: 10px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
     padding: 1px 6px;
     border-radius: 8px;
     font-weight: 600;
@@ -588,8 +588,8 @@
 
 .wla-diff-item {
     padding: 6px 12px;
-    font-size: 11px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-subtle);
     cursor: pointer;
@@ -600,11 +600,11 @@
 .wla-diff-item:hover { background: var(--hover-row); }
 
 .wla-diff-item__name { color: var(--text-primary); font-weight: 600; }
-.wla-diff-item__sysname { color: var(--text-muted); font-size: 10px; }
-.wla-diff-item__stats { color: var(--text-muted); font-size: 10px; margin-left: 8px; }
+.wla-diff-item__sysname { color: var(--text-muted); font-size: var(--font-size-sm); }
+.wla-diff-item__stats { color: var(--text-muted); font-size: var(--font-size-sm); margin-left: 8px; }
 
 /* Diff detail (expanded within a changed item) */
-.wla-diff-detail { display: none; padding: 6px 12px 8px 24px; font-size: 10px; color: var(--text-muted); font-family: 'Consolas', 'Courier New', monospace; border-bottom: 1px solid var(--border-subtle); background: var(--bg-input); }
+.wla-diff-detail { display: none; padding: 6px 12px 8px 24px; font-size: var(--font-size-sm); color: var(--text-muted); font-family: var(--font-mono); border-bottom: 1px solid var(--border-subtle); background: var(--bg-input); }
 .wla-diff-item--expanded + .wla-diff-detail { display: block; }
 
 .wla-diff-detail__section { margin-bottom: 6px; }
@@ -620,7 +620,7 @@
 .wla-modal__pre {
     margin: 0;
     padding: 16px;
-    font-size: 12px;
+    font-size: var(--font-size-base);
     line-height: 1.6;
     tab-size: 4;
     background: var(--bg-input);
@@ -632,8 +632,8 @@
 .wla-modal__pre[class*="language-"],
 .wla-modal__pre code[class*="language-"] {
     background: var(--bg-input);
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 12px;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
 }
 
 /* Prism line numbers */
@@ -661,9 +661,9 @@
     color: var(--bg-input);
     padding: 8px 16px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: var(--font-size-md);
     font-weight: 600;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     opacity: 0;
     transition: opacity 0.2s ease;
     pointer-events: none;
