@@ -79,7 +79,7 @@
             _uxProbeEnv = data.probeEnv || "prod";
             if (Array.isArray(data.pageTargets)) _pageTargets = data.pageTargets;
             // Populate read-only env select
-            fetch("/api/env").then(function (r) { return r.json(); }).then(function (envData) {
+            shared.apiFetch("/api/env").then(function (r) { return r.json(); }).then(function (envData) {
                 var sel = document.getElementById("uxEnvSelect");
                 sel.innerHTML = "";
                 if (envData.environments) {

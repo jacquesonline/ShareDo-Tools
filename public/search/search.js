@@ -96,7 +96,7 @@
     function loadTypeTree() {
         allTypes = [];
         document.getElementById("typeDropdown").innerHTML = '<div class="srch-type-item srch-type-item--loading">Loading types...</div>';
-        fetch("/api/types/tree").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/types/tree").then(function (r) { return r.json(); }).then(function (data) {
             if (data.error) { document.getElementById("typeDropdown").innerHTML = '<div class="srch-type-item srch-type-item--error">Failed to load types</div>'; return; }
             flattenTree(data, 0);
             filterTypes(true);
@@ -414,7 +414,7 @@
 
         document.getElementById("resultsBody").innerHTML = '<tr><td colspan="99" class="usd-table__muted"><span class="fa fa-spinner fa-spin"></span> Searching...</td></tr>';
 
-        fetch("/api/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(model) })
+        shared.apiFetch("/api/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(model) })
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 renderResults(data, rpp);
@@ -547,7 +547,7 @@
 
         function fetchNextPage() {
             var model = buildQuery(currentExportPage, rpp);
-            fetch("/api/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(model) })
+            shared.apiFetch("/api/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(model) })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     if (data && !data.error && data.results) {

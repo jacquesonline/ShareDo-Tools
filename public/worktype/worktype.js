@@ -112,7 +112,7 @@
         container.innerHTML = '<div class="wt-tree__loading"><span class="fa fa-spinner fa-spin"></span> Loading tree...</div>';
         document.getElementById("treeCount").textContent = "--";
 
-        fetch("/api/worktype/tree").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/worktype/tree").then(function (r) { return r.json(); }).then(function (data) {
             if (data && data.error) {
                 container.innerHTML = '<div class="wt-tree__loading usd-clr--red">Failed to load tree: ' + esc(data.message || "Unknown error") + '</div>';
                 return;
@@ -378,7 +378,7 @@
         showLoading("aspects");
         _aspectsData = null;
         _selectedAspect = null;
-        fetch("/api/worktype/aspects/" + encodeURIComponent(_selectedType))
+        shared.apiFetch("/api/worktype/aspects/" + encodeURIComponent(_selectedType))
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data && data.error) { showError("aspects", data.message || "Failed to load aspects. Admin cookie may be required."); return; }
@@ -587,7 +587,7 @@
             return;
         }
 
-        fetch("/api/worktype/form/" + encodeURIComponent(formId))
+        shared.apiFetch("/api/worktype/form/" + encodeURIComponent(formId))
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data && data.error) {
@@ -674,7 +674,7 @@
 
     function loadPhases() {
         showLoading("phases");
-        fetch("/api/worktype/phaseplan/" + encodeURIComponent(_selectedType))
+        shared.apiFetch("/api/worktype/phaseplan/" + encodeURIComponent(_selectedType))
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data && data.error) { showError("phases", data.message || "Failed to load phase plan. Admin cookie may be required."); return; }
@@ -1021,7 +1021,7 @@
 
     function loadRoles() {
         showLoading("roles");
-        fetch("/api/worktype/roles/" + encodeURIComponent(_selectedType), {
+        shared.apiFetch("/api/worktype/roles/" + encodeURIComponent(_selectedType), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ rowsPerPage: 100, page: 1 })
@@ -1084,7 +1084,7 @@
 
     function loadKeyDates() {
         showLoading("keydates");
-        fetch("/api/worktype/keydates/" + encodeURIComponent(_selectedType))
+        shared.apiFetch("/api/worktype/keydates/" + encodeURIComponent(_selectedType))
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data && data.error) { showError("keydates", data.message || "Failed to load key dates. Admin cookie may be required."); return; }
@@ -1190,7 +1190,7 @@
 
     function loadRelationships() {
         showLoading("relationships");
-        fetch("/api/worktype/relationships/" + encodeURIComponent(_selectedType), {
+        shared.apiFetch("/api/worktype/relationships/" + encodeURIComponent(_selectedType), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ rowsPerPage: 100, page: 1 })
@@ -1383,9 +1383,9 @@
         } else {
             // Fetch all three for current env
             currentDataPromise = Promise.all([
-                fetch("/api/worktype/aspects/" + encodeURIComponent(_selectedType)).then(function (r) { return r.json(); }),
-                fetch("/api/worktype/keydates/" + encodeURIComponent(_selectedType)).then(function (r) { return r.json(); }),
-                fetch("/api/worktype/roles/" + encodeURIComponent(_selectedType), {
+                shared.apiFetch("/api/worktype/aspects/" + encodeURIComponent(_selectedType)).then(function (r) { return r.json(); }),
+                shared.apiFetch("/api/worktype/keydates/" + encodeURIComponent(_selectedType)).then(function (r) { return r.json(); }),
+                shared.apiFetch("/api/worktype/roles/" + encodeURIComponent(_selectedType), {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ rowsPerPage: 100, page: 1 })
                 }).then(function (r) { return r.json(); })
@@ -1395,7 +1395,7 @@
         }
 
         // Fetch target env data
-        var targetDataPromise = fetch("/api/worktype/compare/" + encodeURIComponent(_selectedType), {
+        var targetDataPromise = shared.apiFetch("/api/worktype/compare/" + encodeURIComponent(_selectedType), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ targetEnv: targetEnv })
@@ -1817,7 +1817,7 @@
     // ═══════════════════════════════════════════
 
     function checkIndexStatus() {
-        fetch("/api/worktype/index/status").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/worktype/index/status").then(function (r) { return r.json(); }).then(function (data) {
             renderIndexStatus(data);
             if (data.status === "building") startIdxPoll();
         }).catch(function () {});
@@ -1883,20 +1883,24 @@
     }
 
     function onBuildIndex() {
-        fetch("/api/worktype/index/build", {
+        var buildEnv = shared.getCurrentEnv();
+        shared.apiFetch("/api/worktype/index/build", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ force: true })
         }).then(function (r) { return r.json(); }).then(function (data) {
             renderIndexStatus(data);
-            startIdxPoll();
+            startIdxPoll(buildEnv);
         }).catch(function () {});
     }
 
-    function startIdxPoll() {
+    function startIdxPoll(pinnedEnv) {
         stopIdxPoll();
+        // Pin the environment so polling continues against the correct env
+        // even if the user switches env mid-build.
+        var env = pinnedEnv || shared.getCurrentEnv();
         _idxPollTimer = setInterval(function () {
-            fetch("/api/worktype/index/status").then(function (r) { return r.json(); }).then(function (data) {
+            shared.apiFetch("/api/worktype/index/status", { headers: { "X-Sharedo-Env": env } }).then(function (r) { return r.json(); }).then(function (data) {
                 renderIndexStatus(data);
                 if (data.status !== "building") stopIdxPoll();
             }).catch(function () { stopIdxPoll(); });
@@ -1944,7 +1948,7 @@
         showSearchResults();
         document.getElementById("srList").innerHTML = '<div class="wt-sr__loading"><span class="fa fa-spinner fa-spin"></span> Searching...</div>';
 
-        fetch("/api/worktype/index/search", {
+        shared.apiFetch("/api/worktype/index/search", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)

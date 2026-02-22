@@ -76,7 +76,7 @@ function start() {
     for (var en in _healthState) _healthState[en].isFirst = true;
     var interval = _deps.getAutoRefreshInterval();
     var ns = _deps.getNotifySettings();
-    var alertMode = ns.desktopNotifications ? ("alerting" + (ns.notifyProdOnly ? " (prod only)" : " (all envs)")) : "metrics only";
+    var alertMode = (ns.desktopAlertMonitoring || _deps.getTeamsConfig().enabled) ? ("alerting" + (ns.notifyProdOnly ? " (prod only)" : " (all envs)")) : "metrics only";
     _deps.log("health", "Monitor started -- " + alertMode + " (interval: " + interval + "ms, alert duration: " + ns.alertDurationThreshold + "s)");
     _healthTimer = setInterval(runAllHealthChecks, interval);
     setTimeout(runAllHealthChecks, 2000);
@@ -222,7 +222,7 @@ function processHealthCheck(envName, data) {
 
     // ── Alert evaluation ──
 
-    var shouldAlert = env.isMock ? true : (ns.desktopNotifications && (!ns.notifyProdOnly || envName === "prod"));
+    var shouldAlert = env.isMock ? true : ((ns.desktopAlertMonitoring || _deps.getTeamsConfig().enabled) && (!ns.notifyProdOnly || envName === "prod"));
     var alertCount = 0;
 
     var thresholdMs = ns.alertDurationThreshold * 1000;

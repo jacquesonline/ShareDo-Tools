@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
+<link rel="stylesheet" href="/register/register-style.css">
+</head>
+<body>
+
+<div class="reg-page">
+    <div class="reg-card">
+        <div class="reg-header">
+            <div class="reg-header__title">ShareDo Tools</div>
+            <div class="reg-header__desc">Register to continue. Your details are used for display and Teams notification mentions.</div>
+        </div>
+
+        <div class="reg-form" id="regForm">
+            <div class="reg-field">
+                <label class="reg-label" for="regFirstName">First Name</label>
+                <input type="text" class="reg-input" id="regFirstName" placeholder="First name" autocomplete="given-name" />
+            </div>
+            <div class="reg-field">
+                <label class="reg-label" for="regLastName">Last Name</label>
+                <input type="text" class="reg-input" id="regLastName" placeholder="Last name" autocomplete="family-name" />
+            </div>
+            <div class="reg-field">
+                <label class="reg-label" for="regEmail">MB Email Address</label>
+                <div class="reg-email-row">
+                    <input type="text" class="reg-input reg-input--email" id="regEmail" placeholder="firstname.lastname" autocomplete="email" />
+                    <span class="reg-email-suffix">@mauriceblackburn.com.au</span>
+                </div>
+            </div>
+
+            <div class="reg-error" id="regError" style="display:none"></div>
+
+            <button class="reg-submit" id="regSubmitBtn">
+                <span class="fa fa-sign-in"></span> Register
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/register/register.js"></script>
+</body>
+</html>

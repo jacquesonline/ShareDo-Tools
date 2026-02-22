@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════
+   Registration page
+   ═══════════════════════════════════════════ */
+
+.reg-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.reg-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ─── Header ─── */
+.reg-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.reg-header__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.reg-header__desc {
+    font-size: var(--font-size-base);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ─── Form ─── */
+.reg-form {
+    padding: 24px 28px 28px;
+}
+
+.reg-field {
+    margin-bottom: 16px;
+}
+
+.reg-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.reg-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: var(--font-size-lg);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.reg-input:focus {
+    border-color: var(--accent-blue);
+}
+
+.reg-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ─── Email row ─── */
+.reg-email-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.reg-input--email {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.reg-email-suffix {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+/* ─── Error ─── */
+.reg-error {
+    padding: 10px 14px;
+    background: var(--accent-red-bg);
+    border: 1px solid var(--accent-red);
+    border-radius: 6px;
+    color: var(--accent-red);
+    font-size: var(--font-size-base);
+    margin-bottom: 16px;
+}
+
+/* ─── Submit ─── */
+.reg-submit {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--nav-primary-bg, var(--accent-blue));
+    color: var(--nav-primary-text, #fff);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.reg-submit:hover {
+    opacity: 0.85;
+}
+
+.reg-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* ─── MB Brand overrides ─── */
+[data-theme="mb-brand"] .reg-submit {
+    background: #CC2E57;
+}

@@ -108,8 +108,6 @@ async function buildIndex(envName) {
 
             var indexedTypes = [];
             for (var i = 0; i < flatTypes.length; i++) {
-                if (_deps.getCurrentEnv() !== envName) { state.status = "error"; state.error = "Environment changed during build"; _deps.log("wtindex", "Build aborted: env changed"); return; }
-
                 var ft = flatTypes[i];
                 var sn = ft.systemName;
                 state.progress = { current: sn, done: i, total: flatTypes.length };

@@ -149,7 +149,7 @@
         document.getElementById("metFileClearBtn").addEventListener("click", clearFileMode);
 
         // Load env list then auto-load metrics
-        fetch("/api/env").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/env").then(function (r) { return r.json(); }).then(function (data) {
             _environments = data.environments || [];
             var sel = document.getElementById("metEnvSelect");
             sel.innerHTML = "";

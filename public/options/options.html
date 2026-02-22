@@ -55,6 +55,7 @@
                 <button class="opt-nav__item" data-opt-nav="worktypes">Work Types</button>
                 <div class="opt-nav__separator"></div>
                 <button class="opt-nav__item" data-opt-nav="authentication">Authentication</button>
+                <button class="opt-nav__item" data-opt-nav="admin" id="optNavAdmin" style="display:none">Admin</button>
             </div>
             <div class="opt-save-bar">
                 <button class="usd-btn usd-btn--primary opt-save-btn" id="optSaveBtn">
@@ -147,10 +148,26 @@
                 <!-- Desktop -->
                 <div class="opt-panel__sub-title">Desktop</div>
                 <div class="opt-card">
+                    <!-- Admin gate: Desktop Alert Monitoring (multi-user only, shown by JS) -->
+                    <div id="optAlertMonitoringRow" style="display:none">
+                        <div class="opt-row">
+                            <div class="opt-row__text">
+                                <div class="opt-row__label">Desktop Alert Monitoring</div>
+                                <div class="opt-row__desc">Server-level gate. When enabled, the health monitor evaluates alert conditions and pushes notifications via SSE. Required for desktop alerts to reach any user. Admin only.</div>
+                            </div>
+                            <div class="opt-row__control">
+                                <button class="opt-toggle-btn" id="optAlertMonitoringBtn">
+                                    <span class="opt-toggle-btn__label" id="optAlertMonitoringLabel">Off</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opt-divider"></div>
+                    </div>
+                    <!-- Per-user: Desktop Notifications -->
                     <div class="opt-row">
                         <div class="opt-row__text">
                             <div class="opt-row__label">Desktop Notifications</div>
-                            <div class="opt-row__desc">Master toggle. Requires browser permission.</div>
+                            <div class="opt-row__desc" id="optNotifyDesc">Master toggle. Requires browser permission.</div>
                         </div>
                         <div class="opt-row__control">
                             <div class="opt-notify-controls">
@@ -612,6 +629,38 @@
                 <div class="opt-panel__title">Authentication</div>
                 <div class="opt-panel__desc">Cookie-based sessions for admin endpoints. Environments can authenticate via auto-auth (.env credentials), browser login (Playwright), or manual cookie paste.</div>
                 <div class="opt-card" id="optAuthRows"></div>
+            </div>
+
+            <!-- Admin (multi-user only, shown by JS) -->
+            <div class="opt-panel" data-opt-panel="admin" id="optAdminPanel" style="display:none">
+                <div class="opt-panel__title">Admin Access</div>
+                <div class="opt-panel__desc">Enter the admin key to unlock server-level settings, cookie management, and other admin features. The key is configured in the server's .env file.</div>
+                <div class="opt-card">
+                    <div class="opt-row" id="optAdminKeyRow">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Admin Key</div>
+                            <div class="opt-row__desc" id="optAdminDesc">Paste the admin key to gain elevated access for this session.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="password" class="opt-input opt-input--wide" id="optAdminKeyInput" placeholder="Admin key" />
+                                <button class="usd-btn usd-btn--primary" id="optAdminVerifyBtn"><span class="fa fa-key"></span> Verify</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-notify-status" id="optAdminStatus"></div>
+                </div>
+                <div class="opt-card" id="optAdminLogoutCard">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Session</div>
+                            <div class="opt-row__desc">Log out and clear your session cookie. You will need to re-register on next visit.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="usd-btn" id="optLogoutBtn"><span class="fa fa-sign-out"></span> Logout</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

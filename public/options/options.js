@@ -6,6 +6,7 @@
     "use strict";
 
     var _notifyOn = false;
+    var _alertMonitoringOn = false; // server gate (admin-level "Desktop Alert Monitoring")
     var _notifyStreams = true;
     var _notifyStreamsDuration = true;
     var _notifyConnections = true;
@@ -24,6 +25,9 @@
     var _uxProbes = [];
     var _uxWorkItemId = "";
     var _uxPageTargets = [];
+
+    var _isMultiUser = false;
+    var _isAdmin = false;
 
     var NAV_KEY = "sharedo-tools-options-nav";
     var DEFAULT_NAV = "appearance";
@@ -58,8 +62,25 @@
         document.getElementById("optUxPageTargetInput").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addPageTarget(); } });
         document.getElementById("optSaveBtn").addEventListener("click", saveSettings);
 
-        loadSettings();
-        loadAuthStatus();
+        // Multi-user: admin key verification
+        document.getElementById("optAdminVerifyBtn").addEventListener("click", verifyAdminKey);
+        document.getElementById("optAdminKeyInput").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); verifyAdminKey(); } });
+        document.getElementById("optLogoutBtn").addEventListener("click", logout);
+
+        // Multi-user: Desktop Alert Monitoring toggle (admin gate)
+        document.getElementById("optAlertMonitoringBtn").addEventListener("click", toggleAlertMonitoring);
+
+        // Check session state before loading settings
+        fetch("/api/session").then(function (r) { return r.json(); }).then(function (data) {
+            _isMultiUser = !!data.multiUser;
+            _isAdmin = !!(data.user && data.user.isAdmin);
+            applyAccessState();
+            loadSettings();
+            loadAuthStatus();
+        }).catch(function () {
+            loadSettings();
+            loadAuthStatus();
+        });
     }
 
     // ─── Left nav ───
@@ -91,6 +112,141 @@
         try { localStorage.setItem(NAV_KEY, key); } catch (e) {}
     }
 
+    // ─── Multi-user access control ───
+
+    function applyAccessState() {
+        if (!_isMultiUser) {
+            // Single-user: hide multi-user elements, everything editable
+            hide("optNavAdmin");
+            hide("optAdminPanel");
+            hide("optAlertMonitoringRow");
+            return;
+        }
+
+        // Multi-user mode: show admin nav and panel
+        show("optNavAdmin");
+        show("optAdminPanel");
+        show("optAlertMonitoringRow");
+
+        // Update admin panel UI
+        if (_isAdmin) {
+            hide("optAdminKeyRow");
+            document.getElementById("optAdminDesc").textContent = "Admin access granted for this session.";
+        } else {
+            show("optAdminKeyRow");
+            document.getElementById("optAdminDesc").textContent = "Paste the admin key to gain elevated access for this session.";
+        }
+
+        // Desktop Notifications description changes in multi-user mode
+        document.getElementById("optNotifyDesc").textContent = _isMultiUser
+            ? "Opt in to receive desktop notifications from the server alert stream. Requires browser permission and Desktop Alert Monitoring to be enabled by an admin."
+            : "Master toggle. Requires browser permission.";
+
+        // Server-setting panels: apply read-only state for non-admin
+        var serverPanels = ["monitor", "notifications", "metrics", "ux", "waila", "worktypes"];
+        for (var i = 0; i < serverPanels.length; i++) {
+            var panel = document.querySelector('[data-opt-panel="' + serverPanels[i] + '"]');
+            if (!panel) continue;
+            var inputs = panel.querySelectorAll("input, select");
+            var buttons = panel.querySelectorAll(".opt-toggle-btn, .usd-btn");
+            var autoToggles = panel.querySelectorAll(".usd-auto-toggle");
+            var chipRemoves = panel.querySelectorAll(".usd-chip__remove");
+            for (var j = 0; j < inputs.length; j++) inputs[j].disabled = !_isAdmin;
+            for (var k = 0; k < buttons.length; k++) buttons[k].disabled = !_isAdmin;
+            for (var at = 0; at < autoToggles.length; at++) {
+                autoToggles[at].style.pointerEvents = _isAdmin ? "" : "none";
+                autoToggles[at].style.opacity = _isAdmin ? "" : "0.5";
+            }
+            for (var cr = 0; cr < chipRemoves.length; cr++) {
+                chipRemoves[cr].style.pointerEvents = _isAdmin ? "" : "none";
+                chipRemoves[cr].style.opacity = _isAdmin ? "" : "0.5";
+            }
+        }
+
+        // Per-user controls are always enabled (Desktop Notifications toggle, theme)
+        var appearancePanel = document.querySelector('[data-opt-panel="appearance"]');
+        if (appearancePanel) {
+            var aInputs = appearancePanel.querySelectorAll("input, select");
+            var aButtons = appearancePanel.querySelectorAll(".opt-toggle-btn, .usd-btn");
+            for (var ai = 0; ai < aInputs.length; ai++) aInputs[ai].disabled = false;
+            for (var ak = 0; ak < aButtons.length; ak++) aButtons[ak].disabled = false;
+        }
+        // Desktop Notifications toggle is per-user, always enabled
+        var notifyBtn = document.getElementById("optNotifyBtn");
+        if (notifyBtn) notifyBtn.disabled = false;
+        var testNotifyBtn = document.getElementById("optTestNotifyBtn");
+        if (testNotifyBtn) testNotifyBtn.disabled = false;
+        // Chart Backgrounds is per-user, always enabled (lives in Metrics panel)
+        var chartBgBtn = document.getElementById("optChartBgBtn");
+        if (chartBgBtn) chartBgBtn.disabled = false;
+
+        // Authentication panel: visible for admin only in multi-user
+        var authNav = document.querySelector('[data-opt-nav="authentication"]');
+        if (authNav) authNav.style.display = _isAdmin ? "" : "none";
+        // If auth panel is the active panel when switching to non-admin, switch away
+        if (!_isAdmin) {
+            var authPanel = document.querySelector('[data-opt-panel="authentication"]');
+            if (authPanel && authPanel.style.display !== "none") showPanel("appearance");
+        }
+
+        // Logout card: visible for all users in admin panel
+        show("optAdminLogoutCard");
+    }
+
+    function show(id) { var el = document.getElementById(id); if (el) el.style.display = ""; }
+    function hide(id) { var el = document.getElementById(id); if (el) el.style.display = "none"; }
+
+    function verifyAdminKey() {
+        var input = document.getElementById("optAdminKeyInput");
+        var key = input.value.trim();
+        if (!key) { input.focus(); return; }
+
+        var btn = document.getElementById("optAdminVerifyBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="fa fa-spinner fa-spin"></span>';
+
+        fetch("/api/session/admin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: key })
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            if (data.error) {
+                showAdminStatus(data.message || "Verification failed");
+                btn.innerHTML = '<span class="fa fa-key"></span> Verify';
+                btn.disabled = false;
+                return;
+            }
+            _isAdmin = true;
+            input.value = "";
+            showAdminStatus("Admin access granted");
+            applyAccessState();
+            loadSettings();
+            setTimeout(hideAdminStatus, 3000);
+            btn.innerHTML = '<span class="fa fa-key"></span> Verify';
+            btn.disabled = false;
+        }).catch(function () {
+            showAdminStatus("Verification failed");
+            btn.innerHTML = '<span class="fa fa-key"></span> Verify';
+            btn.disabled = false;
+        });
+    }
+
+    function logout() {
+        fetch("/api/session/logout", { method: "POST" })
+            .then(function () { window.location.href = "/register"; })
+            .catch(function () { window.location.href = "/register"; });
+    }
+
+    function showAdminStatus(msg) {
+        var el = document.getElementById("optAdminStatus");
+        el.textContent = msg;
+        el.classList.add("opt-notify-status--visible");
+    }
+
+    function hideAdminStatus() {
+        document.getElementById("optAdminStatus").classList.remove("opt-notify-status--visible");
+    }
+
     // ─── Settings load / save ───
 
     function loadSettings() {
@@ -111,7 +267,13 @@
             updateHcDisplay();
 
             // Notifications
-            _notifyOn = !!data.desktopNotifications;
+            _alertMonitoringOn = !!data.desktopAlertMonitoring;
+            if (_isMultiUser) {
+                _notifyOn = !!data.desktopNotifications;
+            } else {
+                // Single-user: desktopNotifications mirrors desktopAlertMonitoring
+                _notifyOn = _alertMonitoringOn;
+            }
             if (data.notifyStreams != null) _notifyStreams = !!data.notifyStreams;
             if (data.notifyStreamsDuration != null) _notifyStreamsDuration = !!data.notifyStreamsDuration;
             if (data.notifyConnections != null) _notifyConnections = !!data.notifyConnections;
@@ -164,44 +326,53 @@
         var recoveryThreshold = parseInt(document.getElementById("optRecoveryThreshold").value, 10);
         var gracePeriod = parseInt(document.getElementById("optGracePeriod").value, 10);
 
+        // Per-user settings (always sent)
         var body = {
-            backlogThreshold: parseInt(document.getElementById("optBacklogThreshold").value, 10),
-            wailaFetchDelay: parseInt(document.getElementById("optWailaDelay").value, 10),
-            wtIndexFetchDelay: parseInt(document.getElementById("optWtIndexDelay").value, 10),
-            autoRefreshInterval: (isNaN(autoRefreshSec) ? 60 : autoRefreshSec) * 1000,
-            cookieRefreshInterval: (isNaN(cookieRefreshMin) ? 10 : cookieRefreshMin) * 60000,
-            alertDurationThreshold: parseInt(document.getElementById("optAlertDuration").value, 10) || 0,
-            notifyRecoveryThreshold: isNaN(recoveryThreshold) ? 0 : Math.min(100, Math.max(0, recoveryThreshold)),
-            notifyGracePeriod: isNaN(gracePeriod) ? 0 : Math.max(0, gracePeriod),
             theme: document.body.dataset.theme || "dark",
-            desktopNotifications: _notifyOn,
-            notifyStreams: _notifyStreams,
-            notifyStreamsDuration: _notifyStreamsDuration,
-            notifyConnections: _notifyConnections,
-            notifyConnectionsDuration: _notifyConnectionsDuration,
-            zeroConnectionStreams: document.getElementById("optZeroConnectionStreams").value.trim(),
-            notifyNodes: _notifyNodes,
-            notifyNodesDuration: _notifyNodesDuration,
-            notifyServices: _notifyServices,
-            notifyServicesDuration: _notifyServicesDuration,
-            notifyProdOnly: _notifyProdOnly,
             highContrast: document.body.classList.contains("high-contrast"),
-            metricsEnabled: _metricsEnabled,
-            metricsInterval: Math.max(5, parseInt(document.getElementById("optMetricsInterval").value, 10) || 30),
             chartBackgrounds: _chartBackgrounds,
-            uxEnabled: _uxEnabled,
-            uxAutoProbes: _uxAutoProbes,
-            uxAutoPages: _uxAutoPages,
-            uxProbeInterval: Math.max(10, parseInt(document.getElementById("optUxProbeInterval").value, 10) || 60),
-            uxPageInterval: Math.max(60, parseInt(document.getElementById("optUxPageInterval").value, 10) || 300),
-            uxProbeEnv: document.getElementById("optUxEnv").value || "prod",
-            uxAlerts: _uxAlerts,
-            uxProbeThresholdWarn: Math.max(100, parseInt(document.getElementById("optUxThresholdWarn").value, 10) || 3000),
-            uxProbeThresholdCrit: Math.max(100, parseInt(document.getElementById("optUxThresholdCrit").value, 10) || 5000),
-            uxProbes: _uxProbes,
-            uxWorkItemId: document.getElementById("optUxWorkItemId").value.trim(),
-            uxPageTargets: _uxPageTargets
+            desktopNotifications: _notifyOn
         };
+
+        // Server settings (sent always -- server rejects for non-admin in multi-user mode)
+        body.backlogThreshold = parseInt(document.getElementById("optBacklogThreshold").value, 10);
+        body.wailaFetchDelay = parseInt(document.getElementById("optWailaDelay").value, 10);
+        body.wtIndexFetchDelay = parseInt(document.getElementById("optWtIndexDelay").value, 10);
+        body.autoRefreshInterval = (isNaN(autoRefreshSec) ? 60 : autoRefreshSec) * 1000;
+        body.cookieRefreshInterval = (isNaN(cookieRefreshMin) ? 10 : cookieRefreshMin) * 60000;
+        body.alertDurationThreshold = parseInt(document.getElementById("optAlertDuration").value, 10) || 0;
+        body.notifyRecoveryThreshold = isNaN(recoveryThreshold) ? 0 : Math.min(100, Math.max(0, recoveryThreshold));
+        body.notifyGracePeriod = isNaN(gracePeriod) ? 0 : Math.max(0, gracePeriod);
+        if (_isMultiUser) {
+            body.desktopAlertMonitoring = _alertMonitoringOn;
+        } else {
+            // Single-user: desktopNotifications acts as the server gate too (backward compat)
+            body.desktopNotifications = _notifyOn;
+        }
+        body.notifyStreams = _notifyStreams;
+        body.notifyStreamsDuration = _notifyStreamsDuration;
+        body.notifyConnections = _notifyConnections;
+        body.notifyConnectionsDuration = _notifyConnectionsDuration;
+        body.zeroConnectionStreams = document.getElementById("optZeroConnectionStreams").value.trim();
+        body.notifyNodes = _notifyNodes;
+        body.notifyNodesDuration = _notifyNodesDuration;
+        body.notifyServices = _notifyServices;
+        body.notifyServicesDuration = _notifyServicesDuration;
+        body.notifyProdOnly = _notifyProdOnly;
+        body.metricsEnabled = _metricsEnabled;
+        body.metricsInterval = Math.max(5, parseInt(document.getElementById("optMetricsInterval").value, 10) || 30);
+        body.uxEnabled = _uxEnabled;
+        body.uxAutoProbes = _uxAutoProbes;
+        body.uxAutoPages = _uxAutoPages;
+        body.uxProbeInterval = Math.max(10, parseInt(document.getElementById("optUxProbeInterval").value, 10) || 60);
+        body.uxPageInterval = Math.max(60, parseInt(document.getElementById("optUxPageInterval").value, 10) || 300);
+        body.uxProbeEnv = document.getElementById("optUxEnv").value || "prod";
+        body.uxAlerts = _uxAlerts;
+        body.uxProbeThresholdWarn = Math.max(100, parseInt(document.getElementById("optUxThresholdWarn").value, 10) || 3000);
+        body.uxProbeThresholdCrit = Math.max(100, parseInt(document.getElementById("optUxThresholdCrit").value, 10) || 5000);
+        body.uxProbes = _uxProbes;
+        body.uxWorkItemId = document.getElementById("optUxWorkItemId").value.trim();
+        body.uxPageTargets = _uxPageTargets;
 
         fetch("/api/settings", {
             method: "POST",
@@ -280,6 +451,11 @@
 
     // ─── Notifications ───
 
+    function toggleAlertMonitoring() {
+        _alertMonitoringOn = !_alertMonitoringOn;
+        updateNotifyDisplay();
+    }
+
     function toggleNotifications() {
         if (typeof Notification === "undefined") {
             showNotifyStatus("Browser does not support notifications");
@@ -310,6 +486,20 @@
     }
 
     function updateNotifyDisplay() {
+        // Desktop Alert Monitoring (admin gate, multi-user only)
+        var amBtn = document.getElementById("optAlertMonitoringBtn");
+        var amLabel = document.getElementById("optAlertMonitoringLabel");
+        if (amBtn) {
+            if (_alertMonitoringOn) {
+                amBtn.classList.add("opt-toggle-btn--on");
+                amLabel.textContent = "On";
+            } else {
+                amBtn.classList.remove("opt-toggle-btn--on");
+                amLabel.textContent = "Off";
+            }
+        }
+
+        // Desktop Notifications (per-user)
         var btn = document.getElementById("optNotifyBtn");
         var label = document.getElementById("optNotifyLabel");
         var testBtn = document.getElementById("optTestNotifyBtn");
@@ -319,13 +509,17 @@
             btn.classList.add("opt-toggle-btn--on");
             label.textContent = "On";
             testBtn.style.display = "";
-            subsPanel.style.display = "";
         } else {
             btn.classList.remove("opt-toggle-btn--on");
             label.textContent = "Off";
             testBtn.style.display = "none";
-            subsPanel.style.display = "none";
         }
+
+        // Sub-toggles visibility:
+        // Multi-user: shown when admin gate is on (sub-toggles are server config)
+        // Single-user: shown when desktop notifications is on (acts as combined gate)
+        var showSubs = _isMultiUser ? _alertMonitoringOn : _notifyOn;
+        subsPanel.style.display = showSubs ? "" : "none";
 
         updateSubToggle("Streams", _notifyStreams);
         updateSubToggle("Connections", _notifyConnections);
@@ -368,6 +562,7 @@
     }
 
     function toggleSubNotify(name) {
+        if (_isMultiUser && !_isAdmin) return;
         if (name === "Streams") _notifyStreams = !_notifyStreams;
         else if (name === "Connections") _notifyConnections = !_notifyConnections;
         else if (name === "Nodes") _notifyNodes = !_notifyNodes;
@@ -376,6 +571,7 @@
     }
 
     function toggleSubDuration(name) {
+        if (_isMultiUser && !_isAdmin) return;
         if (name === "Streams") _notifyStreamsDuration = !_notifyStreamsDuration;
         else if (name === "Connections") _notifyConnectionsDuration = !_notifyConnectionsDuration;
         else if (name === "Nodes") _notifyNodesDuration = !_notifyNodesDuration;
@@ -384,6 +580,7 @@
     }
 
     function toggleProdOnly() {
+        if (_isMultiUser && !_isAdmin) return;
         _notifyProdOnly = !_notifyProdOnly;
         updateProdOnlyDisplay();
     }
@@ -417,6 +614,7 @@
     // ─── Metrics ───
 
     function toggleMetrics() {
+        if (_isMultiUser && !_isAdmin) return;
         _metricsEnabled = !_metricsEnabled;
         updateMetricsDisplay();
     }
@@ -453,6 +651,7 @@
     // ─── UX Monitor ───
 
     function toggleUxEnabled() {
+        if (_isMultiUser && !_isAdmin) return;
         _uxEnabled = !_uxEnabled;
         updateUxEnabledDisplay();
     }
@@ -470,6 +669,7 @@
     }
 
     function toggleUxAutoProbes() {
+        if (_isMultiUser && !_isAdmin) return;
         _uxAutoProbes = !_uxAutoProbes;
         updateUxAutoProbesDisplay();
     }
@@ -487,6 +687,7 @@
     }
 
     function toggleUxAutoPages() {
+        if (_isMultiUser && !_isAdmin) return;
         _uxAutoPages = !_uxAutoPages;
         updateUxAutoPagesDisplay();
     }
@@ -504,6 +705,7 @@
     }
 
     function toggleUxAlerts() {
+        if (_isMultiUser && !_isAdmin) return;
         _uxAlerts = !_uxAlerts;
         updateUxAlertsDisplay();
     }
@@ -537,6 +739,7 @@
     // ─── Page Check Target chips ───
 
     function addPageTarget() {
+        if (_isMultiUser && !_isAdmin) return;
         var input = document.getElementById("optUxPageTargetInput");
         var val = input.value.trim();
         if (!val) return;
@@ -556,6 +759,7 @@
     }
 
     function removePageTarget(idx) {
+        if (_isMultiUser && !_isAdmin) return;
         _uxPageTargets.splice(idx, 1);
         renderPageTargetChips();
     }
@@ -610,7 +814,9 @@
         // Wire toggles
         var toggles = container.querySelectorAll(".opt-ux-probe-toggle");
         for (var ti = 0; ti < toggles.length; ti++) {
+            if (_isMultiUser && !_isAdmin) toggles[ti].disabled = true;
             toggles[ti].addEventListener("click", function () {
+                if (_isMultiUser && !_isAdmin) return;
                 var idx = parseInt(this.getAttribute("data-probe-idx"), 10);
                 _uxProbes[idx].enabled = !_uxProbes[idx].enabled;
                 renderUxProbeList();

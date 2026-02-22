@@ -57,7 +57,7 @@
         });
 
         // Load initial env, then refresh
-        fetch("/api/env").then(function (r) { return r.json(); }).then(function (d) {
+        shared.apiFetch("/api/env").then(function (r) { return r.json(); }).then(function (d) {
             _currentEnvName = d.current || "";
             updateSysadminVisibility();
             wireExtLinks();
@@ -226,7 +226,7 @@
         var rpp = parseInt(document.getElementById("procRowsPerPage").value, 10) || 10;
         var fromDate = getFromDate("proc");
 
-        fetch("/api/processes", {
+        shared.apiFetch("/api/processes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: procPage, rowsPerPage: rpp, states: states, fromDate: fromDate })
@@ -298,7 +298,7 @@
 
         var rpp = parseInt(document.getElementById("emailRowsPerPage").value, 10) || 10;
 
-        fetch("/api/issues/emails", {
+        shared.apiFetch("/api/issues/emails", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: emailPage, rowsPerPage: rpp, fromDate: getFromDate("email") })
@@ -332,7 +332,7 @@
 
         var rpp = parseInt(document.getElementById("smsRowsPerPage").value, 10) || 10;
 
-        fetch("/api/issues/sms", {
+        shared.apiFetch("/api/issues/sms", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: smsPage, rowsPerPage: rpp, fromDate: getFromDate("sms") })
@@ -405,7 +405,7 @@
         var countEl = document.getElementById("sysadminCount");
         body.innerHTML = '<tr><td colspan="6" class="usd-table__muted"><span class="fa fa-spinner fa-spin"></span> Loading...</td></tr>';
 
-        fetch("/api/issues/sysadmin", {
+        shared.apiFetch("/api/issues/sysadmin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: 1, rowsPerPage: 100, fromDate: getFromDate("sysadmin") })
@@ -490,7 +490,7 @@
         bodyEl.innerHTML = '<div class="iss-log-loading"><span class="fa fa-spinner fa-spin"></span> Loading process detail...</div>';
         modal.style.display = "flex";
 
-        fetch("/api/processes/" + encodeURIComponent(processId))
+        shared.apiFetch("/api/processes/" + encodeURIComponent(processId))
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data || data.error) {
@@ -577,7 +577,7 @@
     }
 
     function fetchStepLog(processId, stepId, logEl) {
-        fetch("/api/processes/" + encodeURIComponent(processId) + "/steps/" + encodeURIComponent(stepId) + "/log")
+        shared.apiFetch("/api/processes/" + encodeURIComponent(processId) + "/steps/" + encodeURIComponent(stepId) + "/log")
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data || data.error) {

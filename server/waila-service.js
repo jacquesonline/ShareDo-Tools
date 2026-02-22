@@ -115,8 +115,6 @@ async function buildIndex(envName) {
 
             var workflows = [];
             for (var i = 0; i < systemNames.length; i++) {
-                if (_deps.getCurrentEnv() !== envName) { state.status = "error"; state.error = "Environment changed during build"; _deps.log("waila", "Build aborted: env changed"); return; }
-
                 var wfSn = systemNames[i];
                 state.progress = { phase: "fetching", fetched: i, total: systemNames.length, current: wfSn };
                 var planUrl = "/api/executionengine/visualmodeller/plans/" + encodeURIComponent(wfSn);

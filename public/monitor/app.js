@@ -45,7 +45,7 @@
     // ─── Refresh ───
     function refreshAll() {
         document.getElementById("refreshBtn").classList.add("usd-btn--loading");
-        fetch("/api/refresh").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/refresh").then(function (r) { return r.json(); }).then(function (data) {
             if (data.error) { showGlobalError(data.message); return; }
             clearGlobalError();
             if (data.hasCookie !== undefined) shared.updateCookieStatus(data.hasCookie);

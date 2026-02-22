@@ -58,7 +58,7 @@
 
     // ─── Index management ───
     function checkIndexStatus() {
-        fetch("/api/waila/index/status").then(function (r) { return r.json(); }).then(function (data) {
+        shared.apiFetch("/api/waila/index/status").then(function (r) { return r.json(); }).then(function (data) {
             renderIndexStatus(data);
             if (data.status === "building") startPolling();
         }).catch(function () {});
@@ -126,16 +126,20 @@
 
     function buildIndex() {
         document.getElementById("buildBtn").classList.add("usd-btn--loading");
-        fetch("/api/waila/index/build", { method: "POST" })
+        var buildEnv = shared.getCurrentEnv();
+        shared.apiFetch("/api/waila/index/build", { method: "POST" })
             .then(function (r) { return r.json(); })
-            .then(function () { startPolling(); })
+            .then(function () { startPolling(buildEnv); })
             .catch(function () {});
     }
 
-    function startPolling() {
+    function startPolling(pinnedEnv) {
         stopPolling();
+        // Pin the environment so polling continues against the correct env
+        // even if the user switches env mid-build.
+        var env = pinnedEnv || shared.getCurrentEnv();
         pollTimer = setInterval(function () {
-            fetch("/api/waila/index/status").then(function (r) { return r.json(); }).then(function (data) {
+            shared.apiFetch("/api/waila/index/status", { headers: { "X-Sharedo-Env": env } }).then(function (r) { return r.json(); }).then(function (data) {
                 renderIndexStatus(data);
                 if (data.status !== "building") stopPolling();
             }).catch(function () { stopPolling(); });
@@ -187,7 +191,7 @@
         container.innerHTML = '<div class="wla-loading"><span class="fa fa-spinner fa-spin"></span> Searching...</div>';
         document.getElementById("resultsMeta").style.display = "none";
 
-        fetch("/api/waila/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        shared.apiFetch("/api/waila/search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
             .then(function (r) { return r.json(); })
             .then(function (data) { renderResults(data, unified); })
             .catch(function (err) {
@@ -425,7 +429,7 @@
         document.getElementById("resultsMeta").style.display = "none";
         document.getElementById("exportPanel").style.display = "none";
 
-        fetch("/api/waila/diff", {
+        shared.apiFetch("/api/waila/diff", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ targetEnv: target })
@@ -610,7 +614,7 @@
         bodyEl.innerHTML = '<div class="usd-modal__loading"><span class="fa fa-spinner fa-spin"></span> Generating script preview...</div>';
         modal.style.display = "flex";
 
-        fetch("/api/waila/workflow/" + encodeURIComponent(systemName) + "/preview", {
+        shared.apiFetch("/api/waila/workflow/" + encodeURIComponent(systemName) + "/preview", {
             method: "POST"
         })
         .then(function (r) { return r.json(); })

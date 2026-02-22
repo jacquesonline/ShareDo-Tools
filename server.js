@@ -18,6 +18,7 @@ const wailaService = require("./server/waila-service");
 const worktypeService = require("./server/worktype-service");
 const metrics = require("./server/metrics-service");
 const auth = require("./server/auth");
+const session = require("./server/session");
 // ─── Logging ───
 // TODO: Add log levels (debug/info/warn/error) if granularity beyond category filtering is needed.
 var LOG_CATEGORIES = {
@@ -136,7 +137,8 @@ function loadSettings() {
             if (data.autoRefreshInterval != null) _autoRefreshInterval = parseInt(data.autoRefreshInterval, 10) || _autoRefreshInterval;
             if (data.alertDurationThreshold != null) _alertDurationThreshold = parseInt(data.alertDurationThreshold, 10) || _alertDurationThreshold;
             if (data.theme) _theme = data.theme;
-            if (data.desktopNotifications != null) _desktopNotifications = !!data.desktopNotifications;
+            if (data.desktopAlertMonitoring != null) _desktopAlertMonitoring = !!data.desktopAlertMonitoring;
+            else if (data.desktopNotifications != null) _desktopAlertMonitoring = !!data.desktopNotifications;
             if (data.notifyStreams != null) _notifyStreams = !!data.notifyStreams;
             if (data.notifyStreamsDuration != null) _notifyStreamsDuration = !!data.notifyStreamsDuration;
             if (data.notifyConnections != null) _notifyConnections = !!data.notifyConnections;
@@ -172,7 +174,7 @@ function saveSettings() {
             autoRefreshInterval: _autoRefreshInterval,
             alertDurationThreshold: _alertDurationThreshold,
             theme: _theme,
-            desktopNotifications: _desktopNotifications,
+            desktopAlertMonitoring: _desktopAlertMonitoring,
             notifyStreams: _notifyStreams,
             notifyStreamsDuration: _notifyStreamsDuration,
             notifyConnections: _notifyConnections,
@@ -195,7 +197,7 @@ function saveSettings() {
 var _autoRefreshInterval = 60000;
 var _alertDurationThreshold = parseInt(process.env.ALERT_DURATION_THRESHOLD, 10) || 60; // seconds
 var _theme = "dark";
-var _desktopNotifications = false;
+var _desktopAlertMonitoring = false;
 var _notifyStreams = true;
 var _notifyStreamsDuration = true;
 var _notifyConnections = true;          // alert when a stream drops to zero connections
@@ -267,8 +269,8 @@ function printStartupBanner() {
     }
     console.log("");
 
-    var notifyStatus = _desktopNotifications ? (_notifyProdOnly ? "On (prod only)" : "On (all envs)") : "Off";
-    var notifyColour = _desktopNotifications ? green : dim;
+    var notifyStatus = _desktopAlertMonitoring ? (_notifyProdOnly ? "On (prod only)" : "On (all envs)") : "Off";
+    var notifyColour = _desktopAlertMonitoring ? green : dim;
     var teamsStatus = _teamsEnabled ? "Enabled" : "Disabled";
     var teamsColour = _teamsEnabled ? green : dim;
     var metricsStatus = _metricsEnabled ? "On (" + _metricsInterval + "s interval)" : "Off";
@@ -294,6 +296,11 @@ function printStartupBanner() {
     var uxColour = uxBanner.isEnabled ? green : dim;
     console.log(label + "  UX monitor         " + r + uxColour + uxStatus + r);
     console.log(label + "  Mock env           " + r + mockColour + mockStatus + r);
+
+    var isMulti = (process.env.MULTI_USER || "false").toLowerCase() === "true";
+    var multiStatus = isMulti ? "Enabled" : "Disabled";
+    var multiColour = isMulti ? green : dim;
+    console.log(label + "  Multi-user         " + r + multiColour + multiStatus + r);
 }
 
 // ─── State ───
@@ -302,20 +309,46 @@ const backlogAlerts = {};
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
-// ─── Clean URL routes ───
-app.get("/", (_req, res) => { res.sendFile(path.join(__dirname, "public", "monitor", "monitor.html")); });
-app.get("/search", (_req, res) => { res.sendFile(path.join(__dirname, "public", "search", "search.html")); });
-app.get("/waila", (_req, res) => { res.sendFile(path.join(__dirname, "public", "waila", "waila.html")); });
-app.get("/options", (_req, res) => { res.sendFile(path.join(__dirname, "public", "options", "options.html")); });
-app.get("/issues", (_req, res) => { res.sendFile(path.join(__dirname, "public", "issues", "issues.html")); });
-app.get("/metrics", (_req, res) => { res.sendFile(path.join(__dirname, "public", "metrics", "metrics.html")); });
-app.get("/worktype", (_req, res) => { res.sendFile(path.join(__dirname, "public", "worktype", "worktype.html")); });
-app.get("/ux", (_req, res) => { res.sendFile(path.join(__dirname, "public", "ux", "ux.html")); });
-app.get("/theme-builder", (_req, res) => { res.sendFile(path.join(__dirname, "public", "theme-builder", "theme-builder.html")); });
 
-app.get("/api/env", (_req, res) => {
-    const env = environments[currentEnv];
-    res.json({ current: currentEnv, environment: env.label, apiHost: env.apiHost, hasCookie: !!auth.cookieCache[currentEnv],
+// ─── Environment resolution middleware ───
+// Reads X-Sharedo-Env header from the client to determine which environment
+// this request targets. Falls back to the server-level currentEnv default.
+// Phase 1 of multi-user support: decouples per-request env from server global.
+app.use("/api", function (req, _res, next) {
+    var envHeader = req.headers["x-sharedo-env"];
+    if (envHeader && environments[envHeader]) {
+        req.envName = envHeader;
+        req.envConfig = environments[envHeader];
+    } else {
+        req.envName = currentEnv;
+        req.envConfig = environments[currentEnv];
+    }
+    next();
+});
+
+// ─── Session middleware (multi-user mode) ───
+// Validates session cookie on API routes. No-op in single-user mode.
+// Exempt paths: GET /api/session, POST /api/session/register, GET /api/settings
+app.use("/api", session.middleware);
+
+// ─── Clean URL routes ───
+app.get("/register", (_req, res) => {
+    if (!session.isMultiUser()) return res.redirect("/");
+    res.sendFile(path.join(__dirname, "public", "register", "register.html"));
+});
+app.get("/", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "monitor", "monitor.html")); });
+app.get("/search", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "search", "search.html")); });
+app.get("/waila", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "waila", "waila.html")); });
+app.get("/options", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "options", "options.html")); });
+app.get("/issues", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "issues", "issues.html")); });
+app.get("/metrics", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "metrics", "metrics.html")); });
+app.get("/worktype", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "worktype", "worktype.html")); });
+app.get("/ux", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "ux", "ux.html")); });
+app.get("/theme-builder", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "theme-builder", "theme-builder.html")); });
+
+app.get("/api/env", (req, res) => {
+    const env = environments[req.envName];
+    res.json({ current: req.envName, environment: env.label, apiHost: env.apiHost, hasCookie: !!auth.cookieCache[req.envName],
         environments: envNames.map(n => ({ name: n, label: environments[n].label, apiHost: environments[n].apiHost, hasCookie: !!auth.cookieCache[n] })) });
 });
 app.post("/api/env/select", (req, res) => {
@@ -323,12 +356,12 @@ app.post("/api/env/select", (req, res) => {
     currentEnv = t; const env = environments[currentEnv]; log("env", `Switched to: ${env.label} (${env.apiHost})`);
     res.json({ current: currentEnv, environment: env.label, apiHost: env.apiHost, hasCookie: !!auth.cookieCache[currentEnv] });
 });
-app.post("/api/cookie", (req, res) => {
+app.post("/api/cookie", session.requireAdmin, (req, res) => {
     const c = req.body && req.body.cookie;
-    if (c && typeof c === "string" && c.trim().length > 0) { auth.setCookie(currentEnv, c.trim(), "manual"); res.json({ success: true, hasCookie: true }); }
-    else { auth.clearCookie(currentEnv); res.json({ success: true, hasCookie: false }); }
+    if (c && typeof c === "string" && c.trim().length > 0) { auth.setCookie(req.envName, c.trim(), "manual"); res.json({ success: true, hasCookie: true }); }
+    else { auth.clearCookie(req.envName); res.json({ success: true, hasCookie: false }); }
 });
-app.post("/api/cookie/:env", (req, res) => {
+app.post("/api/cookie/:env", session.requireAdmin, (req, res) => {
     const envName = req.params.env;
     if (!environments[envName]) return res.status(400).json({ error: true, message: "Unknown environment" });
     const c = req.body && req.body.cookie;
@@ -340,7 +373,7 @@ app.post("/api/cookie/:env", (req, res) => {
         res.json({ success: true, hasCookie: false });
     }
 });
-app.post("/api/auth/reacquire/:env", async (req, res) => {
+app.post("/api/auth/reacquire/:env", session.requireAdmin, async (req, res) => {
     const envName = req.params.env;
     const env = environments[envName];
     if (!env) return res.status(400).json({ error: true, message: "Unknown environment" });
@@ -349,10 +382,10 @@ app.post("/api/auth/reacquire/:env", async (req, res) => {
     await auth.acquireCookieForEnv(envName);
     res.json({ success: true, hasCookie: !!auth.cookieCache[envName] });
 });
-app.get("/api/cookie/status", (_req, res) => {
-    const c = auth.cookieCache[currentEnv]; let expiresAt = null, expiresInMin = null;
+app.get("/api/cookie/status", (req, res) => {
+    const c = auth.cookieCache[req.envName]; let expiresAt = null, expiresInMin = null;
     if (c) { const jwt = auth.extractApiJwt(c); if (jwt) { const exp = auth.getJwtExpiry(jwt); if (exp) { expiresAt = new Date(exp).toISOString(); expiresInMin = Math.round((exp - Date.now())/1000/60); } } }
-    res.json({ hasCookie: !!c, autoRefreshing: auth.isRefreshing(currentEnv), expiresAt, expiresInMin });
+    res.json({ hasCookie: !!c, autoRefreshing: auth.isRefreshing(req.envName), expiresAt, expiresInMin });
 });
 
 // ─── Auto-auth status (for Options page Authentication section) ───
@@ -387,7 +420,7 @@ app.get("/api/auth/status", (_req, res) => {
 // ─── Browser-based authentication (Playwright) ───
 var _browserLoginActive = {};
 
-app.post("/api/auth/launch-browser", async (req, res) => {
+app.post("/api/auth/launch-browser", session.requireAdmin, async (req, res) => {
     var envName = req.body && req.body.environment;
     if (!envName || !environments[envName]) return res.status(400).json({ error: true, message: "Unknown environment" });
     if (environments[envName].isMock) return res.status(400).json({ error: true, message: "Not applicable for mock environment" });
@@ -440,16 +473,15 @@ app.post("/api/auth/launch-browser", async (req, res) => {
 });
 
 // ─── Settings ───
-app.get("/api/settings", (_req, res) => {
-    res.json(Object.assign({
+app.get("/api/settings", (req, res) => {
+    var serverSettings = Object.assign({
         backlogThreshold: BACKLOG_THRESHOLD,
         wailaFetchDelay: wailaService.getFetchDelay(),
         wtIndexFetchDelay: worktypeService.getFetchDelay(),
         cookieRefreshInterval: auth.getCookieRefreshInterval(),
         autoRefreshInterval: _autoRefreshInterval,
         alertDurationThreshold: _alertDurationThreshold,
-        theme: _theme,
-        desktopNotifications: _desktopNotifications,
+        desktopAlertMonitoring: _desktopAlertMonitoring,
         notifyStreams: _notifyStreams,
         notifyStreamsDuration: _notifyStreamsDuration,
         notifyConnections: _notifyConnections,
@@ -462,16 +494,71 @@ app.get("/api/settings", (_req, res) => {
         notifyProdOnly: _notifyProdOnly,
         notifyRecoveryThreshold: _notifyRecoveryThreshold,
         notifyGracePeriod: _notifyGracePeriod,
-        highContrast: _highContrast,
         metricsEnabled: _metricsEnabled,
         metricsInterval: _metricsInterval,
-        chartBackgrounds: _chartBackgrounds,
-        teamsEnabled: _teamsEnabled
-    }, uxMonitor.getSettings()));
+        teamsEnabled: _teamsEnabled,
+        multiUser: session.isMultiUser()
+    }, uxMonitor.getSettings());
+
+    if (session.isMultiUser()) {
+        var s = session.getSessionFromReq(req);
+        serverSettings.isAdmin = !!(s && s.isAdmin);
+        // Overlay per-user settings from user file (theme, highContrast, chartBackgrounds, desktopNotifications)
+        if (s && s.slug) {
+            var userSettings = session.loadUserSettings(s.slug);
+            if (userSettings) {
+                if (userSettings.theme != null) serverSettings.theme = userSettings.theme;
+                if (userSettings.highContrast != null) serverSettings.highContrast = !!userSettings.highContrast;
+                if (userSettings.chartBackgrounds != null) serverSettings.chartBackgrounds = !!userSettings.chartBackgrounds;
+                if (userSettings.desktopNotifications != null) serverSettings.desktopNotifications = !!userSettings.desktopNotifications;
+                else serverSettings.desktopNotifications = false;
+            } else {
+                serverSettings.desktopNotifications = false;
+            }
+        } else {
+            serverSettings.desktopNotifications = false;
+        }
+    } else {
+        // Single-user: appearance settings from server, desktopNotifications mirrors desktopAlertMonitoring
+        serverSettings.theme = _theme;
+        serverSettings.highContrast = _highContrast;
+        serverSettings.chartBackgrounds = _chartBackgrounds;
+        serverSettings.desktopNotifications = _desktopAlertMonitoring;
+        serverSettings.isAdmin = true;
+    }
+
+    res.json(serverSettings);
 });
 app.post("/api/settings", (req, res) => {
     const s = req.body;
     if (!s) return res.status(400).json({ error: true, message: "Missing body" });
+
+    // ─── Per-user settings (saved to user file in multi-user, settings.json in single-user) ───
+    if (session.isMultiUser()) {
+        var userSession = session.getSessionFromReq(req);
+        if (userSession && userSession.slug) {
+            var userSettings = session.loadUserSettings(userSession.slug) || {};
+            if (s.theme && _validThemes.has(s.theme)) userSettings.theme = s.theme;
+            if (s.highContrast != null) userSettings.highContrast = !!s.highContrast;
+            if (s.chartBackgrounds != null) userSettings.chartBackgrounds = !!s.chartBackgrounds;
+            if (s.desktopNotifications != null) userSettings.desktopNotifications = !!s.desktopNotifications;
+            session.saveUserSettings(userSession.slug, userSettings);
+        }
+    } else {
+        // Single-user: appearance settings go to server state (saved to settings.json)
+        if (s.theme && _validThemes.has(s.theme)) _theme = s.theme;
+        if (s.highContrast != null) _highContrast = !!s.highContrast;
+        if (s.chartBackgrounds != null) _chartBackgrounds = !!s.chartBackgrounds;
+    }
+
+    // ─── Server settings (admin-only in multi-user) ───
+    var isAdmin = !session.isMultiUser() || (req.user && req.user.isAdmin);
+
+    if (!isAdmin) {
+        // Non-admin in multi-user: user settings saved above, skip server settings
+        res.json({ success: true });
+        return;
+    }
 
     var restartHealth = false;
 
@@ -501,13 +588,16 @@ app.post("/api/settings", (req, res) => {
         var ad = parseInt(s.alertDurationThreshold, 10);
         if (!isNaN(ad) && ad >= 0) _alertDurationThreshold = ad;
     }
-    if (s.theme && _validThemes.has(s.theme)) {
-        _theme = s.theme;
+    if (s.desktopAlertMonitoring != null) {
+        var wasEnabled = _desktopAlertMonitoring;
+        _desktopAlertMonitoring = !!s.desktopAlertMonitoring;
+        if (_desktopAlertMonitoring !== wasEnabled) restartHealth = true;
     }
-    if (s.desktopNotifications != null) {
-        var wasEnabled = _desktopNotifications;
-        _desktopNotifications = !!s.desktopNotifications;
-        if (_desktopNotifications !== wasEnabled) restartHealth = true;
+    // Backward compat: accept desktopNotifications as server gate until options.js is updated
+    if (s.desktopNotifications != null && s.desktopAlertMonitoring == null) {
+        var wasEnabled2 = _desktopAlertMonitoring;
+        _desktopAlertMonitoring = !!s.desktopNotifications;
+        if (_desktopAlertMonitoring !== wasEnabled2) restartHealth = true;
     }
     if (s.notifyStreams != null) _notifyStreams = !!s.notifyStreams;
     if (s.notifyStreamsDuration != null) _notifyStreamsDuration = !!s.notifyStreamsDuration;
@@ -527,9 +617,6 @@ app.post("/api/settings", (req, res) => {
         var gp = parseInt(s.notifyGracePeriod, 10);
         if (!isNaN(gp) && gp >= 0) _notifyGracePeriod = gp;
     }
-    if (s.highContrast != null) {
-        _highContrast = !!s.highContrast;
-    }
     if (s.metricsEnabled != null) {
         _metricsEnabled = !!s.metricsEnabled;
     }
@@ -537,10 +624,6 @@ app.post("/api/settings", (req, res) => {
         var mi = parseInt(s.metricsInterval, 10);
         if (!isNaN(mi) && mi >= 5) _metricsInterval = mi;
     }
-    if (s.chartBackgrounds != null) {
-        _chartBackgrounds = !!s.chartBackgrounds;
-    }
-
 
     // UX Monitor settings
     var uxResult = uxMonitor.applySettings(s);
@@ -549,7 +632,7 @@ app.post("/api/settings", (req, res) => {
     saveSettings();
     if (restartHealth) { healthMonitor.start(); }
     if (restartUx) { uxMonitor.startProbeMonitor(); uxMonitor.startPageMonitor(); }
-    log("settings", `Updated -- backlog: ${BACKLOG_THRESHOLD}, alertDuration: ${_alertDurationThreshold}s, notifications: ${_desktopNotifications}`);
+    log("settings", `Updated -- backlog: ${BACKLOG_THRESHOLD}, alertDuration: ${_alertDurationThreshold}s, alertMonitoring: ${_desktopAlertMonitoring}`);
     res.json({ success: true });
 });
 
@@ -581,22 +664,22 @@ app.get("/api/alerts/stream", (req, res) => {
 });
 
 // ─── Test notifications ───
-app.post("/api/alerts/test", (_req, res) => {
-    var alerts = healthMonitor.buildTestAlerts(currentEnv, environments);
+app.post("/api/alerts/test", (req, res) => {
+    var alerts = healthMonitor.buildTestAlerts(req.envName, environments);
     for (var i = 0; i < alerts.length; i++) { alerts[i].skipTeams = true; healthMonitor.pushAlert(alerts[i]); }
     res.json({ success: true, sent: alerts.length });
 });
 
-app.post("/api/alerts/test-teams", (_req, res) => {
+app.post("/api/alerts/test-teams", (req, res) => {
     if (!_teamsEnabled || !TEAMS_WEBHOOK_URL) return res.status(400).json({ error: true, message: "Teams webhook not enabled" });
-    var alerts = healthMonitor.buildTestAlerts(currentEnv, environments);
+    var alerts = healthMonitor.buildTestAlerts(req.envName, environments);
     for (var i = 0; i < alerts.length; i++) { healthMonitor.pushAlert(alerts[i]); }
     res.json({ success: true, sent: alerts.length });
 });
 // ─── Main refresh ───
-app.get("/api/refresh", async (_req, res) => {
+app.get("/api/refresh", async (req, res) => {
     try {
-        const reqEnv = currentEnv;
+        const reqEnv = req.envName;
         const env = environments[reqEnv];
 
         // Mock environment: return synthetic data from _mockState
@@ -697,8 +780,8 @@ app.get("/api/refresh", async (_req, res) => {
 // ─── Processes (errored / running, dynamic filters) ───
 app.post("/api/processes", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
         if (!adminCookie) return res.json({ error: true, status: 401, message: "Admin cookie required." });
         const apiJwt = auth.extractApiJwt(adminCookie);
         if (!apiJwt) return res.json({ error: true, status: 401, message: "Could not extract _api JWT." });
@@ -735,9 +818,9 @@ app.post("/api/processes", async (req, res) => {
 // ─── Process detail (execution plan with steps) ───
 app.get("/api/processes/:processId", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/executionengine/plans/executing/${encodeURIComponent(req.params.processId)}`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -747,9 +830,9 @@ app.get("/api/processes/:processId", async (req, res) => {
 // ─── Step execution log ───
 app.get("/api/processes/:processId/steps/:stepId/log", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/executionengine/plans/executing/${encodeURIComponent(req.params.processId)}/steps/${encodeURIComponent(req.params.stepId)}/log`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -759,9 +842,9 @@ app.get("/api/processes/:processId/steps/:stepId/log", async (req, res) => {
 // ─── Failed Outbound Emails ───
 app.post("/api/issues/emails", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const rpp = parseInt(req.body.rowsPerPage, 10) || 10;
         const page = parseInt(req.body.page, 10) || 1;
         const fromDate = req.body.fromDate || null;
@@ -777,9 +860,9 @@ app.post("/api/issues/emails", async (req, res) => {
 // ─── Failed Outbound SMS ───
 app.post("/api/issues/sms", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const rpp = parseInt(req.body.rowsPerPage, 10) || 10;
         const page = parseInt(req.body.page, 10) || 1;
         const fromDate = req.body.fromDate || null;
@@ -794,11 +877,11 @@ app.post("/api/issues/sms", async (req, res) => {
 
 // ─── SYSADMIN Tasks (production only) ───
 app.post("/api/issues/sysadmin", async (req, res) => {
-    if (currentEnv !== "prod") return res.json({ resultCount: 0, rows: [] });
+    if (req.envName !== "prod") return res.json({ resultCount: 0, rows: [] });
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const rpp = parseInt(req.body.rowsPerPage, 10) || 100;
         const page = parseInt(req.body.page, 10) || 1;
         const fromDate = req.body.fromDate || null;
@@ -812,10 +895,10 @@ app.post("/api/issues/sysadmin", async (req, res) => {
 });
 
 // ─── Work type tree ───
-app.get("/api/types/tree", async (_req, res) => {
+app.get("/api/types/tree", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const token = await auth.getToken(currentEnv);
-        const adminCookie = auth.cookieCache[currentEnv] || null;
+        const env = req.envConfig; const token = await auth.getToken(req.envName);
+        const adminCookie = auth.cookieCache[req.envName] || null;
         let result = await auth.sharedoGet(env.apiHost, "/api/sharedoTypes/tree", { type: "bearer", value: token });
         if (result && result.error && result.status === 401 && adminCookie) { const j = auth.extractApiJwt(adminCookie); if (j) result = await auth.sharedoGet(env.apiHost, "/api/sharedoTypes/tree", { type: "bearer", value: j }); }
         if (result && result.error && result.status === 401) result = await auth.sharedoGet(env.apiHost, "/api/v2/public/types/tree", { type: "bearer", value: token });
@@ -826,7 +909,7 @@ app.get("/api/types/tree", async (_req, res) => {
 // ─── Work item search ───
 app.post("/api/search", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const token = await auth.getToken(req.envName);
         const qm = req.body; if (!qm || !qm.search) return res.status(400).json({ error: true, message: "Missing search model" });
         res.json(await auth.sharedoPost(env.apiHost, "/api/v1/public/workItem/findByQuery", qm, { type: "bearer", value: token }));
     } catch (err) { res.status(500).json({ error: true, message: err.message }); }
@@ -862,11 +945,11 @@ app.post("/api/search/presets", (req, res) => {
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── Work type tree (modeller endpoint, includes isCoreType/hasPortals) ───
-app.get("/api/worktype/tree", async (_req, res) => {
+app.get("/api/worktype/tree", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const result = await auth.tryAuth(host, "GET", "/api/modeller/sharedoTypes", null, token, adminCookie);
         res.json(result);
     } catch (err) { res.status(500).json({ error: true, message: err.message }); }
@@ -875,9 +958,9 @@ app.get("/api/worktype/tree", async (_req, res) => {
 // ─── Aspects (admin cookie required) ───
 app.get("/api/worktype/aspects/:typeSystemName", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/admin/aspects/sharedoTypes/${encodeURIComponent(req.params.typeSystemName)}`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -887,9 +970,9 @@ app.get("/api/worktype/aspects/:typeSystemName", async (req, res) => {
 // ─── Form builder detail ───
 app.get("/api/worktype/form/:formId", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/formbuilder/forms/${encodeURIComponent(req.params.formId)}`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -899,9 +982,9 @@ app.get("/api/worktype/form/:formId", async (req, res) => {
 // ─── Phase plan (admin cookie required) ───
 app.get("/api/worktype/phaseplan/:typeSystemName", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/modeller/sharedoTypes/${encodeURIComponent(req.params.typeSystemName)}/phasePlan`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -911,9 +994,9 @@ app.get("/api/worktype/phaseplan/:typeSystemName", async (req, res) => {
 // ─── Participant roles (listview, admin cookie required) ───
 app.post("/api/worktype/roles/:typeSystemName", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const rpp = parseInt(req.body.rowsPerPage, 10) || 100;
         const page = parseInt(req.body.page, 10) || 1;
         const url = `/api/listview/core-modeller-sharedo-roles/${rpp}/${page}/name/asc/?view=table&withCounts=1&contextId=${encodeURIComponent(req.params.typeSystemName)}`;
@@ -926,9 +1009,9 @@ app.post("/api/worktype/roles/:typeSystemName", async (req, res) => {
 // ─── Key dates (admin cookie required) ───
 app.get("/api/worktype/keydates/:typeSystemName", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const url = `/api/admin/keyDates/definitionForType/${encodeURIComponent(req.params.typeSystemName)}`;
         const result = await auth.tryAuth(host, "GET", url, null, token, adminCookie);
         res.json(result);
@@ -938,9 +1021,9 @@ app.get("/api/worktype/keydates/:typeSystemName", async (req, res) => {
 // ─── Type relationships (listview, admin cookie required) ───
 app.post("/api/worktype/relationships/:typeSystemName", async (req, res) => {
     try {
-        const env = environments[currentEnv]; const host = env.apiHost;
-        const adminCookie = auth.cookieCache[currentEnv] || null;
-        const token = await auth.getToken(currentEnv);
+        const env = req.envConfig; const host = env.apiHost;
+        const adminCookie = auth.cookieCache[req.envName] || null;
+        const token = await auth.getToken(req.envName);
         const rpp = parseInt(req.body.rowsPerPage, 10) || 100;
         const page = parseInt(req.body.page, 10) || 1;
         const url = `/api/listview/core-admin-sharedo-type-relationships/${rpp}/${page}/relationshipType/asc/?view=table&withCounts=1&contextId=${encodeURIComponent(req.params.typeSystemName)}`;
@@ -985,23 +1068,26 @@ app.post("/api/worktype/compare/:typeSystemName", async (req, res) => {
 
 
 // ─── Work Type Config Index: routes (implementation in server/worktype-service.js) ───
-app.get("/api/worktype/index/status", (_req, res) => {
-    var state = worktypeService.getState(currentEnv);
-    res.json({ environment: currentEnv, status: state.status, count: state.types.length, builtAt: state.builtAt, error: state.error, progress: state.progress });
+app.get("/api/worktype/index/status", (req, res) => {
+    var state = worktypeService.getState(req.envName);
+    res.json({ environment: req.envName, status: state.status, count: state.types.length, builtAt: state.builtAt, error: state.error, progress: state.progress });
 });
 
 app.post("/api/worktype/index/build", async (req, res) => {
-    var result = await worktypeService.buildIndex(currentEnv);
+    var result = await worktypeService.buildIndex(req.envName);
     res.json(result);
 });
 
 app.post("/api/worktype/index/search", (req, res) => {
-    res.json(worktypeService.search(currentEnv, req.body || {}));
+    res.json(worktypeService.search(req.envName, req.body || {}));
 });
 
 // WAILA and Work Type Config state/cache now owned by their respective modules in server/
 loadSettings();
 printStartupBanner();
+session.init({
+    log: log, fs: fs, path: path, baseDir: __dirname
+});
 auth.init({
     environments: environments, envNames: envNames, log: log,
     https: https, querystring: querystring, fs: fs, path: path,
@@ -1018,14 +1104,12 @@ metrics.migrate();
 wailaService.init({
     environments: environments, auth: auth, log: log,
     fs: fs, path: path, baseDir: __dirname,
-    getCurrentEnv: function () { return currentEnv; },
     initialFetchDelay: process.env.WAILA_FETCH_DELAY || 100
 });
 wailaService.loadCaches();
 worktypeService.init({
     environments: environments, auth: auth, log: log,
     fs: fs, path: path, baseDir: __dirname,
-    getCurrentEnv: function () { return currentEnv; },
     initialFetchDelay: process.env.WT_INDEX_FETCH_DELAY || 100
 });
 worktypeService.loadCaches();
@@ -1036,7 +1120,7 @@ healthMonitor.init({
     log: log, https: https, mockState: _mockState, metrics: metrics,
     getNotifySettings: function () {
         return {
-            desktopNotifications: _desktopNotifications, notifyStreams: _notifyStreams,
+            desktopAlertMonitoring: _desktopAlertMonitoring, notifyStreams: _notifyStreams,
             notifyStreamsDuration: _notifyStreamsDuration, notifyConnections: _notifyConnections,
             notifyConnectionsDuration: _notifyConnectionsDuration, zeroConnectionStreams: _zeroConnectionStreams,
             notifyNodes: _notifyNodes, notifyNodesDuration: _notifyNodesDuration,
@@ -1061,29 +1145,29 @@ uxMonitor.startPageMonitor();
 
 
 // ─── WAILA routes (implementation in server/waila-service.js) ───
-app.get("/api/waila/index/status", (_req, res) => {
-    var state = wailaService.getState(currentEnv);
-    res.json({ environment: currentEnv, status: state.status, count: state.workflows.length, builtAt: state.builtAt, error: state.error, progress: state.progress });
+app.get("/api/waila/index/status", (req, res) => {
+    var state = wailaService.getState(req.envName);
+    res.json({ environment: req.envName, status: state.status, count: state.workflows.length, builtAt: state.builtAt, error: state.error, progress: state.progress });
 });
 
 app.post("/api/waila/index/build", async (req, res) => {
-    var result = await wailaService.buildIndex(currentEnv);
+    var result = await wailaService.buildIndex(req.envName);
     res.json(result);
 });
 
 app.post("/api/waila/search", (req, res) => {
-    res.json(wailaService.search(currentEnv, req.body || {}));
+    res.json(wailaService.search(req.envName, req.body || {}));
 });
 
 app.get("/api/waila/workflow/:systemName", (req, res) => {
-    var wf = wailaService.getWorkflow(currentEnv, req.params.systemName);
+    var wf = wailaService.getWorkflow(req.envName, req.params.systemName);
     if (!wf) return res.status(404).json({ error: true, message: "Workflow not in index: " + req.params.systemName });
     res.json(wf);
 });
 
 app.post("/api/waila/workflow/:systemName/preview", async (req, res) => {
     try {
-        var result = await wailaService.fetchPreview(currentEnv, req.params.systemName);
+        var result = await wailaService.fetchPreview(req.envName, req.params.systemName);
         if (result.error) return res.json(result);
         res.json(result);
     } catch (err) { res.status(500).json({ error: true, message: err.message }); }
@@ -1092,8 +1176,8 @@ app.post("/api/waila/workflow/:systemName/preview", async (req, res) => {
 app.post("/api/waila/diff", (req, res) => {
     var envB = req.body && req.body.targetEnv;
     if (!envB || !environments[envB]) return res.status(400).json({ error: true, message: "Invalid target environment" });
-    if (currentEnv === envB) return res.status(400).json({ error: true, message: "Cannot diff an environment against itself" });
-    res.json(wailaService.diff(currentEnv, envB));
+    if (req.envName === envB) return res.status(400).json({ error: true, message: "Cannot diff an environment against itself" });
+    res.json(wailaService.diff(req.envName, envB));
 });
 // ─── Mock environment API ───
 app.get("/api/mock/state", (_req, res) => {
@@ -1159,6 +1243,39 @@ app.post("/api/mock/state", (req, res) => {
 app.get("/debug/mock", (_req, res) => {
     if (!MOCK_ENV_ENABLED) return res.status(404).send("Mock environment not enabled. Set MOCK_ENV_ENABLED=true in .env to enable.");
     res.sendFile(path.join(__dirname, "public", "mock", "mock.html"));
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// Session routes (multi-user mode)
+// ═══════════════════════════════════════════════════════════════════
+
+app.get("/api/session", (req, res) => {
+    if (!session.isMultiUser()) return res.json({ multiUser: false });
+    var s = session.getSessionFromReq(req);
+    if (!s) return res.json({ multiUser: true, authenticated: false });
+    res.json({ multiUser: true, authenticated: true, user: { firstName: s.firstName, lastName: s.lastName, email: s.email, isAdmin: !!s.isAdmin } });
+});
+
+app.post("/api/session/register", (req, res) => {
+    if (!session.isMultiUser()) return res.status(400).json({ error: true, message: "Multi-user mode is not enabled" });
+    var result = session.register(req.body);
+    if (result.error) return res.status(400).json(result);
+    res.cookie(result.cookieName, result.cookieValue, { httpOnly: true, maxAge: result.cookieMaxAge, sameSite: "lax", path: "/" });
+    res.json({ success: true, user: { firstName: result.session.firstName, lastName: result.session.lastName, email: result.session.email, isAdmin: result.session.isAdmin } });
+});
+
+app.post("/api/session/admin", (req, res) => {
+    if (!session.isMultiUser()) return res.status(400).json({ error: true, message: "Multi-user mode is not enabled" });
+    var key = req.body && req.body.key;
+    if (!session.verifyAdminKey(key)) return res.status(403).json({ error: true, message: "Invalid admin key" });
+    var result = session.upgradeToAdmin(req.user);
+    res.cookie(result.cookieName, result.cookieValue, { httpOnly: true, maxAge: result.cookieMaxAge, sameSite: "lax", path: "/" });
+    res.json({ success: true, isAdmin: true });
+});
+
+app.post("/api/session/logout", (_req, res) => {
+    res.clearCookie(session.COOKIE_NAME, { path: "/" });
+    res.json({ success: true });
 });
 
 // ═══════════════════════════════════════════════════════════════════
