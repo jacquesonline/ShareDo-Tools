@@ -46,6 +46,17 @@
         document.getElementById("uxDateTo").addEventListener("change", onDatePickerChange);
         document.getElementById("uxNavPrev").addEventListener("click", function () { navStep(-1); });
         document.getElementById("uxNavNext").addEventListener("click", function () { navStep(1); });
+
+        // Today range slider
+        document.getElementById("uxRangeFrom").addEventListener("input", onSliderInput);
+        document.getElementById("uxRangeTo").addEventListener("input", onSliderInput);
+        var _sliderDebounce = null;
+        document.getElementById("uxRangeFrom").addEventListener("change", function () { debouncedLoad(); });
+        document.getElementById("uxRangeTo").addEventListener("change", function () { debouncedLoad(); });
+        function debouncedLoad() {
+            if (_sliderDebounce) clearTimeout(_sliderDebounce);
+            _sliderDebounce = setTimeout(loadData, 300);
+        }
         document.getElementById("uxVitalsShowAll").addEventListener("click", function () { toggleAllDatasets(_vitalsChart, true); });
         document.getElementById("uxVitalsHideAll").addEventListener("click", function () { toggleAllDatasets(_vitalsChart, false); });
         document.getElementById("uxProbesShowAll").addEventListener("click", function () { toggleAllDatasets(_probesChart, true); });
@@ -116,6 +127,7 @@
         _activeRange = val;
         var btns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("usd-quick-btn--active", btns[i].getAttribute("data-range") === val);
+        document.getElementById("uxRangeBar").style.display = val === "today" ? "" : "none";
         document.getElementById("uxNavPrev").disabled = (val === "0");
         document.getElementById("uxNavNext").disabled = (val === "0");
         updateDatePickerFromRange();
@@ -131,6 +143,7 @@
         _rangeBefore = to ? new Date(to).toISOString() : null;
         var btns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
+        document.getElementById("uxRangeBar").style.display = "none";
         document.getElementById("uxNavPrev").disabled = !_rangeAfter;
         document.getElementById("uxNavNext").disabled = !_rangeAfter;
         loadData();
@@ -160,6 +173,7 @@
         _rangeBefore = newBefore.toISOString();
         var btns = document.querySelectorAll(".usd-quick-btn");
         for (var i = 0; i < btns.length; i++) btns[i].classList.remove("usd-quick-btn--active");
+        document.getElementById("uxRangeBar").style.display = "none";
         document.getElementById("uxNavPrev").disabled = false;
         document.getElementById("uxNavNext").disabled = false;
         document.getElementById("uxDateFrom").value = toLocalDatetimeString(newAfter);
@@ -169,9 +183,47 @@
 
     function getTimeRange() {
         if (_activeRange === "custom") return { after: _rangeAfter, before: _rangeBefore };
+        if (_activeRange === "today") {
+            var today = new Date();
+            var startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var fromHour = parseInt(document.getElementById("uxRangeFrom").value, 10);
+            var toHour = parseInt(document.getElementById("uxRangeTo").value, 10);
+            return {
+                after: new Date(startOfDay.getTime() + fromHour * 3600000).toISOString(),
+                before: new Date(startOfDay.getTime() + toHour * 3600000).toISOString()
+            };
+        }
         if (_activeRange === "0") return { after: null, before: null };
         var hours = parseInt(_activeRange, 10);
         return { after: new Date(Date.now() - hours * 3600000).toISOString(), before: null };
+    }
+
+    function onSliderInput() {
+        var fromVal = parseInt(document.getElementById("uxRangeFrom").value, 10);
+        var toVal = parseInt(document.getElementById("uxRangeTo").value, 10);
+        if (fromVal > toVal) {
+            if (this.id === "uxRangeFrom") {
+                fromVal = toVal;
+                document.getElementById("uxRangeFrom").value = fromVal;
+            } else {
+                toVal = fromVal;
+                document.getElementById("uxRangeTo").value = toVal;
+            }
+        }
+        document.getElementById("uxRangeFromLabel").textContent = formatHour(fromVal);
+        document.getElementById("uxRangeToLabel").textContent = formatHour(toVal);
+        var pctFrom = (fromVal / 24) * 100;
+        var pctTo = (toVal / 24) * 100;
+        var fill = document.getElementById("uxRangeFill");
+        fill.style.left = pctFrom + "%";
+        fill.style.width = (pctTo - pctFrom) + "%";
+    }
+
+    function formatHour(h) {
+        if (h === 0 || h === 24) return "12:00 AM";
+        if (h === 12) return "12:00 PM";
+        if (h < 12) return h + ":00 AM";
+        return (h - 12) + ":00 PM";
     }
 
     function updateResetZoomBtn(prefix, visible) {

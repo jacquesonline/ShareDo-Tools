@@ -62,6 +62,7 @@
             <button class="usd-btn usd-quick-btn" data-range="72">3d</button>
             <button class="usd-btn usd-quick-btn" data-range="168">7d</button>
             <button class="usd-btn usd-quick-btn" data-range="0">All</button>
+            <button class="usd-btn usd-quick-btn" data-range="today">Today</button>
         </div>
         <div class="usd-time-bar__sep"></div>
         <div class="usd-time-bar__nav">
@@ -76,6 +77,16 @@
         <div class="usd-time-bar__dates">
             <label class="usd-controls-bar__label">To</label>
             <input type="datetime-local" class="usd-date-input" id="uxDateTo" />
+        </div>
+        <div class="usd-range-inline" id="uxRangeBar" style="display:none">
+            <span class="usd-range-inline__label" id="uxRangeFromLabel">12:00 AM</span>
+            <div class="usd-range-slider">
+                <div class="usd-range-slider__track"></div>
+                <div class="usd-range-slider__fill" id="uxRangeFill"></div>
+                <input type="range" class="usd-range-slider__input" id="uxRangeFrom" min="0" max="24" value="0" step="1" />
+                <input type="range" class="usd-range-slider__input" id="uxRangeTo" min="0" max="24" value="24" step="1" />
+            </div>
+            <span class="usd-range-inline__label" id="uxRangeToLabel">12:00 AM</span>
         </div>
     </div>
 
