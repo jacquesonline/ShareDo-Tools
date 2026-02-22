@@ -138,10 +138,10 @@ var shared = (function () {
         if (!container) return;
         var displayName = _session.firstName + " " + _session.lastName;
         var adminBadge = _session.isAdmin
-            ? ' <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:2px 6px;border-radius:3px;background:var(--accent-purple-bg);color:var(--accent-purple);margin-left:4px">Admin</span>'
+            ? ' <span class="usd-admin-badge">Admin</span>'
             : "";
-        container.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:var(--font-size-md);color:var(--text-secondary);font-family:var(--font-ui)">' +
-            '<span class="fa fa-user-circle-o" style="font-size:14px;color:var(--text-muted)"></span>' +
+        container.innerHTML = '<div style="display:flex;align-items:center;gap:6px;font-size:var(--font-size-md);color:var(--nav-text);font-family:var(--font-ui)">' +
+            '<span class="fa fa-user-circle-o" style="font-size:14px;color:var(--nav-text)"></span>' +
             '<span>' + esc(displayName) + '</span>' +
             adminBadge +
             '</div>';

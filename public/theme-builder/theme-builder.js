@@ -17,6 +17,7 @@
             "accent-purple":"#a078ff","accent-cyan":"#56d4c0","accent-orange":"#ffb378",
             "nav-bg":"#22262e","nav-border":"#363c48","nav-text":"#7d8590","nav-text-active":"#4a9eff",
             "nav-active-bg":"#4a9eff","nav-env-bg":"#4a9eff","nav-env-text":"#4a9eff","nav-env-border":"#4a9eff",
+            "nav-admin-bg":"#a078ff","nav-admin-text":"#a078ff",
             "guidance-bg":"#1a3352","guidance-text":"#8ec4f0","guidance-border":"#2a5a80",
             "scrollbar-thumb":"#363c48","scrollbar-hover":"#4a5264",
             "phase-start":"#43a047","phase-open":"#1976d2","phase-closed":"#d32f2f","phase-default":"#f57c00",
@@ -30,6 +31,7 @@
             "accent-purple":"#7c4dff","accent-cyan":"#0b7d70","accent-orange":"#c2710a",
             "nav-bg":"#ffffff","nav-border":"#d8dbe0","nav-text":"#6b7280","nav-text-active":"#1a73e8",
             "nav-active-bg":"#1a73e8","nav-env-bg":"#1a73e8","nav-env-text":"#1a73e8","nav-env-border":"#1a73e8",
+            "nav-admin-bg":"#7c4dff","nav-admin-text":"#7c4dff",
             "guidance-bg":"#EFF8FF","guidance-text":"#1d6db5","guidance-border":"#93c5fd",
             "scrollbar-thumb":"#c4c8ce","scrollbar-hover":"#a0a5ad",
             "phase-start":"#2e7d32","phase-open":"#1565c0","phase-closed":"#c62828","phase-default":"#e65100",
@@ -43,6 +45,7 @@
             "accent-purple":"#75264F","accent-cyan":"#0e7c6b","accent-orange":"#b84c00",
             "nav-bg":"#461C2F","nav-border":"#3a1527","nav-text":"#b3a99e","nav-text-active":"#ffffff",
             "nav-active-bg":"#CC2E57","nav-env-bg":"#CC2E57","nav-env-text":"#ffffff","nav-env-border":"#CC2E57",
+            "nav-admin-bg":"#CC2E57","nav-admin-text":"#ffffff",
             "guidance-bg":"#fdf0f4","guidance-text":"#A82660","guidance-border":"#e8b0c8",
             "scrollbar-thumb":"#c4b8be","scrollbar-hover":"#a0959a",
             "phase-start":"#2d7a3a","phase-open":"#1a6b9c","phase-closed":"#DB333C","phase-default":"#b84c00",
@@ -63,7 +66,8 @@
         ],
         navRows: [
             ["nav-bg","Background"],["nav-border","Border"],["nav-text","Text"],["nav-text-active","Active text"],
-            ["nav-active-bg","Active bg"],["nav-env-text","Env text"],["nav-env-bg","Env bg"],["nav-env-border","Env border"]
+            ["nav-active-bg","Active bg"],["nav-env-text","Env text"],["nav-env-bg","Env bg"],["nav-env-border","Env border"],
+            ["nav-admin-bg","Admin badge bg"],["nav-admin-text","Admin badge text"]
         ],
         guidanceRows: [["guidance-bg","Background"],["guidance-text","Text"],["guidance-border","Border"]],
         miscRows: [
@@ -90,6 +94,7 @@
         ["nav-text","nav-bg","Nav text on nav bg"],
         ["nav-text-active","nav-active-bg","Nav active text on active bg"],
         ["nav-env-text","nav-env-bg","Env text on env bg"],
+        ["nav-admin-text","nav-admin-bg","Admin badge text on badge bg"],
         ["guidance-text","guidance-bg","Guidance text on guidance bg"]
     ];
 
@@ -424,6 +429,8 @@
         lines.push('    --nav-env-border: ' + hexToRgba(v["nav-env-border"], 0.4) + ';');
         lines.push('    --nav-primary-bg: ' + v["nav-active-bg"] + ';');
         lines.push('    --nav-primary-text: #fff;');
+        lines.push('    --nav-admin-bg: ' + v["nav-admin-bg"] + ';');
+        lines.push('    --nav-admin-text: ' + v["nav-admin-text"] + ';');
         lines.push('}');
 
         return lines.join('\n');

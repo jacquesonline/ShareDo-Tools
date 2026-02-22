@@ -69,4 +69,6 @@
     --nav-env-border: rgba(26,115,232,0.2);
     --nav-primary-bg: var(--accent-blue);
     --nav-primary-text: #fff;
+    --nav-admin-bg: var(--accent-purple-bg);
+    --nav-admin-text: var(--accent-purple);
 }

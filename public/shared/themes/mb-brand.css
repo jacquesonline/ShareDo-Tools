@@ -69,6 +69,8 @@
     --nav-env-border: rgba(204,46,87,0.4);
     --nav-primary-bg: #CC2E57;
     --nav-primary-text: #fff;
+    --nav-admin-bg: #CC2E57;
+    --nav-admin-text: #fff;
 }
 
 /* ── Nav text overrides (title, host, cookie inherit from body, not nav) ── */
@@ -88,3 +90,4 @@
 [data-theme="mb-brand"].high-contrast .usd-nav__link--active { background: #CC2E57; color: #fff; }
 [data-theme="mb-brand"].high-contrast .usd-header__env-select { background: #75264F; color: #fff; border-color: #75264F; }
 [data-theme="mb-brand"].high-contrast .usd-quick-btn--active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+[data-theme="mb-brand"].high-contrast .usd-admin-badge { background: #CC2E57; color: #fff; }

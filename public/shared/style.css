@@ -251,6 +251,19 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .usd-chip__remove { cursor: pointer; font-size: 13px; line-height: 1; opacity: 0.7; }
 .usd-chip__remove:hover { opacity: 1; color: var(--accent-red); }
 
+/* ─── Admin badge (header, multi-user mode) ─── */
+.usd-admin-badge {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+    background: var(--nav-admin-bg);
+    color: var(--nav-admin-text);
+}
+
 /* ─── Pagination ─── */
 .usd-pagination, .iss-pagination, .srch-pagination { display: flex; align-items: center; justify-content: center; padding: 10px 12px; gap: 8px; }
 
@@ -491,6 +504,9 @@ button.usd-help { cursor: pointer; }
 /* ── Navigation + env select ── */
 .high-contrast .usd-nav__link--active { background: var(--nav-text-active); color: var(--hc-pill-text-blue); }
 .high-contrast .usd-header__env-select { background: var(--nav-env-text); color: var(--hc-pill-text-blue); border-color: var(--nav-env-text); }
+
+/* ── Admin badge ── */
+.high-contrast .usd-admin-badge { background: var(--accent-purple); color: var(--hc-pill-text-purple); }
 
 /* ── Page header icons ── */
 .high-contrast .usd-page-header__icon--blue   { background: var(--accent-blue);   color: var(--hc-pill-text-blue); }
