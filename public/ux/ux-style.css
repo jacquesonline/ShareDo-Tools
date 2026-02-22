@@ -253,6 +253,7 @@
     justify-content: center;
     padding: 4px 6px;
     min-width: 40px;
+    border: 1px solid var(--border);
 }
 
 .ux-modal__timing-seg--ttfb { background: var(--accent-blue-bg); }
