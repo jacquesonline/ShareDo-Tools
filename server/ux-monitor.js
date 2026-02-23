@@ -35,6 +35,7 @@ var _uxAlertsPages = true;        // fire alerts on page check Web Vital breache
 var _uxAlertsSession = true;      // fire alerts on browser session expiry
 var _uxProbeThresholdWarn = 3000;  // ms
 var _uxProbeThresholdCrit = 5000;  // ms
+var _uxProbeTimeout = 15000;      // ms -- request timeout for API probes
 var _uxWorkItemId = "";            // GUID of a specific work item (shared by probes + page checks)
 var _uxPageTargets = ["/", "/admin"];  // paths to check during page check cycles
 var _uxVitalsFcpWarn = 1800;
@@ -90,6 +91,7 @@ function init(deps) {
     if (env.UX_ALERTS_SESSION != null) _uxAlertsSession = env.UX_ALERTS_SESSION.toLowerCase() === "true";
     if (env.UX_PROBE_THRESHOLD_WARN) { var v = parseInt(env.UX_PROBE_THRESHOLD_WARN, 10); if (v > 0) _uxProbeThresholdWarn = v; }
     if (env.UX_PROBE_THRESHOLD_CRIT) { var v = parseInt(env.UX_PROBE_THRESHOLD_CRIT, 10); if (v > 0) _uxProbeThresholdCrit = v; }
+    if (env.UX_PROBE_TIMEOUT) { var v = parseInt(env.UX_PROBE_TIMEOUT, 10); if (v >= 1000) _uxProbeTimeout = v; }
     if (env.UX_VITALS_FCP_WARN) { var v = parseInt(env.UX_VITALS_FCP_WARN, 10); if (v > 0) _uxVitalsFcpWarn = v; }
     if (env.UX_VITALS_FCP_CRIT) { var v = parseInt(env.UX_VITALS_FCP_CRIT, 10); if (v > 0) _uxVitalsFcpCrit = v; }
     if (env.UX_VITALS_LCP_WARN) { var v = parseInt(env.UX_VITALS_LCP_WARN, 10); if (v > 0) _uxVitalsLcpWarn = v; }
@@ -125,6 +127,7 @@ function getSettings() {
         uxAlertsSession: _uxAlertsSession,
         uxProbeThresholdWarn: _uxProbeThresholdWarn,
         uxProbeThresholdCrit: _uxProbeThresholdCrit,
+        uxProbeTimeout: _uxProbeTimeout,
         uxVitalsFcpWarn: _uxVitalsFcpWarn,
         uxVitalsFcpCrit: _uxVitalsFcpCrit,
         uxVitalsLcpWarn: _uxVitalsLcpWarn,
@@ -198,6 +201,11 @@ function applySettings(data) {
         var utc = parseInt(data.uxProbeThresholdCrit, 10);
         if (!isNaN(utc) && utc > 0) _uxProbeThresholdCrit = utc;
     }
+    if (data.uxProbeTimeout != null) {
+        var upt = parseInt(data.uxProbeTimeout, 10);
+        if (!isNaN(upt) && upt >= 1000) _uxProbeTimeout = upt;
+    }
+    if (_uxProbeTimeout < _uxProbeThresholdCrit) _uxProbeTimeout = _uxProbeThresholdCrit;
     if (data.uxVitalsFcpWarn != null) { var v = parseInt(data.uxVitalsFcpWarn, 10); if (!isNaN(v) && v > 0) _uxVitalsFcpWarn = v; }
     if (data.uxVitalsFcpCrit != null) { var v = parseInt(data.uxVitalsFcpCrit, 10); if (!isNaN(v) && v > 0) _uxVitalsFcpCrit = v; }
     if (data.uxVitalsLcpWarn != null) { var v = parseInt(data.uxVitalsLcpWarn, 10); if (!isNaN(v) && v > 0) _uxVitalsLcpWarn = v; }
@@ -258,7 +266,7 @@ function probeRequest(env, probe) {
             method: probe.method,
             headers: headers,
             rejectUnauthorized: false,
-            timeout: 15000
+            timeout: _uxProbeTimeout
         }, function (res) {
             var chunks = [];
             res.on("data", function (c) { chunks.push(c); });
@@ -278,7 +286,7 @@ function probeRequest(env, probe) {
         });
         req.on("timeout", function () {
             req.destroy();
-            resolve({ label: probe.label, status: null, ms: Date.now() - startMs, tookMs: null, error: "Timeout (15s)" });
+            resolve({ label: probe.label, status: null, ms: Date.now() - startMs, tookMs: null, error: "Timeout (" + Math.round(_uxProbeTimeout / 1000) + "s)" });
         });
         if (isPost && bodyStr) req.write(bodyStr);
         req.end();

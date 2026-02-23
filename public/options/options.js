@@ -314,6 +314,7 @@
             document.getElementById("optUxPageInterval").value = data.uxPageInterval != null ? data.uxPageInterval : 300;
             document.getElementById("optUxThresholdWarn").value = data.uxProbeThresholdWarn != null ? data.uxProbeThresholdWarn : 3000;
             document.getElementById("optUxThresholdCrit").value = data.uxProbeThresholdCrit != null ? data.uxProbeThresholdCrit : 5000;
+            document.getElementById("optUxProbeTimeout").value = data.uxProbeTimeout != null ? data.uxProbeTimeout : 15000;
             populateUxEnvSelect(data.uxProbeEnv || "prod");
             renderUxProbeList();
             loadUxLatestResults();
@@ -370,6 +371,7 @@
         body.uxAlerts = _uxAlerts;
         body.uxProbeThresholdWarn = Math.max(100, parseInt(document.getElementById("optUxThresholdWarn").value, 10) || 3000);
         body.uxProbeThresholdCrit = Math.max(100, parseInt(document.getElementById("optUxThresholdCrit").value, 10) || 5000);
+        body.uxProbeTimeout = Math.max(body.uxProbeThresholdCrit, Math.max(1000, parseInt(document.getElementById("optUxProbeTimeout").value, 10) || 15000));
         body.uxProbes = _uxProbes;
         body.uxWorkItemId = document.getElementById("optUxWorkItemId").value.trim();
         body.uxPageTargets = _uxPageTargets;

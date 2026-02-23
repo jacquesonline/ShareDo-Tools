@@ -562,6 +562,19 @@
                     <div class="opt-divider"></div>
                     <div class="opt-row">
                         <div class="opt-row__text">
+                            <div class="opt-row__label">Probe Timeout</div>
+                            <div class="opt-row__desc">Maximum time (ms) to wait for a probe response before marking it as timed out. Automatically raised to match the Critical Threshold if set lower.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxProbeTimeout" min="1000" />
+                                <span class="opt-input-suffix">ms</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
                             <div class="opt-row__label">Run Probes Now</div>
                             <div class="opt-row__desc">Trigger an immediate probe cycle without waiting for the interval timer.</div>
                         </div>
