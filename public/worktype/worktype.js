@@ -299,7 +299,7 @@
         var link = document.getElementById("infoLink");
         var host = document.getElementById("hostLabel").textContent;
         if (host && host !== "--") {
-            link.href = "https://" + host + "/modeller/work-types/" + encodeURIComponent(_selectedType);
+            link.href = "https://" + host + "/modeller/sharedoTypes/" + encodeURIComponent(_selectedType);
             link.style.display = "";
         } else {
             link.style.display = "none";
