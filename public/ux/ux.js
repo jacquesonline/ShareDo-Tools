@@ -70,6 +70,7 @@
         document.getElementById("uxFileBtn").addEventListener("click", function () { document.getElementById("uxFileInput").click(); });
         document.getElementById("uxFileInput").addEventListener("change", onFileInputChange);
         document.getElementById("uxFileClearBtn").addEventListener("click", clearFileMode);
+        document.getElementById("uxExportBtn").addEventListener("click", exportMetrics);
         document.getElementById("uxAjaxModalClose").addEventListener("click", closeAjaxModal);
         document.getElementById("uxAjaxModal").addEventListener("click", function (e) { if (e.target === this) closeAjaxModal(); });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAjaxModal(); });
@@ -319,6 +320,25 @@
     }
 
     function clearFileMode() { _filePageEntries = null; _fileApiEntries = null; _fileNames.pages = null; _fileNames.api = null; _fileMode = false; updateFileChips(); loadData(); }
+
+    function exportMetrics() {
+        if (!_uxProbeEnv) return;
+        var metricNames = ["ux-pages", "ux-api"];
+        var delay = 0;
+        for (var i = 0; i < metricNames.length; i++) {
+            (function (metric, d) {
+                setTimeout(function () {
+                    var a = document.createElement("a");
+                    a.href = "/api/metrics/" + encodeURIComponent(_uxProbeEnv) + "/" + metric + "/export";
+                    a.download = "";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, d);
+            })(metricNames[i], delay);
+            delay += 300;
+        }
+    }
 
     function filterEntriesByRange(arr, after, before) {
         if (!arr) return []; if (!after && !before) return arr.slice();

@@ -48,6 +48,7 @@
         <button class="usd-btn usd-btn--primary" id="metLoadBtn"><span class="fa fa-refresh"></span> Load</button>
         <button class="usd-btn usd-file-btn usd-help" id="metFileBtn" data-tooltip="Load metrics from local JSONL file(s).&#10;Accepted: streamstats-{env}.jsonl, nodestatus-{env}.jsonl&#10;Optional suffix: -backup or -backup-DD-MM-YYYY" data-tooltip-pos="below"><span class="fa fa-folder-open-o"></span></button>
         <input type="file" id="metFileInput" accept=".jsonl" multiple style="display:none" />
+        <button class="usd-btn usd-file-btn usd-help" id="metExportBtn" data-tooltip="Export metric files for the selected environment.&#10;Saves as streamstats-backup-{env}-DD-MM-YYYY.jsonl&#10;and nodestatus-backup-{env}-DD-MM-YYYY.jsonl" data-tooltip-pos="below"><span class="fa fa-download"></span></button>
         <div class="usd-file-chips" id="metFileChips" style="display:none"></div>
         <button class="usd-btn usd-file-clear-btn" id="metFileClearBtn" style="display:none">Clear Files</button>
         <div class="usd-controls-bar__right" id="metStorageInfo"></div>

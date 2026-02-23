@@ -147,6 +147,7 @@
         });
         document.getElementById("metFileInput").addEventListener("change", onFileInputChange);
         document.getElementById("metFileClearBtn").addEventListener("click", clearFileMode);
+        document.getElementById("metExportBtn").addEventListener("click", exportMetrics);
 
         // Load env list then auto-load metrics
         shared.apiFetch("/api/env").then(function (r) { return r.json(); }).then(function (data) {
@@ -581,6 +582,26 @@
         _fileMode = false;
         updateFileChips();
         loadMetrics();
+    }
+
+    function exportMetrics() {
+        var envName = document.getElementById("metEnvSelect").value;
+        if (!envName) return;
+        var metricNames = ["streamstats", "nodestatus"];
+        var delay = 0;
+        for (var i = 0; i < metricNames.length; i++) {
+            (function (metric, d) {
+                setTimeout(function () {
+                    var a = document.createElement("a");
+                    a.href = "/api/metrics/" + encodeURIComponent(envName) + "/" + metric + "/export";
+                    a.download = "";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, d);
+            })(metricNames[i], delay);
+            delay += 300;
+        }
     }
 
     function filterEntriesByRange(arr, after, before) {

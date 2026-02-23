@@ -644,6 +644,20 @@ app.get("/api/metrics/status", (_req, res) => {
     res.json(metrics.getStatus());
 });
 
+app.get("/api/metrics/:env/:metric/export", (req, res) => {
+    var envName = req.params.env;
+    var metric = req.params.metric;
+    if (!environments[envName]) return res.status(400).json({ error: true, message: "Unknown environment" });
+    var fp = metrics.filePath(envName, metric);
+    if (!fs.existsSync(fp)) return res.status(404).json({ error: true, message: "No data for " + metric + " in " + envName });
+    var now = new Date();
+    var dateSuffix = String(now.getDate()).padStart(2, "0") + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + now.getFullYear();
+    var filename = metric + "-backup-" + envName + "-" + dateSuffix + ".jsonl";
+    res.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    res.setHeader("Content-Type", "application/x-ndjson");
+    fs.createReadStream(fp).pipe(res);
+});
+
 app.get("/api/metrics/:env/:metric", (req, res) => {
     var envName = req.params.env;
     var metric = req.params.metric;
