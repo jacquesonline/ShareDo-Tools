@@ -101,7 +101,7 @@ Below the stream table, EE Node cards show each node's status with a compact con
 - **SQL Agent & Reporting Jobs**: Job execution history and health check results
 - **System Diagnostics Config**: ShareDo configuration key/value pairs
 - **Maintenance Plans**: Scheduled maintenance tasks with next run times
-- **Linked Services**: Integration health for services like iManage and DocuSign (critical services are highlighted)
+- **Linked Services**: Integration health for services like iManage and DocuSign. Critical services are highlighted with a blue border; unhealthy critical services show red borders and the section badge turns red. Non-critical services with issues (unlinked, invalid provider/config) show amber borders and the badge shows an amber warning count.
 - **External**: Quick links to frequently used external pages (Outbound Comms Failures, SYSADMIN, iManage SPM, Freshservice)
 
 ### Controls
@@ -165,6 +165,10 @@ Displayed above the charts when data is loaded: average velocity, peak backlog, 
 
 The folder icon accepts `.jsonl` files with names matching the pattern `streamstats.jsonl` or `nodestatus.jsonl` (with optional environment suffix). Loaded files appear as chips below the controls and replace server data until cleared.
 
+### Exporting Data
+
+The download icon (next to the folder icon) exports the raw JSONL metric files for the selected environment. Two files are saved: `streamstats-backup-{env}-DD-MM-YYYY.jsonl` and `nodestatus-backup-{env}-DD-MM-YYYY.jsonl`. Exported files can be re-imported using the folder icon.
+
 ---
 
 ## UX Monitor Page
@@ -173,7 +177,11 @@ Displays API probe and page load performance data with interactive charts.
 
 ### Loading Data
 
-Select the monitoring environment from the dropdown (typically `prod`) and click **Load**. Data can also be loaded from local JSONL backup files.
+Select the monitoring environment from the dropdown (typically `prod`) and click **Load**. Data can also be loaded from local JSONL backup files. The download icon exports the raw metric files for the probe environment as `ux-pages-backup-{env}-DD-MM-YYYY.jsonl` and `ux-api-backup-{env}-DD-MM-YYYY.jsonl`.
+
+### Time Range Controls
+
+The same time range controls as the Metrics page: quick buttons (1h, 6h, 24h, 3d, 7d, All, Today), navigation arrows, date pickers, and the Today dual-handle slider for narrowing to a specific hour window within the current day.
 
 ### Summary Cards
 
@@ -351,6 +359,7 @@ Runtime settings organised into a left-nav layout with a Save button. Changes ta
 - **Probe Environment**: Which environment to probe
 - **Alert toggles**: Enable/disable alerts for probes, pages, and session expiry
 - **Probe/Vital Thresholds**: Warn and critical thresholds for API response times and Web Vitals (FCP, LCP, TTI)
+- **Probe Timeout**: Maximum time to wait for a probe response before marking it as timed out. Automatically raised to match the critical threshold if set lower.
 - **Work Item ID**: GUID for work item-specific probes and page checks
 - **Page Targets**: Comma-separated URL paths for page check cycles
 - **Probe table**: Enable/disable individual probes, run manually, view latest results
@@ -383,8 +392,8 @@ Development tool for creating custom CSS themes.
 ### Workflow
 
 1. Select a starting base (Dark or Light) and click **Load**
-2. Adjust colours using the colour pickers and hex inputs, grouped by category: Surfaces, Borders, Text, Accents, Navigation, Guidance, Scrollbar/Phase
-3. View the live preview panel to see changes in real time
+2. Adjust colours using the colour pickers and hex inputs, grouped by category: Surfaces, Borders, Text, Accents, Chart Palette, Navigation, Guidance, Scrollbar/Phase
+3. View the live preview panel to see changes in real time (includes a mini chart showing the chart palette colours)
 4. Check the Contrast Report for WCAG compliance (AAA, AA, AA Large, Fail ratings)
 5. Set metadata: theme ID (used as the CSS selector and file name), display label, icon class, and light-based flag
 6. Export: copy the generated CSS, copy the manifest JSON entry, or download the CSS file

@@ -274,7 +274,7 @@ Both services run builds asynchronously. The build endpoint returns immediately 
 
 ### API Probes
 
-A set of predefined API requests (`_uxProbes` array) executed against a configurable environment. Each probe measures total round-trip time and extracts the server-reported `tookMs`. Results are compared against warn/crit thresholds and can trigger alerts.
+A set of predefined API requests (`_uxProbes` array) executed against a configurable environment. Each probe measures total round-trip time and extracts the server-reported `tookMs`. Results are compared against warn/crit thresholds and can trigger alerts. The request timeout is configurable (`uxProbeTimeout`, default 15000ms) and is enforced to be at least as large as the critical threshold to prevent probes timing out before threshold evaluation.
 
 ### Playwright Page Checks
 
@@ -331,7 +331,7 @@ Every page calls `shared.init({ activePage: "pageName" })` on load. This:
 3. Fetches `/api/session` to determine multi-user state and render user identity
 4. Applies the theme from `localStorage` (instant, avoids flash) then syncs with server settings
 5. Initialises the SSE alert stream if notifications are enabled
-6. Sets up guidance dismissal persistence and JS-positioned tooltips
+6. Sets up guidance dismissal persistence and JS-positioned tooltips (all tooltips use `data-tooltip` + `usd-help` with a 400ms show delay matching native browser behaviour)
 
 ### `apiFetch`
 
@@ -351,7 +351,7 @@ Bridge between CSS custom properties and Chart.js configuration. Reads computed 
 
 - Semantic colour accessors (`accentBlue()`, `textMuted()`, etc.)
 - Pre-built config builders for time axes, value axes, legends, tooltips, threshold annotations
-- A cycling colour palette that pulls the first 6 colours from live CSS accent variables
+- A cycling colour palette that pulls the first 6 colours from `--chart-*` CSS variables (falling back to `--accent-*`)
 
 ---
 
@@ -372,6 +372,10 @@ Themes are CSS files that define CSS custom properties under a `[data-theme="id"
 3. Add an entry to `manifest.json`
 
 The Theme Builder page automates CSS generation and provides the manifest entry to copy.
+
+### Chart Palette
+
+Themes can optionally define `--chart-blue` through `--chart-cyan` variables for chart line and bar colours. `chartTheme.js` reads these first, falling back to the corresponding `--accent-*` values if undefined. This allows themes like MB Brand to use dark, WCAG-compliant accents for text while providing brighter, more saturated chart palette colours for visibility on white panel backgrounds. Dark and light themes do not define chart variables (their accents are already suitable for charts).
 
 ### High Contrast
 
@@ -431,6 +435,7 @@ The mock page also displays current notification settings (backlog threshold, al
 |--------|--------------------------------|---------|----------------------------|
 | GET    | `/api/metrics/status`          | Session | File listing and sizes     |
 | GET    | `/api/metrics/:env/:metric`    | Session | Read metric entries (with time filters) |
+| GET    | `/api/metrics/:env/:metric/export` | Session | Download raw JSONL file as backup |
 
 ### Issues
 
