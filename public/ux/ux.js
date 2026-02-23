@@ -476,9 +476,9 @@
                 label: g.label + " (" + g.path + ")",
                 data: dsData,
                 borderColor: color,
-                backgroundColor: color,
+                backgroundColor: color + "20",
                 borderWidth: 2,
-                pointRadius: 4,
+                pointRadius: 3,
                 pointHoverRadius: 6,
                 tension: 0.2,
                 fill: false

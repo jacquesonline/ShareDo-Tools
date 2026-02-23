@@ -35,6 +35,15 @@ var chartTheme = (function () {
     function accentCyan()   { return get("--accent-cyan"); }
     function accentRedBg()  { return get("--accent-red-bg"); }
 
+    // ─── Chart palette (falls back to accent if --chart-* not defined) ───
+
+    function chartBlue()   { return get("--chart-blue")   || accentBlue(); }
+    function chartGreen()  { return get("--chart-green")  || accentGreen(); }
+    function chartRed()    { return get("--chart-red")    || accentRed(); }
+    function chartAmber()  { return get("--chart-amber")  || accentAmber(); }
+    function chartPurple() { return get("--chart-purple") || accentPurple(); }
+    function chartCyan()   { return get("--chart-cyan")   || accentCyan(); }
+
     // ─── High contrast detection ───
 
     function isHC() { return document.body.classList.contains("high-contrast"); }
@@ -150,22 +159,22 @@ var chartTheme = (function () {
     function bgFill() { return bgPanel(); }
 
     // ─── Series palette ───
-    // First 6 entries match the CSS accent variables.
+    // First 6 entries use chart-specific colours (falling back to accents).
     // Remaining entries are extended palette colours for charts with many series.
 
     var PALETTE_EXTENDED = [
-        null, null, null, null, null, null,  // slots 0-5: filled dynamically from accents
+        null, null, null, null, null, null,  // slots 0-5: filled dynamically from chart/accent vars
         "#ff7eb3", "#8bc34a", "#ff9800", "#7986cb",
         "#26c6da", "#d4e157", "#ec407a", "#66bb6a", "#ffa726"
     ];
 
     /**
      * Returns an array of `count` colours, cycling through the palette.
-     * The first 6 are always the live accent values from CSS.
+     * The first 6 are the live chart palette values from CSS (or accent fallbacks).
      */
     function palette(count) {
         var base = [
-            accentBlue(), accentGreen(), accentRed(), accentAmber(), accentPurple(), accentCyan()
+            chartBlue(), chartGreen(), chartRed(), chartAmber(), chartPurple(), chartCyan()
         ];
         for (var i = 6; i < PALETTE_EXTENDED.length; i++) base.push(PALETTE_EXTENDED[i]);
         var result = [];
@@ -192,6 +201,12 @@ var chartTheme = (function () {
         accentPurple: accentPurple,
         accentCyan: accentCyan,
         accentRedBg: accentRedBg,
+        chartBlue: chartBlue,
+        chartGreen: chartGreen,
+        chartRed: chartRed,
+        chartAmber: chartAmber,
+        chartPurple: chartPurple,
+        chartCyan: chartCyan,
         fontMono: fontMono,
         timeAxis: timeAxis,
         valueAxis: valueAxis,

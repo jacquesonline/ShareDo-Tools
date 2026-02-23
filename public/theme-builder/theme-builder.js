@@ -16,8 +16,10 @@
             "accent-blue":"#4a9eff","accent-green":"#3dd68c","accent-red":"#ef5350","accent-amber":"#f0a840",
             "accent-purple":"#a078ff","accent-cyan":"#56d4c0","accent-orange":"#ffb378",
             "nav-bg":"#22262e","nav-border":"#363c48","nav-text":"#7d8590","nav-text-active":"#4a9eff",
-            "nav-active-bg":"#4a9eff","nav-env-bg":"#4a9eff","nav-env-text":"#4a9eff","nav-env-border":"#4a9eff",
-            "nav-admin-bg":"#a078ff","nav-admin-text":"#a078ff",
+            "nav-active-bg":"#273447","nav-env-bg":"#4a9eff","nav-env-text":"#4a9eff","nav-env-border":"#4a9eff",
+            "nav-primary-bg":"#4a9eff",
+            "nav-admin-bg":"#313047","nav-admin-text":"#a078ff",
+            "chart-blue":"#4a9eff","chart-green":"#3dd68c","chart-red":"#ef5350","chart-amber":"#f0a840","chart-purple":"#a078ff","chart-cyan":"#56d4c0",
             "guidance-bg":"#1a3352","guidance-text":"#8ec4f0","guidance-border":"#2a5a80",
             "scrollbar-thumb":"#363c48","scrollbar-hover":"#4a5264",
             "phase-start":"#43a047","phase-open":"#1976d2","phase-closed":"#d32f2f","phase-default":"#f57c00",
@@ -30,8 +32,10 @@
             "accent-blue":"#1a73e8","accent-green":"#167d48","accent-red":"#d32f2f","accent-amber":"#b45309",
             "accent-purple":"#7c4dff","accent-cyan":"#0b7d70","accent-orange":"#c2710a",
             "nav-bg":"#ffffff","nav-border":"#d8dbe0","nav-text":"#6b7280","nav-text-active":"#1a73e8",
-            "nav-active-bg":"#1a73e8","nav-env-bg":"#1a73e8","nav-env-text":"#1a73e8","nav-env-border":"#1a73e8",
-            "nav-admin-bg":"#7c4dff","nav-admin-text":"#7c4dff",
+            "nav-active-bg":"#edf4fd","nav-env-bg":"#1a73e8","nav-env-text":"#1a73e8","nav-env-border":"#1a73e8",
+            "nav-primary-bg":"#1a73e8",
+            "nav-admin-bg":"#f5f1ff","nav-admin-text":"#7c4dff",
+            "chart-blue":"#1a73e8","chart-green":"#167d48","chart-red":"#d32f2f","chart-amber":"#b45309","chart-purple":"#7c4dff","chart-cyan":"#0b7d70",
             "guidance-bg":"#EFF8FF","guidance-text":"#1d6db5","guidance-border":"#93c5fd",
             "scrollbar-thumb":"#c4c8ce","scrollbar-hover":"#a0a5ad",
             "phase-start":"#2e7d32","phase-open":"#1565c0","phase-closed":"#c62828","phase-default":"#e65100",
@@ -45,7 +49,9 @@
             "accent-purple":"#75264F","accent-cyan":"#0e7c6b","accent-orange":"#b84c00",
             "nav-bg":"#461C2F","nav-border":"#3a1527","nav-text":"#b3a99e","nav-text-active":"#ffffff",
             "nav-active-bg":"#CC2E57","nav-env-bg":"#CC2E57","nav-env-text":"#ffffff","nav-env-border":"#CC2E57",
+            "nav-primary-bg":"#CC2E57",
             "nav-admin-bg":"#CC2E57","nav-admin-text":"#ffffff",
+            "chart-blue":"#2196F3","chart-green":"#43A047","chart-red":"#E53935","chart-amber":"#F4A623","chart-purple":"#AB47BC","chart-cyan":"#26A69A",
             "guidance-bg":"#fdf0f4","guidance-text":"#A82660","guidance-border":"#e8b0c8",
             "scrollbar-thumb":"#c4b8be","scrollbar-hover":"#a0959a",
             "phase-start":"#2d7a3a","phase-open":"#1a6b9c","phase-closed":"#DB333C","phase-default":"#b84c00",
@@ -63,6 +69,10 @@
         accentRows: [
             ["accent-blue","Blue"],["accent-green","Green"],["accent-red","Red"],["accent-amber","Amber"],
             ["accent-purple","Purple"],["accent-cyan","Cyan"],["accent-orange","Orange"]
+        ],
+        chartRows: [
+            ["chart-blue","Blue"],["chart-green","Green"],["chart-red","Red"],["chart-amber","Amber"],
+            ["chart-purple","Purple"],["chart-cyan","Cyan"]
         ],
         navRows: [
             ["nav-bg","Background"],["nav-border","Border"],["nav-text","Text"],["nav-text-active","Active text"],
@@ -91,9 +101,15 @@
         ["accent-purple","bg-panel","Purple on panel"],
         ["accent-cyan","bg-panel","Cyan on panel"],
         ["accent-orange","bg-panel","Orange on panel"],
+        ["chart-blue","bg-panel","Chart blue on panel"],
+        ["chart-green","bg-panel","Chart green on panel"],
+        ["chart-red","bg-panel","Chart red on panel"],
+        ["chart-amber","bg-panel","Chart amber on panel"],
+        ["chart-purple","bg-panel","Chart purple on panel"],
+        ["chart-cyan","bg-panel","Chart cyan on panel"],
         ["nav-text","nav-bg","Nav text on nav bg"],
         ["nav-text-active","nav-active-bg","Nav active text on active bg"],
-        ["nav-env-text","nav-env-bg","Env text on env bg"],
+        ["nav-env-text","nav-bg","Env text on nav bg"],
         ["nav-admin-text","nav-admin-bg","Admin badge text on badge bg"],
         ["guidance-text","guidance-bg","Guidance text on guidance bg"]
     ];
@@ -339,6 +355,39 @@
         html += '<button style="padding:3px 8px;border:1px solid ' + esc(border) + ';border-radius:4px;background:' + esc(panelBg) + ';color:' + esc(txtS) + ';font-size:9px;cursor:pointer">6h</button>';
         html += '</div>';
 
+        // Mini chart palette preview
+        var chartColours = [
+            v["chart-blue"] || v["accent-blue"] || "#4a9eff",
+            v["chart-green"] || v["accent-green"] || "#3dd68c",
+            v["chart-red"] || v["accent-red"] || "#ef5350",
+            v["chart-amber"] || v["accent-amber"] || "#f0a840",
+            v["chart-purple"] || v["accent-purple"] || "#a078ff",
+            v["chart-cyan"] || v["accent-cyan"] || "#56d4c0"
+        ];
+        var chartLabels = ["Blue","Green","Red","Amber","Purple","Cyan"];
+        var lineYs = [8, 20, 32, 44, 56, 68];
+        var linePts = [[10,0],[90,-4],[170,3]]; // x, y-offset from baseline
+
+        html += '<div style="background:' + esc(panelBg) + ';border:1px solid ' + esc(border) + ';border-radius:5px;margin-top:10px;overflow:hidden">';
+        html += '<div style="padding:6px 12px;border-bottom:1px solid ' + esc(border) + ';font-size:10px;font-weight:600;color:' + esc(txtP) + ';display:flex;align-items:center;gap:6px">';
+        html += '<span class="fa fa-line-chart" style="font-size:9px;color:' + esc(txtM) + '"></span>Chart Palette</div>';
+        html += '<div style="padding:6px 10px">';
+        html += '<svg viewBox="0 0 220 76" style="width:360px;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">';
+
+        for (var si = 0; si < chartColours.length; si++) {
+            var by = lineYs[si];
+            var pts = [];
+            for (var pi = 0; pi < linePts.length; pi++) pts.push(linePts[pi][0] + "," + (by + linePts[pi][1]));
+            html += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="' + esc(chartColours[si]) + '" stroke-width="1.8" stroke-linejoin="round"/>';
+            for (var ni = 0; ni < linePts.length; ni++) {
+                html += '<circle cx="' + linePts[ni][0] + '" cy="' + (by + linePts[ni][1]) + '" r="2.5" fill="' + esc(chartColours[si]) + '"/>';
+            }
+            html += '<text x="180" y="' + (by + 3) + '" font-size="8" font-family="Consolas,monospace" fill="' + esc(txtM) + '">' + chartLabels[si] + '</text>';
+        }
+
+        html += '</svg>';
+        html += '</div></div>';
+
         html += '</div>'; // body
         frame.innerHTML = html;
     }
@@ -397,6 +446,12 @@
         }
         lines.push('    --accent-neutral-bg: rgba(' + neutralBase + ',' + bgOpacity + ');');
         lines.push('');
+        lines.push('    /* Chart palette (line/bar colours, falls back to accents if omitted) */');
+        var chartNames = ["blue","green","red","amber","purple","cyan"];
+        for (var ci = 0; ci < chartNames.length; ci++) {
+            lines.push('    --chart-' + chartNames[ci] + ': ' + v["chart-" + chartNames[ci]] + ';');
+        }
+        lines.push('');
         lines.push('    /* Interaction */');
         var hoverBase = v["text-primary"];
         lines.push('    --hover-row: ' + hexToRgba(v["accent-blue"], 0.03) + ';');
@@ -427,7 +482,7 @@
         lines.push('    --nav-env-bg: ' + hexToRgba(v["nav-env-bg"], 0.25) + ';');
         lines.push('    --nav-env-text: ' + v["nav-env-text"] + ';');
         lines.push('    --nav-env-border: ' + hexToRgba(v["nav-env-border"], 0.4) + ';');
-        lines.push('    --nav-primary-bg: ' + v["nav-active-bg"] + ';');
+        lines.push('    --nav-primary-bg: ' + (v["nav-primary-bg"] || v["nav-active-bg"]) + ';');
         lines.push('    --nav-primary-text: #fff;');
         lines.push('    --nav-admin-bg: ' + v["nav-admin-bg"] + ';');
         lines.push('    --nav-admin-text: ' + v["nav-admin-text"] + ';');

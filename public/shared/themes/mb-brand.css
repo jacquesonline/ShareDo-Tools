@@ -38,6 +38,14 @@
     --accent-orange-bg: rgba(184,76,0,0.08);
     --accent-neutral-bg: rgba(70,28,47,0.04);
 
+    /* ── Chart palette (brighter variants for line/bar charts on white panels) ── */
+    --chart-blue: #2196F3;
+    --chart-green: #43A047;
+    --chart-red: #E53935;
+    --chart-amber: #F4A623;
+    --chart-purple: #AB47BC;
+    --chart-cyan: #26A69A;
+
     /* ── Interaction ── */
     --hover-row: rgba(70,28,47,0.03);
     --hover-bg: rgba(70,28,47,0.04);
