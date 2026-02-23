@@ -68,7 +68,7 @@
         <div class="usd-guidance" data-guidance-id="waila-index">
             <span class="fa fa-lightbulb-o usd-guidance__icon"></span>
             <div class="usd-guidance__text">Click <kbd>Build Index</kbd> to fetch and index all workflow definitions for the current environment. Once built, use Search or Filters to query across all workflows.</div>
-            <button class="usd-guidance__dismiss" title="Dismiss"><span class="fa fa-times"></span></button>
+            <button class="usd-guidance__dismiss usd-help" data-tooltip="Dismiss"><span class="fa fa-times"></span></button>
         </div>
 
         <!-- Search -->
@@ -86,7 +86,7 @@
                 <button class="usd-btn usd-btn--primary wla-search-actions__go" id="searchBtn">
                     <span class="fa fa-search"></span> Search
                 </button>
-                <button class="usd-btn" id="advancedToggle" title="Toggle advanced filters">
+                <button class="usd-btn usd-help" id="advancedToggle" data-tooltip="Toggle advanced filters">
                     <span class="fa fa-sliders"></span> Filters
                 </button>
             </div>
@@ -175,8 +175,8 @@
             <span class="wla-results-bar__count" id="resultsCount"></span>
             <span class="wla-results-bar__time" id="resultsTime"></span>
             <div class="wla-results-bar__actions">
-                <button class="usd-btn" id="expandAllResults" title="Expand all"><span class="fa fa-expand"></span></button>
-                <button class="usd-btn" id="collapseAllResults" title="Collapse all"><span class="fa fa-compress"></span></button>
+                <button class="usd-btn usd-help" id="expandAllResults" data-tooltip="Expand all"><span class="fa fa-expand"></span></button>
+                <button class="usd-btn usd-help" id="collapseAllResults" data-tooltip="Collapse all"><span class="fa fa-compress"></span></button>
             </div>
         </div>
 
@@ -202,8 +202,8 @@
                 <span class="wla-modal__subtitle" id="scriptModalSubtitle"></span>
             </div>
             <div class="wla-modal__actions">
-                <button class="usd-btn" id="scriptModalCopy" title="Copy script to clipboard"><span class="fa fa-clipboard"></span> Copy</button>
-                <button class="usd-btn" id="scriptModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+                <button class="usd-btn usd-help" id="scriptModalCopy" data-tooltip="Copy script to clipboard"><span class="fa fa-clipboard"></span> Copy</button>
+                <button class="usd-btn usd-help" id="scriptModalClose" data-tooltip="Close (Esc)"><span class="fa fa-times"></span></button>
             </div>
         </div>
         <div class="wla-modal__body" id="scriptModalBody">

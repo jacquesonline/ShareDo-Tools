@@ -487,7 +487,7 @@
                         var host = document.getElementById("hostLabel").textContent;
                         if (host && host !== "--") href = "https://" + host + href;
                     }
-                    bHtml += '<td class="usd-table__mono"><a href="' + esc(href) + '" target="_blank" class="srch-link" title="' + esc(href) + '"><span class="fa fa-external-link"></span> Open</a></td>';
+                    bHtml += '<td class="usd-table__mono"><a href="' + esc(href) + '" target="_blank" class="srch-link usd-help" data-tooltip="' + esc(href) + '"><span class="fa fa-external-link"></span> Open</a></td>';
                 } else {
                     bHtml += '<td class="usd-table__mono">' + esc(val != null ? String(val) : "") + "</td>";
                 }

@@ -270,9 +270,9 @@
                 h += '<tr class="iss-proc-row" data-pid="' + esc(rows[i].id || "") + '" data-ptitle="' + esc(d.title || "--") + '">';
                 h += '<td class="usd-table__mono">' + fmtDate(d.started) + '</td>';
                 h += '<td>' + esc(d.title || "--") + '</td>';
-                h += '<td class="usd-table__muted"><span class="iss-desc" title="' + esc(d.description || "") + '">' + esc(d.description || "--") + '</span></td>';
+                h += '<td class="usd-table__muted"><span class="iss-desc">' + esc(d.description || "--") + '</span></td>';
                 h += '<td class="usd-table__mono">' + esc(sharedoRef) + '</td>';
-                h += '<td><span class="fa ' + esc(stateIcon) + '" style="color:' + stateColour + '" title="' + esc(stateText) + '"></span> ' + esc(stateText) + '</td>';
+                h += '<td><span class="fa ' + esc(stateIcon) + '" style="color:' + stateColour + '"></span> ' + esc(stateText) + '</td>';
                 h += '</tr>';
             }
             body.innerHTML = h;
@@ -445,7 +445,7 @@
                 h += '<tr>';
                 h += '<td class="usd-table__mono">' + esc(d.reference || "--") + '</td>';
                 h += '<td>' + esc(d.title || "--") + '</td>';
-                h += '<td><span class="iss-desc" title="' + esc(d.description || "") + '">' + esc(d.description || "--") + '</span></td>';
+                h += '<td><span class="iss-desc">' + esc(d.description || "--") + '</span></td>';
                 h += '<td class="usd-table__mono">' + fmtDate(d.createdDate) + '</td>';
                 h += '<td>';
                 for (var t = 0; t < tags.length; t++) h += '<span class="iss-tag">' + esc(tags[t]) + '</span>';

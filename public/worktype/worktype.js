@@ -175,7 +175,7 @@
             html += '<div class="wt-tree-node__row" data-sn="' + esc(sn) + '" style="padding-left:' + (8 + depth * 16) + 'px">';
             html += '<span class="wt-tree-node__toggle ' + (hasKids ? '' : 'wt-tree-node__toggle--leaf') + '"><span class="fa fa-caret-right"></span></span>';
             html += '<span class="wt-tree-node__icon"><span class="fa ' + esc(icon) + '"></span></span>';
-            html += '<span class="wt-tree-node__name" title="' + esc(sn) + '">' + esc(info.name || sn) + '</span>';
+            html += '<span class="wt-tree-node__name usd-help" data-tooltip="' + esc(sn) + '">' + esc(info.name || sn) + '</span>';
             if (info.isAbstract) html += '<span class="wt-tree-node__abstract">abstract</span>';
             html += '</div>';
             if (hasKids) {
@@ -438,12 +438,12 @@
                 }
 
                 listHtml += '<div class="' + rowClasses + '" data-zone="' + zoneName + '" data-idx="' + a + '">';
-                listHtml += '<span class="wt-aspect-row__name" title="' + esc(asp.aspectDefinitionSystemName) + '">' + esc(displayName) + '</span>';
+                listHtml += '<span class="wt-aspect-row__name usd-help" data-tooltip="' + esc(asp.aspectDefinitionSystemName) + '">' + esc(displayName) + '</span>';
                 listHtml += '<span class="wt-aspect-row__dots">';
-                if (asp.inherited) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--inherited" title="Inherited"></span>';
-                if (asp.alwaysHide) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--hidden" title="Always hidden"></span>';
-                if (asp.ruleSetSelection) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--rules" title="Display rules"></span>';
-                if (asp.aspectDefinitionSystemName === "FormBuilder") listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--form" title="Form Builder"></span>';
+                if (asp.inherited) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--inherited usd-help" data-tooltip="Inherited"></span>';
+                if (asp.alwaysHide) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--hidden usd-help" data-tooltip="Always hidden"></span>';
+                if (asp.ruleSetSelection) listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--rules usd-help" data-tooltip="Display rules"></span>';
+                if (asp.aspectDefinitionSystemName === "FormBuilder") listHtml += '<span class="wt-aspect-row__dot wt-aspect-row__dot--form usd-help" data-tooltip="Form Builder"></span>';
                 listHtml += '</span>';
                 listHtml += '</div>';
             }
@@ -1596,8 +1596,8 @@
                         col += '<span class="wt-cmp-aspect-row__form"><span class="fa fa-wpforms"></span> ' + esc(formLabel) + '</span>';
                     }
                     col += '<span class="wt-cmp-aspect-row__dots">';
-                    if (asp.inherited) col += '<span class="wt-cmp-aspect-row__dot usd-bg--blue" title="Inherited"></span>';
-                    if (asp.sysName === "FormBuilder") col += '<span class="wt-cmp-aspect-row__dot usd-bg--cyan" title="FormBuilder"></span>';
+                    if (asp.inherited) col += '<span class="wt-cmp-aspect-row__dot usd-bg--blue usd-help" data-tooltip="Inherited"></span>';
+                    if (asp.sysName === "FormBuilder") col += '<span class="wt-cmp-aspect-row__dot usd-bg--cyan usd-help" data-tooltip="FormBuilder"></span>';
                     col += '</span></div>';
 
                     // Show change detail on target side
@@ -2014,7 +2014,7 @@
         // Header
         h += '<div class="wt-sr-card__header">';
         h += '<span class="fa fa-chevron-down wt-sr-card__chevron"></span>';
-        h += '<div class="wt-sr-card__identity" data-sn="' + esc(r.systemName) + '" title="View type detail">';
+        h += '<div class="wt-sr-card__identity usd-help" data-sn="' + esc(r.systemName) + '" data-tooltip="View type detail">';
         h += '<span class="wt-sr-card__icon" style="background:' + esc(colour) + '"><span class="fa ' + esc(icon) + '"></span></span>';
         h += '<div class="wt-sr-card__title">';
         h += '<div class="wt-sr-card__name">' + hlText(esc(r.name), searchTerm) + '</div>';

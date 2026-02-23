@@ -1021,20 +1021,20 @@
 
                 // 3.1: Clear or Paste
                 if (env.hasCookie) {
-                    html += '<button class="usd-btn opt-auth-btn opt-auth-clear-btn" data-env="' + shared.esc(env.envName) + '" title="Clear cookie"><span class="fa fa-times"></span></button>';
+                    html += '<button class="usd-btn opt-auth-btn opt-auth-clear-btn usd-help" data-env="' + shared.esc(env.envName) + '" data-tooltip="Clear cookie"><span class="fa fa-times"></span></button>';
                 } else {
-                    html += '<button class="usd-btn opt-auth-btn opt-auth-paste-btn" data-env="' + shared.esc(env.envName) + '" title="Set cookie from paste"><span class="fa fa-paste"></span></button>';
+                    html += '<button class="usd-btn opt-auth-btn opt-auth-paste-btn usd-help" data-env="' + shared.esc(env.envName) + '" data-tooltip="Set cookie from paste"><span class="fa fa-paste"></span></button>';
                 }
 
                 // 3.2: Auto Auth (spacer if not available)
                 if (env.hasAutoAuth) {
-                    html += '<button class="usd-btn opt-auth-btn opt-auth-reacquire-btn" data-env="' + shared.esc(env.envName) + '" title="Auto Auth"><span class="fa fa-refresh"></span></button>';
+                    html += '<button class="usd-btn opt-auth-btn opt-auth-reacquire-btn usd-help" data-env="' + shared.esc(env.envName) + '" data-tooltip="Auto Auth"><span class="fa fa-refresh"></span></button>';
                 } else {
                     html += '<span class="opt-auth-btn-spacer"></span>';
                 }
 
                 // 3.3: Login/Re-login
-                html += '<button class="usd-btn opt-auth-btn opt-auth-login-btn" data-env="' + shared.esc(env.envName) + '" title="' + (env.hasCookie ? 'Re-login' : 'Login') + '"><span class="fa fa-globe"></span></button>';
+                html += '<button class="usd-btn opt-auth-btn opt-auth-login-btn usd-help" data-env="' + shared.esc(env.envName) + '" data-tooltip="' + (env.hasCookie ? 'Re-login' : 'Login') + '"><span class="fa fa-globe"></span></button>';
 
                 html += '</div>';
                 html += '</div>';

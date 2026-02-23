@@ -36,8 +36,8 @@
     </div>
     <div class="usd-page-header__actions">
         <button class="usd-btn usd-btn--primary" id="refreshAllBtn"><span class="fa fa-refresh"></span> Refresh All</button>
-        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
-        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
+        <button class="usd-btn usd-help" id="expandAllBtn" data-tooltip="Expand all sections"><span class="fa fa-expand"></span></button>
+        <button class="usd-btn usd-help" id="collapseAllBtn" data-tooltip="Collapse all sections"><span class="fa fa-compress"></span></button>
     </div>
 </div>
 <!-- Issues body -->
@@ -52,7 +52,7 @@
                 <span class="usd-section__title">EE Processes</span>
             </div>
             <div class="usd-section__header-right">
-                <a class="iss-ext-link" data-path="/modeller/diagnostics-executionengine" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeProcesses">--</span>
+                <a class="iss-ext-link usd-help" data-path="/modeller/diagnostics-executionengine" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeProcesses">--</span>
             </div>
         </div>
         <div class="usd-section__content">
@@ -65,7 +65,7 @@
                     <button class="usd-btn iss-date-btn" id="procBtnToday">Today</button>
                     <button class="usd-btn iss-date-btn" id="procBtnWeek">7 Days</button>
                     <input type="date" class="usd-date-input" id="procDatePicker" />
-                    <button class="usd-btn iss-date-btn" id="procBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                    <button class="usd-btn iss-date-btn usd-help" id="procBtnClearDate" data-tooltip="Clear date filter"><span class="fa fa-times"></span></button>
                 </div>
                 <div class="iss-controls__group iss-controls__group--right">
                     <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="procRowsPerPage" value="10" min="1" max="100" /></label>
@@ -92,7 +92,7 @@
                 <span class="usd-section__title">Failed Outbound Emails</span>
             </div>
             <div class="usd-section__header-right">
-                <a class="iss-ext-link" data-path="/outbound-comms-failures" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEmails">--</span>
+                <a class="iss-ext-link usd-help" data-path="/outbound-comms-failures" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEmails">--</span>
             </div>
         </div>
         <div class="usd-section__content">
@@ -101,7 +101,7 @@
                     <button class="usd-btn iss-date-btn" id="emailBtnToday">Today</button>
                     <button class="usd-btn iss-date-btn" id="emailBtnWeek">7 Days</button>
                     <input type="date" class="usd-date-input" id="emailDatePicker" />
-                    <button class="usd-btn iss-date-btn" id="emailBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                    <button class="usd-btn iss-date-btn usd-help" id="emailBtnClearDate" data-tooltip="Clear date filter"><span class="fa fa-times"></span></button>
                 </div>
                 <div class="iss-controls__group iss-controls__group--right">
                     <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="emailRowsPerPage" value="10" min="1" max="100" /></label>
@@ -128,7 +128,7 @@
                 <span class="usd-section__title">Failed Outbound SMS</span>
             </div>
             <div class="usd-section__header-right">
-                <a class="iss-ext-link" data-path="/outbound-comms-failures" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSms">--</span>
+                <a class="iss-ext-link usd-help" data-path="/outbound-comms-failures" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSms">--</span>
             </div>
         </div>
         <div class="usd-section__content">
@@ -137,7 +137,7 @@
                     <button class="usd-btn iss-date-btn" id="smsBtnToday">Today</button>
                     <button class="usd-btn iss-date-btn" id="smsBtnWeek">7 Days</button>
                     <input type="date" class="usd-date-input" id="smsDatePicker" />
-                    <button class="usd-btn iss-date-btn" id="smsBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                    <button class="usd-btn iss-date-btn usd-help" id="smsBtnClearDate" data-tooltip="Clear date filter"><span class="fa fa-times"></span></button>
                 </div>
                 <div class="iss-controls__group iss-controls__group--right">
                     <label class="iss-rpp">Rows: <input type="number" class="iss-rpp__input" id="smsRowsPerPage" value="10" min="1" max="100" /></label>
@@ -164,7 +164,7 @@
                 <span class="usd-section__title">SYSADMIN Tasks</span>
             </div>
             <div class="usd-section__header-right">
-                <a class="iss-ext-link" data-path="/sharedo/e027def1-8b7e-4842-a8a6-b211001e25c1" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSysadmin">--</span>
+                <a class="iss-ext-link usd-help" data-path="/sharedo/e027def1-8b7e-4842-a8a6-b211001e25c1" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSysadmin">--</span>
             </div>
         </div>
         <div class="usd-section__content">
@@ -173,7 +173,7 @@
                     <button class="usd-btn iss-date-btn" id="sysadminBtnToday">Today</button>
                     <button class="usd-btn iss-date-btn" id="sysadminBtnWeek">7 Days</button>
                     <input type="date" class="usd-date-input" id="sysadminDatePicker" />
-                    <button class="usd-btn iss-date-btn" id="sysadminBtnClearDate" title="Clear date filter"><span class="fa fa-times"></span></button>
+                    <button class="usd-btn iss-date-btn usd-help" id="sysadminBtnClearDate" data-tooltip="Clear date filter"><span class="fa fa-times"></span></button>
                 </div>
                 <div class="iss-controls__group iss-controls__group--right">
                     <button class="usd-btn" id="sysadminRefreshBtn"><span class="fa fa-refresh"></span></button>
@@ -201,7 +201,7 @@
             </div>
             <div class="iss-modal__actions">
                 <a class="usd-btn" id="procModalLink" href="#" target="_blank" style="display:none"><span class="fa fa-external-link"></span> Open Work Item</a>
-                <button class="usd-btn" id="procModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+                <button class="usd-btn usd-help" id="procModalClose" data-tooltip="Close (Esc)"><span class="fa fa-times"></span></button>
             </div>
         </div>
         <div class="iss-modal__body" id="procModalBody"></div>

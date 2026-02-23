@@ -205,12 +205,12 @@
             { label: "Next OptionSet ID", value: data.nextOptionSetId, type: "number", tooltip: nextOS <= maxOS ? "Should be greater than Max" : null }
         );
         var html = "", failCount = 0;
-        for (var i = 0; i < checks.length; i++) { var ck = checks[i], cls = "usd-cfg-val--neutral", display = ""; var tt = ck.tooltip ? ' title="' + esc(ck.tooltip) + '"' : '';
+        for (var i = 0; i < checks.length; i++) { var ck = checks[i], cls = "usd-cfg-val--neutral", display = "";
             if (ck.type === "custom") { cls = ck.cls; display = ck.display; if (ck.isIssue) failCount++; }
             else if (ck.type === "bool") { display = ck.value ? "true" : "false"; cls = ck.value === ck.expect ? "usd-cfg-val--pass" : "usd-cfg-val--fail"; if (ck.value !== ck.expect) failCount++; }
             else if (ck.type === "zero") { display = String(ck.value); cls = ck.value === 0 ? "usd-cfg-val--pass" : "usd-cfg-val--fail"; if (ck.value !== 0) failCount++; }
             else if (ck.type === "number") { display = fmtNum(ck.value); } else { display = String(ck.value); }
-            html += '<div class="usd-config-item"' + tt + '><span class="usd-config-item__label">' + esc(ck.label); if (ck.tooltip) html += ' <span class="fa fa-info-circle usd-config-item__info"></span>';
+            html += '<div class="usd-config-item"><span class="usd-config-item__label">' + esc(ck.label); if (ck.tooltip) html += ' <span class="fa fa-info-circle usd-config-item__info usd-help" data-tooltip="' + esc(ck.tooltip) + '"></span>';
             html += '</span><span class="usd-config-item__value ' + cls + '">' + esc(display) + '</span></div>'; }
         container.innerHTML = html;
         summaryEl.textContent = failCount === 0 ? "OK" : failCount + " issue" + (failCount > 1 ? "s" : "");
@@ -261,7 +261,7 @@
             html += '<td class="usd-table__muted">' + esc(d.schedule || "--") + '</td>';
             html += '<td class="usd-table__mono">' + fmtDate(d.lastRun) + '</td>';
             html += '<td class="usd-table__mono">' + fmtDate(d.nextRun) + '</td>';
-            html += '<td><span class="fa ' + esc(stateIcon) + '" style="color:' + esc(colour) + '" title="' + esc(stateTooltip) + '"></span> ' + esc(stateTooltip) + '</td>';
+            html += '<td><span class="fa ' + esc(stateIcon) + '" style="color:' + esc(colour) + '"></span> ' + esc(stateTooltip) + '</td>';
             html += '</tr>';
         }
         if (!rows.length) html += '<tr><td colspan="5" class="usd-table__muted">No maintenance plans found</td></tr>';

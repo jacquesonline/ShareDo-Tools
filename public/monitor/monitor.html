@@ -53,8 +53,8 @@
             <span id="autoRefreshLabel">Auto 30s</span>
         </label>
         <button class="usd-btn usd-btn--primary" id="refreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
-        <button class="usd-btn" id="expandAllBtn" title="Expand all sections"><span class="fa fa-expand"></span></button>
-        <button class="usd-btn" id="collapseAllBtn" title="Collapse all sections"><span class="fa fa-compress"></span></button>
+        <button class="usd-btn usd-help" id="expandAllBtn" data-tooltip="Expand all sections"><span class="fa fa-expand"></span></button>
+        <button class="usd-btn usd-help" id="collapseAllBtn" data-tooltip="Collapse all sections"><span class="fa fa-compress"></span></button>
     </div>
 </div>
 
@@ -64,7 +64,7 @@
 <div class="usd-section" id="sectionEE">
     <div class="usd-section__header" onclick="toggleSection('sectionEE')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--ee"><span class="fa fa-bolt"></span></span><span class="usd-section__title">Event Engine -- Stream Stats</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/event-engine-config-service" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEE">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/event-engine-config-service" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeEE">Loading...</span></div>
     </div>
     <div class="usd-section__content">
         <table class="usd-table"><thead><tr><th>Stream</th><th>Group</th><th>Description</th><th>Status</th><th class="usd-table__right">Connections</th><th class="usd-table__right">Backlog</th><th class="usd-table__right">Alert Duration</th></tr></thead><tbody id="streamTableBody"></tbody></table>
@@ -77,7 +77,7 @@
 <div class="usd-section" id="sectionSearch">
     <div class="usd-section__header" onclick="toggleSection('sectionSearch')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--search"><span class="fa fa-search"></span></span><span class="usd-section__title">Search Index Health</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/search-indexes" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSearch">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/search-indexes" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSearch">Loading...</span></div>
     </div>
     <div class="usd-section__content">
         <div class="usd-sub-label">Cluster Health</div>
@@ -93,7 +93,7 @@
 <div class="usd-section" id="sectionSQL">
     <div class="usd-section__header" onclick="toggleSection('sectionSQL')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--sql"><span class="fa fa-database"></span></span><span class="usd-section__title">SQL Agent & Reporting Jobs</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/reports-jobs" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSQL">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/reports-jobs" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeSQL">Loading...</span></div>
     </div>
     <div class="usd-section__content">
         <div class="usd-sub-label">Jobs</div>
@@ -109,7 +109,7 @@
 <div class="usd-section" id="sectionConfig">
     <div class="usd-section__header" onclick="toggleSection('sectionConfig')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--config"><span class="fa fa-cog"></span></span><span class="usd-section__title">System Diagnostics Config</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/diagnostics-config" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeConfig">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/diagnostics-config" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeConfig">Loading...</span></div>
     </div>
     <div class="usd-section__content"><div class="usd-config-grid" id="configGrid"></div></div>
 </div>
@@ -118,7 +118,7 @@
 <div class="usd-section" id="sectionMaint">
     <div class="usd-section__header" onclick="toggleSection('sectionMaint')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--maint"><span class="fa fa-wrench"></span></span><span class="usd-section__title">Maintenance Plans</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/maintenance-plans" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeMaint">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/maintenance-plans" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeMaint">Loading...</span></div>
     </div>
     <div class="usd-section__content"><div id="maintGrid"></div></div>
 </div>
@@ -127,7 +127,7 @@
 <div class="usd-section" id="sectionLinked">
     <div class="usd-section__header" onclick="toggleSection('sectionLinked')">
         <div class="usd-section__header-left"><span class="fa fa-chevron-down usd-section__chevron"></span><span class="usd-section__icon usd-section__icon--linked"><span class="fa fa-link"></span></span><span class="usd-section__title">Linked Services</span></div>
-        <div class="usd-section__header-right"><a class="mon-ext-link" data-path="/admin/oauth" title="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeLinked">Loading...</span></div>
+        <div class="usd-section__header-right"><a class="mon-ext-link usd-help" data-path="/admin/oauth" data-tooltip="Open in ShareDo"><span class="fa fa-external-link"></span></a><span class="usd-badge usd-badge--neutral" id="badgeLinked">Loading...</span></div>
     </div>
     <div class="usd-section__content"><div class="usd-linked-grid" id="linkedGrid"></div></div>
 </div>

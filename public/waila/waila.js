@@ -260,9 +260,9 @@
         h += '<span class="wla-card__stat"><span class="fa fa-cube"></span> ' + wf.actionCount + '</span>';
         h += '</div>';
         h += '<div class="wla-card__actions">';
-        h += '<button class="usd-btn wla-card__script-btn" title="View compiled script" data-sn="' + esc(wf.systemName) + '" data-name="' + esc(wf.name) + '"><span class="fa fa-code"></span></button>';
-        h += '<button class="usd-btn wla-card__copy-btn" title="Copy system name" data-copy="' + esc(wf.systemName) + '"><span class="fa fa-clipboard"></span></button>';
-        h += '<button class="usd-btn wla-card__cmd-btn" title="Copy open command" data-sn="' + esc(wf.systemName) + '"><span class="fa fa-terminal"></span></button>';
+        h += '<button class="usd-btn wla-card__script-btn usd-help" data-tooltip="View compiled script" data-sn="' + esc(wf.systemName) + '" data-name="' + esc(wf.name) + '"><span class="fa fa-code"></span></button>';
+        h += '<button class="usd-btn wla-card__copy-btn usd-help" data-tooltip="Copy system name" data-copy="' + esc(wf.systemName) + '"><span class="fa fa-clipboard"></span></button>';
+        h += '<button class="usd-btn wla-card__cmd-btn usd-help" data-tooltip="Copy open command" data-sn="' + esc(wf.systemName) + '"><span class="fa fa-terminal"></span></button>';
         h += '</div>';
         h += '</div>';
 

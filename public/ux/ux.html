@@ -66,8 +66,8 @@
         </div>
         <div class="usd-time-bar__sep"></div>
         <div class="usd-time-bar__nav">
-            <button class="usd-btn usd-nav-btn" id="uxNavPrev" title="Step backward"><span class="fa fa-chevron-left"></span></button>
-            <button class="usd-btn usd-nav-btn" id="uxNavNext" title="Step forward"><span class="fa fa-chevron-right"></span></button>
+            <button class="usd-btn usd-nav-btn usd-help" id="uxNavPrev" data-tooltip="Step backward"><span class="fa fa-chevron-left"></span></button>
+            <button class="usd-btn usd-nav-btn usd-help" id="uxNavNext" data-tooltip="Step forward"><span class="fa fa-chevron-right"></span></button>
         </div>
         <div class="usd-time-bar__sep"></div>
         <div class="usd-time-bar__dates">
@@ -113,9 +113,9 @@
                     <option value="totalLoadMs">Total Load</option>
                     <option value="ajaxSlowest">Slowest AJAX</option>
                 </select>
-                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                <button class="usd-btn usd-chart-panel__toggle" id="uxCompareHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxCompareResetZoom" data-tooltip="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxCompareShowAll" data-tooltip="Show all"><span class="fa fa-eye"></span></button>
+                <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxCompareHideAll" data-tooltip="Hide all"><span class="fa fa-eye-slash"></span></button>
             </div>
         </div>
         <div class="usd-chart-panel__body">
@@ -137,9 +137,9 @@
                 <span class="fa fa-heartbeat"></span> Web Vitals Over Time
                 <span class="usd-chart-panel__count" id="uxVitalsCount"></span>
                 <div class="usd-chart-panel__actions" id="uxVitalsActions" style="display:none">
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxVitalsHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxVitalsResetZoom" data-tooltip="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxVitalsShowAll" data-tooltip="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxVitalsHideAll" data-tooltip="Hide all"><span class="fa fa-eye-slash"></span></button>
                 </div>
             </div>
             <div class="usd-chart-panel__body">
@@ -155,9 +155,9 @@
                 <span class="fa fa-exchange"></span> API Probe Response Times
                 <span class="usd-chart-panel__count" id="uxProbesCount"></span>
                 <div class="usd-chart-panel__actions" id="uxProbesActions" style="display:none">
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesResetZoom" title="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesShowAll" title="Show all"><span class="fa fa-eye"></span></button>
-                    <button class="usd-btn usd-chart-panel__toggle" id="uxProbesHideAll" title="Hide all"><span class="fa fa-eye-slash"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxProbesResetZoom" data-tooltip="Reset zoom" style="display:none"><span class="fa fa-search-minus"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxProbesShowAll" data-tooltip="Show all"><span class="fa fa-eye"></span></button>
+                    <button class="usd-btn usd-chart-panel__toggle usd-help" id="uxProbesHideAll" data-tooltip="Hide all"><span class="fa fa-eye-slash"></span></button>
                 </div>
             </div>
             <div class="usd-chart-panel__body">
@@ -192,7 +192,7 @@
                 <span class="ux-modal__subtitle" id="uxAjaxContext"></span>
             </div>
             <div class="ux-modal__actions">
-                <button class="usd-btn" id="uxAjaxModalClose" title="Close (Esc)"><span class="fa fa-times"></span></button>
+                <button class="usd-btn usd-help" id="uxAjaxModalClose" data-tooltip="Close (Esc)"><span class="fa fa-times"></span></button>
             </div>
         </div>
         <div class="ux-modal__summary" id="uxAjaxSummary"></div>
