@@ -408,65 +408,59 @@ var shared = (function () {
 
     function showTooltip(trigger) {
         clearTimeout(_tooltipTimer);
-        var text = trigger.getAttribute("data-tooltip");
-        if (!text) return;
-        _tooltipEl.textContent = "";
-        // Support line breaks via &#10; (already decoded by browser) or \n
-        var lines = text.split("\n");
-        for (var i = 0; i < lines.length; i++) {
-            if (i > 0) _tooltipEl.appendChild(document.createElement("br"));
-            _tooltipEl.appendChild(document.createTextNode(lines[i]));
-        }
+        _tooltipTimer = setTimeout(function () {
+            var text = trigger.getAttribute("data-tooltip");
+            if (!text) return;
+            _tooltipEl.textContent = "";
+            var lines = text.split("\n");
+            for (var i = 0; i < lines.length; i++) {
+                if (i > 0) _tooltipEl.appendChild(document.createElement("br"));
+                _tooltipEl.appendChild(document.createTextNode(lines[i]));
+            }
 
-        // Make visible off-screen to measure
-        _tooltipEl.style.left = "-9999px";
-        _tooltipEl.style.top = "-9999px";
-        _tooltipEl.classList.add("usd-tooltip--visible");
+            _tooltipEl.style.left = "-9999px";
+            _tooltipEl.style.top = "-9999px";
+            _tooltipEl.classList.add("usd-tooltip--visible");
 
-        var tipRect = _tooltipEl.getBoundingClientRect();
-        var trigRect = trigger.getBoundingClientRect();
-        var gap = 8;
-        var vw = window.innerWidth;
-        var vh = window.innerHeight;
+            var tipRect = _tooltipEl.getBoundingClientRect();
+            var trigRect = trigger.getBoundingClientRect();
+            var gap = 8;
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
 
-        var pos = trigger.getAttribute("data-tooltip-pos") || "above";
-        var left, top;
+            var pos = trigger.getAttribute("data-tooltip-pos") || "above";
+            var left, top;
 
-        if (pos === "right") {
-            left = trigRect.right + gap;
-            top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
-            // Flip to left if clipped
-            if (left + tipRect.width > vw - gap) { left = trigRect.left - tipRect.width - gap; }
-        } else if (pos === "left") {
-            left = trigRect.left - tipRect.width - gap;
-            top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
-            // Flip to right if clipped
-            if (left < gap) { left = trigRect.right + gap; }
-        } else if (pos === "below") {
-            left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
-            top = trigRect.bottom + gap;
-            // Flip to above if clipped
-            if (top + tipRect.height > vh - gap) { top = trigRect.top - tipRect.height - gap; }
-        } else {
-            // Default: above
-            left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
-            top = trigRect.top - tipRect.height - gap;
-            // Flip to below if clipped
-            if (top < gap) { top = trigRect.bottom + gap; }
-        }
+            if (pos === "right") {
+                left = trigRect.right + gap;
+                top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
+                if (left + tipRect.width > vw - gap) { left = trigRect.left - tipRect.width - gap; }
+            } else if (pos === "left") {
+                left = trigRect.left - tipRect.width - gap;
+                top = trigRect.top + (trigRect.height / 2) - (tipRect.height / 2);
+                if (left < gap) { left = trigRect.right + gap; }
+            } else if (pos === "below") {
+                left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
+                top = trigRect.bottom + gap;
+                if (top + tipRect.height > vh - gap) { top = trigRect.top - tipRect.height - gap; }
+            } else {
+                left = trigRect.left + (trigRect.width / 2) - (tipRect.width / 2);
+                top = trigRect.top - tipRect.height - gap;
+                if (top < gap) { top = trigRect.bottom + gap; }
+            }
 
-        // Clamp horizontal to viewport
-        if (left < gap) left = gap;
-        if (left + tipRect.width > vw - gap) left = vw - tipRect.width - gap;
-        // Clamp vertical to viewport
-        if (top < gap) top = gap;
-        if (top + tipRect.height > vh - gap) top = vh - tipRect.height - gap;
+            if (left < gap) left = gap;
+            if (left + tipRect.width > vw - gap) left = vw - tipRect.width - gap;
+            if (top < gap) top = gap;
+            if (top + tipRect.height > vh - gap) top = vh - tipRect.height - gap;
 
-        _tooltipEl.style.left = Math.round(left) + "px";
-        _tooltipEl.style.top = Math.round(top) + "px";
+            _tooltipEl.style.left = Math.round(left) + "px";
+            _tooltipEl.style.top = Math.round(top) + "px";
+        }, 400);
     }
 
     function hideTooltip() {
+        clearTimeout(_tooltipTimer);
         _tooltipTimer = setTimeout(function () {
             if (_tooltipEl) _tooltipEl.classList.remove("usd-tooltip--visible");
         }, 80);
