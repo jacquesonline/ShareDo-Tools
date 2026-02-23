@@ -213,6 +213,7 @@ body { font-family: var(--font-ui); background: var(--bg-body); color: var(--tex
 .usd-linked-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
 .usd-linked-card--critical { border-color: rgba(74,158,255,0.4); }
 .usd-linked-card--critical-error { border-color: var(--accent-red); }
+.usd-linked-card--warn { border-color: var(--accent-amber); }
 .usd-linked-card__header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .usd-linked-card__icon { font-size: 14px; color: var(--text-muted); }
 .usd-linked-card__name { font-size: var(--font-size-base); font-weight: 600; flex: 1; }

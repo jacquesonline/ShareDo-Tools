@@ -288,30 +288,33 @@
             if (isCritical || hasIssue) visible.push(svc);
         }
 
-        var html = "", issues = 0;
+        var html = "", criticalIssues = 0, warnIssues = 0;
         for (var i = 0; i < visible.length; i++) {
             var sv = visible[i]; var isCrit = CRITICAL_SERVICES.indexOf(sv.systemName) !== -1;
             var isLinked = sv.isLinked; var provValid = sv.providerIsValid; var cfgValid = sv.configurationIsValid;
             var hasProb = isCrit && (!isLinked || !provValid || !cfgValid);
             var nonCritProb = !isCrit && ((sv.canLink && !isLinked) || !provValid || !cfgValid);
-            if (hasProb || nonCritProb) issues++;
-            var borderCls = isCrit ? (hasProb ? "usd-linked-card--critical-error" : "usd-linked-card--critical") : (nonCritProb ? "usd-linked-card--critical-error" : "");
+            if (hasProb) criticalIssues++;
+            if (nonCritProb) warnIssues++;
+            var borderCls = isCrit ? (hasProb ? "usd-linked-card--critical-error" : "usd-linked-card--critical") : (nonCritProb ? "usd-linked-card--warn" : "");
             html += '<div class="usd-linked-card ' + borderCls + '">';
             html += '<div class="usd-linked-card__header"><span class="fa ' + esc(sv.icon || "fa-cog") + ' usd-linked-card__icon"></span><span class="usd-linked-card__name">' + esc(sv.name) + '</span>';
             if (isCrit) html += '<span class="usd-linked-card__critical">CRITICAL</span>';
             html += '</div>';
             html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Group</span><span class="usd-linked-card__value">' + esc(sv._group || "--") + '</span></div>';
             html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Provider</span><span class="usd-linked-card__value">' + esc(sv.providerName || "--") + '</span></div>';
-            html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Linked</span><span class="usd-linked-card__value ' + (isLinked ? "usd-cfg-val--pass" : (sv.canLink ? "usd-cfg-val--fail" : "usd-cfg-val--neutral")) + '">' + (isLinked ? "Yes" : "No") + '</span></div>';
+            html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Linked</span><span class="usd-linked-card__value ' + (isLinked ? "usd-cfg-val--pass" : ((isCrit || sv.canLink) ? "usd-cfg-val--fail" : "usd-cfg-val--neutral")) + '">' + (isLinked ? "Yes" : "No") + '</span></div>';
             if (sv.linkedAccountName) html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Account</span><span class="usd-linked-card__value usd-index-card__value--small">' + esc(sv.linkedAccountName) + '</span></div>';
             html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Provider Valid</span><span class="usd-linked-card__value ' + (provValid ? "usd-cfg-val--pass" : "usd-cfg-val--fail") + '">' + (provValid ? "Yes" : "No") + '</span></div>';
             html += '<div class="usd-linked-card__row"><span class="usd-linked-card__label">Config Valid</span><span class="usd-linked-card__value ' + (cfgValid ? "usd-cfg-val--pass" : "usd-cfg-val--fail") + '">' + (cfgValid ? "Yes" : "No") + '</span></div>';
             html += '</div>';
         }
         container.innerHTML = html || '<div class="usd-table__muted mon-empty-msg">All non-critical services healthy</div>';
-        summaryEl.textContent = issues === 0 ? "OK" : issues + " issue" + (issues > 1 ? "s" : "");
-        if (issues === 0) { setBadge(badge, "All OK", "usd-badge--ok"); setDot(summaryDot, "usd-summary-dot--ok"); }
-        else { setBadge(badge, issues + " Issue" + (issues > 1 ? "s" : ""), "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); }
+        var totalIssues = criticalIssues + warnIssues;
+        summaryEl.textContent = totalIssues === 0 ? "OK" : totalIssues + " issue" + (totalIssues > 1 ? "s" : "");
+        if (criticalIssues > 0) { setBadge(badge, totalIssues + " Issue" + (totalIssues > 1 ? "s" : ""), "usd-badge--error"); setDot(summaryDot, "usd-summary-dot--error"); }
+        else if (warnIssues > 0) { setBadge(badge, warnIssues + " Warning" + (warnIssues > 1 ? "s" : ""), "usd-badge--warn"); setDot(summaryDot, "usd-summary-dot--warn"); }
+        else { setBadge(badge, "All OK", "usd-badge--ok"); setDot(summaryDot, "usd-summary-dot--ok"); }
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
