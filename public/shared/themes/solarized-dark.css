@@ -1,0 +1,84 @@
+/* ═══════════════════════════════════════════
+   Solarized Dark theme
+   Based on Ethan Schoonover's Solarized palette.
+   Accents lightly brightened from canonical values
+   to maintain AA contrast on dark Solarized surfaces.
+   ═══════════════════════════════════════════ */
+[data-theme="solarized-dark"] {
+    /* ── Surfaces (base03 → base02 → base01 spectrum) ── */
+    --bg-body: #002b36;
+    --bg-panel: #073642;
+    --bg-card: #0a3f4e;
+    --bg-input: #002b36;
+    --bg-console: #00232d;
+
+    /* ── Borders ── */
+    --border: #2a5460;
+    --border-subtle: rgba(42,84,96,0.5);
+
+    /* ── Text (base0 / base1 spectrum) ── */
+    --text-primary: #93a1a1;
+    --text-secondary: #839496;
+    --text-muted: #657b83;
+
+    /* ── Accents (brightened from canonical Solarized) ── */
+    --accent-blue: #4aacf0;
+    --accent-green: #98a817;
+    --accent-red: #f27870;
+    --accent-amber: #c99700;
+    --accent-purple: #9898e8;
+    --accent-cyan: #38b4a8;
+    --accent-orange: #e0893a;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(74,172,240,0.10);
+    --accent-green-bg: rgba(152,168,23,0.10);
+    --accent-red-bg: rgba(242,120,112,0.10);
+    --accent-amber-bg: rgba(201,151,0,0.10);
+    --accent-purple-bg: rgba(152,152,232,0.10);
+    --accent-cyan-bg: rgba(56,180,168,0.10);
+    --accent-orange-bg: rgba(224,137,58,0.10);
+    --accent-neutral-bg: rgba(147,161,161,0.06);
+
+    /* ── Chart palette (slightly boosted for chart legibility) ── */
+    --chart-blue: #58b8f8;
+    --chart-green: #a8b830;
+    --chart-red: #f88880;
+    --chart-amber: #d8a818;
+    --chart-purple: #a8a8f0;
+    --chart-cyan: #48c8b8;
+
+    /* ── Interaction ── */
+    --hover-row: rgba(74,172,240,0.05);
+    --hover-bg: rgba(147,161,161,0.06);
+    --link-hover: #70c0f8;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #2a5460;
+    --scrollbar-hover: #3a6a78;
+
+    /* ── Phase colours ── */
+    --phase-start: #98a817;
+    --phase-open: #4aacf0;
+    --phase-closed: #f27870;
+    --phase-default: #e0893a;
+
+    /* ── Guidance ── */
+    --guidance-bg: #003845;
+    --guidance-text: #4aacf0;
+    --guidance-border: #2a5460;
+
+    /* ── Navigation header ── */
+    --nav-bg: #073642;
+    --nav-border: #2a5460;
+    --nav-text: #657b83;
+    --nav-text-active: #4aacf0;
+    --nav-active-bg: rgba(74,172,240,0.12);
+    --nav-env-bg: rgba(74,172,240,0.12);
+    --nav-env-text: #4aacf0;
+    --nav-env-border: rgba(74,172,240,0.3);
+    --nav-primary-bg: #4aacf0;
+    --nav-primary-text: #002b36;
+    --nav-admin-bg: rgba(152,152,232,0.12);
+    --nav-admin-text: #9898e8;
+}

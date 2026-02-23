@@ -1,5 +1,12 @@
 [
-    { "id": "dark",     "label": "Dark",     "icon": "fa-moon-o",     "lightBased": false },
-    { "id": "light",    "label": "Light",    "icon": "fa-sun-o",      "lightBased": true  },
-    { "id": "mb-brand", "label": "MB Brand", "icon": "fa-briefcase",  "lightBased": true  }
+    { "id": "dark",             "label": "Dark",                "icon": "fa-moon-o",        "lightBased": false },
+    { "id": "light",            "label": "Light",               "icon": "fa-sun-o",         "lightBased": true  },
+    { "id": "mb-brand",         "label": "MB Brand",            "icon": "fa-briefcase",     "lightBased": true  },
+    { "id": "mb-brand-dark",    "label": "MB Brand Dark",       "icon": "fa-briefcase",     "lightBased": false },
+    { "id": "hc-dark",          "label": "High Contrast Dark",  "icon": "fa-adjust",        "lightBased": false },
+    { "id": "hc-light",         "label": "High Contrast Light", "icon": "fa-adjust",        "lightBased": true  },
+    { "id": "solarized-dark",   "label": "Solarized Dark",      "icon": "fa-sun-o",         "lightBased": false },
+    { "id": "solarized-light",  "label": "Solarized Light",     "icon": "fa-sun-o",         "lightBased": true  },
+    { "id": "slate",            "label": "Slate",               "icon": "fa-moon-o",        "lightBased": false },
+    { "id": "nord",             "label": "Nord",                "icon": "fa-snowflake-o",   "lightBased": false }
 ]

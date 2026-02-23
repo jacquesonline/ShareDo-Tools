@@ -1,0 +1,76 @@
+/* ═══════════════════════════════════════════
+   High Contrast Light theme
+   Pure white surfaces, deep saturated accents.
+   Standalone theme -- does not require the HC toggle.
+   All text/accent pairings target WCAG AAA (7:1+).
+   ═══════════════════════════════════════════ */
+[data-theme="hc-light"] {
+    /* ── Surfaces ── */
+    --bg-body: #ffffff;
+    --bg-panel: #ffffff;
+    --bg-card: #f0f0f0;
+    --bg-input: #ffffff;
+    --bg-console: #f5f5f5;
+
+    /* ── Borders ── */
+    --border: #808080;
+    --border-subtle: rgba(0,0,0,0.15);
+
+    /* ── Text ── */
+    --text-primary: #0a0a0a;
+    --text-secondary: #2a2a2a;
+    --text-muted: #444444;
+
+    /* ── Accents (foreground) ── */
+    --accent-blue: #084a9e;
+    --accent-green: #0a5828;
+    --accent-red: #a01616;
+    --accent-amber: #764000;
+    --accent-purple: #4a2488;
+    --accent-cyan: #005848;
+    --accent-orange: #8a4000;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(8,74,158,0.10);
+    --accent-green-bg: rgba(10,88,40,0.10);
+    --accent-red-bg: rgba(160,22,22,0.10);
+    --accent-amber-bg: rgba(118,64,0,0.10);
+    --accent-purple-bg: rgba(74,36,136,0.10);
+    --accent-cyan-bg: rgba(0,88,72,0.10);
+    --accent-orange-bg: rgba(138,64,0,0.10);
+    --accent-neutral-bg: rgba(0,0,0,0.06);
+
+    /* ── Interaction ── */
+    --hover-row: rgba(8,74,158,0.05);
+    --hover-bg: rgba(0,0,0,0.06);
+    --link-hover: #063470;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #999999;
+    --scrollbar-hover: #666666;
+
+    /* ── Phase colours ── */
+    --phase-start: #0a5828;
+    --phase-open: #084a9e;
+    --phase-closed: #a01616;
+    --phase-default: #8a4000;
+
+    /* ── Guidance ── */
+    --guidance-bg: #e8f0ff;
+    --guidance-text: #084a9e;
+    --guidance-border: #4a80c0;
+
+    /* ── Navigation header ── */
+    --nav-bg: #ffffff;
+    --nav-border: #808080;
+    --nav-text: #444444;
+    --nav-text-active: #084a9e;
+    --nav-active-bg: rgba(8,74,158,0.10);
+    --nav-env-bg: rgba(8,74,158,0.10);
+    --nav-env-text: #084a9e;
+    --nav-env-border: rgba(8,74,158,0.3);
+    --nav-primary-bg: #084a9e;
+    --nav-primary-text: #fff;
+    --nav-admin-bg: rgba(74,36,136,0.10);
+    --nav-admin-text: #4a2488;
+}

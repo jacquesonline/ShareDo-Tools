@@ -1,0 +1,101 @@
+/* ═══════════════════════════════════════════
+   Maurice Blackburn brand theme (dark)
+   Dark-based: maroon/rose brand palette on dark surfaces
+   ═══════════════════════════════════════════ */
+[data-theme="mb-brand-dark"] {
+    /* ── Surfaces ── */
+    --bg-body: #1a1318;
+    --bg-panel: #241c22;
+    --bg-card: #2e242b;
+    --bg-input: #1a1318;
+    --bg-console: #110d10;
+
+    /* ── Borders ── */
+    --border: #3e3039;
+    --border-subtle: rgba(62,48,57,0.5);
+
+    /* ── Text ── */
+    --text-primary: #ece5ea;
+    --text-secondary: #9e8e97;
+    --text-muted: #847680;
+
+    /* ── Accents (foreground) ── */
+    --accent-blue: #5aace8;
+    --accent-green: #4ec98a;
+    --accent-red: #e05a60;
+    --accent-amber: #e8a843;
+    --accent-purple: #cc5a8e;
+    --accent-cyan: #48c4b0;
+    --accent-orange: #e89060;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(90,172,232,0.12);
+    --accent-green-bg: rgba(78,201,138,0.12);
+    --accent-red-bg: rgba(224,90,96,0.12);
+    --accent-amber-bg: rgba(232,168,67,0.12);
+    --accent-purple-bg: rgba(204,90,142,0.12);
+    --accent-cyan-bg: rgba(72,196,176,0.12);
+    --accent-orange-bg: rgba(232,144,96,0.12);
+    --accent-neutral-bg: rgba(120,96,112,0.10);
+
+    /* ── Chart palette (brighter for dark backgrounds) ── */
+    --chart-blue: #58b4f0;
+    --chart-green: #5ad8a0;
+    --chart-red: #ef6b6e;
+    --chart-amber: #f0b84a;
+    --chart-purple: #d870a0;
+    --chart-cyan: #50d8c0;
+
+    /* ── Interaction ── */
+    --hover-row: rgba(204,46,87,0.05);
+    --hover-bg: rgba(255,255,255,0.05);
+    --link-hover: #e06090;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #3e3039;
+    --scrollbar-hover: #584850;
+
+    /* ── Phase colours (semantic, for Work Types) ── */
+    --phase-start: #4ec98a;
+    --phase-open: #5aace8;
+    --phase-closed: #e05a60;
+    --phase-default: #e89060;
+
+    /* ── Guidance ── */
+    --guidance-bg: #2e1a28;
+    --guidance-text: #d890b0;
+    --guidance-border: #5a3048;
+
+    /* ── Navigation header ── */
+    --nav-bg: #2a1424;
+    --nav-border: #3a1830;
+    --nav-text: rgba(236,229,234,0.5);
+    --nav-text-active: #ece5ea;
+    --nav-active-bg: #CC2E57;
+    --nav-env-bg: rgba(204,46,87,0.20);
+    --nav-env-text: #e87898;
+    --nav-env-border: rgba(204,46,87,0.35);
+    --nav-primary-bg: #CC2E57;
+    --nav-primary-text: #fff;
+    --nav-admin-bg: rgba(204,90,142,0.20);
+    --nav-admin-text: #cc5a8e;
+}
+
+/* ── Nav text overrides (inherit from nav, not body) ── */
+[data-theme="mb-brand-dark"] .usd-header__title { color: var(--nav-text-active); }
+[data-theme="mb-brand-dark"] .usd-header__host { color: var(--nav-text); }
+[data-theme="mb-brand-dark"] .usd-header__cookie-status { color: var(--nav-text); }
+[data-theme="mb-brand-dark"] .usd-nav__link:hover { color: var(--nav-text-active); background: rgba(255,255,255,0.06); }
+
+/* ── Primary button: solid rose ── */
+[data-theme="mb-brand-dark"] .usd-btn--primary { background: #CC2E57; border-color: #CC2E57; color: #fff; }
+[data-theme="mb-brand-dark"] .usd-btn--primary:hover { background: #CC2E57; border-color: #CC2E57; opacity: 0.85; }
+
+/* ── MB Brand Dark + High Contrast ── */
+[data-theme="mb-brand-dark"].high-contrast .usd-btn--primary { background: #CC2E57; color: #fff; border-color: #CC2E57; }
+[data-theme="mb-brand-dark"].high-contrast .usd-btn--primary:hover { background: #CC2E57; opacity: 0.85; }
+[data-theme="mb-brand-dark"].high-contrast .usd-btn--active { background: #CC2E57; color: #fff; border-color: #CC2E57; }
+[data-theme="mb-brand-dark"].high-contrast .usd-nav__link--active { background: #CC2E57; color: #fff; }
+[data-theme="mb-brand-dark"].high-contrast .usd-header__env-select { background: #75264F; color: #fff; border-color: #75264F; }
+[data-theme="mb-brand-dark"].high-contrast .usd-quick-btn--active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+[data-theme="mb-brand-dark"].high-contrast .usd-admin-badge { background: #CC2E57; color: #fff; }

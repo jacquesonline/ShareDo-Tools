@@ -2,3 +2,11 @@
 @import url("themes/dark.css");
 @import url("themes/light.css");
 @import url("themes/mb-brand.css");
+@import url("themes/mb-brand-dark.css");
+
+@import url("themes/hc-dark.css");
+@import url("themes/hc-light.css");
+@import url("themes/solarized-dark.css");
+@import url("themes/solarized-light.css");
+@import url("themes/slate.css");
+@import url("themes/nord.css");

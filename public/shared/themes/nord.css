@@ -1,0 +1,84 @@
+/* ═══════════════════════════════════════════
+   Nord theme
+   Based on arcticicestudio's Nord colour palette.
+   Aurora accents brightened where needed to maintain
+   AA contrast on Polar Night surfaces.
+   ═══════════════════════════════════════════ */
+[data-theme="nord"] {
+    /* ── Surfaces (Polar Night: nord0 → nord1 → nord2) ── */
+    --bg-body: #2e3440;
+    --bg-panel: #3b4252;
+    --bg-card: #434c5e;
+    --bg-input: #2e3440;
+    --bg-console: #272d38;
+
+    /* ── Borders ── */
+    --border: #4c566a;
+    --border-subtle: rgba(76,86,106,0.5);
+
+    /* ── Text (Snow Storm: nord6 / nord4) ── */
+    --text-primary: #eceff4;
+    --text-secondary: #d8dee9;
+    --text-muted: #8a94aa;
+
+    /* ── Accents (Frost + Aurora, brightened for AA) ── */
+    --accent-blue: #90b8e0;
+    --accent-green: #a3be8c;
+    --accent-red: #ec98a0;
+    --accent-amber: #ebcb8b;
+    --accent-purple: #caa8c8;
+    --accent-cyan: #8fbcbb;
+    --accent-orange: #e0a090;
+
+    /* ── Accents (tinted backgrounds) ── */
+    --accent-blue-bg: rgba(144,184,224,0.10);
+    --accent-green-bg: rgba(163,190,140,0.10);
+    --accent-red-bg: rgba(236,152,160,0.10);
+    --accent-amber-bg: rgba(235,203,139,0.10);
+    --accent-purple-bg: rgba(202,168,200,0.10);
+    --accent-cyan-bg: rgba(143,188,187,0.10);
+    --accent-orange-bg: rgba(224,160,144,0.10);
+    --accent-neutral-bg: rgba(216,222,233,0.06);
+
+    /* ── Chart palette (canonical Nord for chart vibrancy) ── */
+    --chart-blue: #81a1c1;
+    --chart-green: #a3be8c;
+    --chart-red: #bf616a;
+    --chart-amber: #ebcb8b;
+    --chart-purple: #b48ead;
+    --chart-cyan: #88c0d0;
+
+    /* ── Interaction ── */
+    --hover-row: rgba(136,192,208,0.05);
+    --hover-bg: rgba(216,222,233,0.06);
+    --link-hover: #a8d0f0;
+
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #4c566a;
+    --scrollbar-hover: #5c6a80;
+
+    /* ── Phase colours ── */
+    --phase-start: #a3be8c;
+    --phase-open: #81a1c1;
+    --phase-closed: #bf616a;
+    --phase-default: #d08770;
+
+    /* ── Guidance ── */
+    --guidance-bg: #333d4e;
+    --guidance-text: #90b8e0;
+    --guidance-border: #4c566a;
+
+    /* ── Navigation header ── */
+    --nav-bg: var(--bg-panel);
+    --nav-border: var(--border);
+    --nav-text: var(--text-muted);
+    --nav-text-active: #88c0d0;
+    --nav-active-bg: rgba(136,192,208,0.12);
+    --nav-env-bg: rgba(136,192,208,0.12);
+    --nav-env-text: #88c0d0;
+    --nav-env-border: rgba(136,192,208,0.3);
+    --nav-primary-bg: #5e81ac;
+    --nav-primary-text: #eceff4;
+    --nav-admin-bg: rgba(180,142,173,0.12);
+    --nav-admin-text: #b48ead;
+}
