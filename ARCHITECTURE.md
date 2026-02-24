@@ -548,3 +548,73 @@ The mock page also displays current notification settings (backlog threshold, al
 | POST   | `/api/mock/state` | Session | Update mock state            |
 
 **Auth column key**: "Session" = requires session in multi-user mode (no-op in single-user). "Admin" = requires admin session in multi-user (no-op in single-user). "Exempt" = no session required. "None" = no authentication at all.
+
+## File Structure
+
+```
+sharedo-monitor/
+├── server.js
+├── package.json
+├── .env.example
+├── .gitignore
+├── README.md
+├── ARCHITECTURE.md
+├── USAGE.md
+├── server/
+│   ├── auth.js
+│   ├── session.js
+│   ├── health-monitor.js
+│   ├── ux-monitor.js
+│   ├── waila-service.js
+│   ├── worktype-service.js
+│   └── metrics-service.js
+├── public/
+│   ├── shared/
+│   │   ├── shared.js
+│   │   ├── style.css
+│   │   ├── themes.css
+│   │   ├── chartTheme.js
+│   │   └── themes/
+│   │       ├── manifest.json
+│   │       ├── dark.css
+│   │       ├── light.css
+│   │       └── mb-brand.css
+│   ├── monitor/
+│   │   └── monitor.html, app.js, monitor-style.css
+│   ├── issues/
+│   │   └── issues.html, issues.js, issues-style.css
+│   ├── metrics/
+│   │   └── metrics.html, metrics.js, metrics-style.css
+│   ├── ux/
+│   │   └── ux.html, ux.js, ux-style.css
+│   ├── search/
+│   │   └── search.html, search.js, search-style.css
+│   ├── waila/
+│   │   └── waila.html, waila.js, waila-style.css
+│   ├── worktype/
+│   │   └── worktype.html, worktype.js, worktype-style.css
+│   ├── options/
+│   │   └── options.html, options.js, options-style.css
+│   ├── theme-builder/
+│   │   └── theme-builder.html, theme-builder.js, theme-builder-style.css
+│   ├── mock/
+│   │   └── mock.html, mock.js, mock-style.css
+│   └── register/
+│       └── register.html, register.js, register-style.css
+└── cache/
+    ├── settings.json
+    ├── metrics/
+    │   └── {env}/
+    │       ├── streamstats.jsonl
+    │       └── nodestatus.jsonl
+    ├── waila-indexes/
+    │   └── waila-{env}.json
+    ├── worktype-indexes/
+    │   └── worktype-config-{env}.json
+    ├── search-presets/
+    │   └── work-item-query-presets.json
+    ├── user-settings/
+    │   └── {email-slug}.json
+    └── ux-user-data/
+        └── {env}/
+```
