@@ -233,7 +233,7 @@
     }
 
     function getZoomPluginConfig(prefix) {
-        return { zoom: { wheel: { enabled: true, modifierKey: "ctrl" }, drag: { enabled: true, modifierKey: "shift", backgroundColor: "rgba(74,158,255,0.1)", borderColor: "rgba(74,158,255,0.4)", borderWidth: 1 }, mode: "x", onZoom: function () { updateResetZoomBtn(prefix, true); } }, pan: { enabled: true, modifierKey: "alt", mode: "x" }, limits: { x: { minRange: 60000 } } };
+        return { zoom: { wheel: { enabled: true, modifierKey: "ctrl" }, drag: { enabled: true, modifierKey: "shift", backgroundColor: "rgba(74,158,255,0.1)", borderColor: "rgba(74,158,255,0.4)", borderWidth: 1 }, pinch: { enabled: true }, mode: "x", onZoom: function () { updateResetZoomBtn(prefix, true); } }, pan: { enabled: true, modifierKey: "alt", mode: "x" }, limits: { x: { minRange: 60000 } } };
     }
 
     // ─── Storage ───

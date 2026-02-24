@@ -610,3 +610,60 @@ button.usd-help { cursor: pointer; }
 /* Work Types: light HC outline adjustment */
 .high-contrast.light-theme .wt-aspect-row__dot,
 .high-contrast.light-theme .wt-cmp-legend__dot { outline-color: rgba(0,0,0,0.2); }
+
+/* ═══════════════════════════════════════════
+   Mobile (max-width: 600px)
+   ═══════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+    /* ─── Header: wrap left section, shrink padding ─── */
+    .usd-header { padding: 8px 12px; flex-wrap: wrap; gap: 8px; min-height: 0; }
+    .usd-header__left { flex-wrap: wrap; gap: 8px; width: 100%; }
+    .usd-header__title { font-size: var(--font-size-lg); }
+    .usd-header__host { display: none; }
+    .usd-header__cookie-status { display: none; }
+
+    /* ─── Nav: horizontal scroll instead of wrap ─── */
+    .usd-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-shrink: 1; min-width: 0; }
+    .usd-nav::-webkit-scrollbar { display: none; }
+    .usd-nav__link { white-space: nowrap; flex-shrink: 0; }
+
+    /* ─── Page header: stack identity and actions ─── */
+    .usd-page-header { padding: 10px 12px; gap: 10px; }
+    .usd-page-header__desc { font-size: var(--font-size-sm); }
+    .usd-page-header__actions { width: 100%; justify-content: flex-start; }
+
+    /* ─── Body padding ─── */
+    .usd-body { padding: 10px 12px; }
+
+    /* ─── Summary bar: tighter spacing ─── */
+    .usd-summary { padding: 8px 12px; gap: 12px 16px; }
+
+    /* ─── Tables: horizontal scroll, smaller text ─── */
+    .usd-section__content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .usd-table { min-width: 600px; }
+    .usd-table th { font-size: var(--font-size-xs); padding: 6px 8px; }
+    .usd-table td { font-size: var(--font-size-sm); padding: 5px 8px; }
+
+    /* ─── Controls bar ─── */
+    .usd-controls-bar { padding: 10px 12px; gap: 10px; }
+    .usd-controls-bar__right { margin-left: 0; width: 100%; }
+
+    /* ─── Time bar: stack date inputs below quick buttons ─── */
+    .usd-time-bar { padding: 8px 10px; gap: 8px; }
+    .usd-time-bar__sep { display: none; }
+    .usd-time-bar__dates { flex-direction: row; align-items: center; gap: 6px; }
+    .usd-date-input { min-width: 0; width: 100%; font-size: var(--font-size-sm); }
+
+    /* ─── Chart panels: reduce padding, taller to fit wrapped legends ─── */
+    .usd-chart-panel__body { padding: 8px 10px; height: 360px; }
+    .usd-chart-panel__header { padding: 8px 12px; }
+    .usd-chart-panel--narrow { flex: none; }
+
+    /* ─── Two-column layout: already stacks at 900px, tighten padding ─── */
+    .usd-layout-split { padding: 8px 10px; gap: 8px; }
+
+    /* ─── Modals: full-width on mobile ─── */
+    .usd-modal { width: 100%; max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
+    .usd-modal--sm { width: 100%; max-width: 100%; max-height: 100%; border-radius: 0; }
+}

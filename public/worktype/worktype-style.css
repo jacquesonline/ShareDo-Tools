@@ -466,5 +466,36 @@
     .wt-cmp-aspects__col + .wt-cmp-aspects__col { border-left: none; border-top: 1px solid var(--border); }
 }
 
+/* ─── Mobile (600px) ─── */
+@media (max-width: 600px) {
 
+    /* Sidebar: full width, cap tree height */
+    .wt-sidebar { width: 100%; }
+    .wt-tree { max-height: 50vh; }
+
+    /* Tabs: horizontal scroll */
+    .wt-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
+    .wt-tabs::-webkit-scrollbar { display: none; }
+    .wt-tabs__btn { white-space: nowrap; flex-shrink: 0; padding: 8px 12px; }
+
+    /* Info header: allow name to wrap */
+    .wt-info { flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+    .wt-info__name { white-space: normal; }
+    .wt-info__badges { width: 100%; }
+    .wt-info__link { margin-left: auto; }
+
+    /* Aspects split: already stacks at 900px, constrain list height */
+    .wt-aspects-list { max-height: 200px; }
+
+    /* Phase plan SVG: ensure scroll */
+    .wt-phases { overflow: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Roles / key dates / relationships tables: horizontal scroll */
+    .wt-roles, .wt-keydates, .wt-rels { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .wt-roles-table, .wt-kd-table, .wt-rels-table { min-width: 500px; }
+
+    /* Compare: stacked columns already at 900px, tighten */
+    .wt-cmp-controls { gap: 6px; }
+    .wt-cmp-aspects__col { min-width: 0; }
+}
 /* --- High Contrast: see /shared/style.css --- */

@@ -312,6 +312,7 @@
             zoom: {
                 wheel: { enabled: true, modifierKey: "ctrl" },
                 drag: { enabled: true, modifierKey: "shift", backgroundColor: "rgba(74,158,255,0.1)", borderColor: "rgba(74,158,255,0.4)", borderWidth: 1 },
+                pinch: { enabled: true },
                 mode: "x",
                 onZoom: function () { updateResetZoomBtn(prefix, true); }
             },

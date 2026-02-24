@@ -60,3 +60,14 @@
 }
 
 /* ─── Chart panels, responsive: now in /shared/style.css ─── */
+
+/* ─── Mobile (600px) ─── */
+@media (max-width: 600px) {
+
+    .met-body { padding: 10px 12px; gap: 10px; }
+
+    /* Summary cards: 2-column grid */
+    .met-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .met-summary__card { min-width: 0; padding: 8px 10px; }
+    .met-summary__value { font-size: var(--font-size-xl); }
+}
