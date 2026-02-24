@@ -16,6 +16,8 @@
  *   getStatus()             -- returns status summary for GET /api/ux/status
  *   getLatestPageResults()  -- returns latest page check result
  *   getBannerStatus()       -- returns { text, isEnabled } for startup banner
+ *   closeContext()          -- close the persistent browser context
+ *   getContextStatus()      -- returns { alive, env, launchedAt, uptimeMs, maxAgeMins }
  */
 "use strict";
 
@@ -59,6 +61,14 @@ var _latestProbeResults = null;   // { ts, env, probes: [{ label, status, ms, to
 var _latestPageResults = null;    // { ts, env, url, statusCode, totalLoadMs, webVitals, navTiming, ajaxCount, ajaxSlowest, ajaxTop, error }
 var _pageCheckRunning = false;
 
+// ─── Persistent browser context state ───
+var _persistentContext = null;    // Playwright BrowserContext, kept alive between checks
+var _contextEnv = null;           // environment name the context was opened for
+var _contextLaunchedAt = null;    // Date.now() when context was launched
+var _contextMaxAgeMins = 1440;    // max age before forced recycle (default 24h, 0 = disabled)
+var _sessionExpired = false;      // set on login redirect, prevents relaunch in same cycle
+var _uxContextIgnoreOfficeHours = false;  // when true, context stays alive outside office hours
+
 
 // ═══════════════════════════════════════════════════════════════════
 // Initialisation
@@ -80,6 +90,7 @@ var _pageCheckRunning = false;
  * @param {Object}   deps.path             - Node path module
  * @param {Object}   deps.https            - Node https module
  * @param {string}   deps.baseDir          - __dirname of server.js (for cache paths)
+ * @param {Function} [deps.isWithinOfficeHours] - () -> boolean (true if within office hours or if disabled)
  */
 function init(deps) {
     _deps = deps;
@@ -103,6 +114,8 @@ function init(deps) {
         var targets = env.UX_PAGE_TARGETS.split(",").map(function (t) { return t.trim(); }).filter(function (t) { return t.length > 0 && t.charAt(0) === "/"; });
         if (targets.length > 0) _uxPageTargets = targets;
     }
+    if (env.UX_CONTEXT_MAX_AGE_MINS) { var v = parseInt(env.UX_CONTEXT_MAX_AGE_MINS, 10); if (!isNaN(v) && v >= 0) _contextMaxAgeMins = v; }
+    if (env.UX_CONTEXT_IGNORE_OFFICE_HOURS != null) _uxContextIgnoreOfficeHours = env.UX_CONTEXT_IGNORE_OFFICE_HOURS.toLowerCase() === "true";
 }
 
 
@@ -136,7 +149,9 @@ function getSettings() {
         uxVitalsTtiCrit: _uxVitalsTtiCrit,
         uxWorkItemId: _uxWorkItemId,
         uxPageTargets: _uxPageTargets,
-        uxProbes: _uxProbes
+        uxProbes: _uxProbes,
+        uxContextMaxAgeMins: _contextMaxAgeMins,
+        uxContextIgnoreOfficeHours: _uxContextIgnoreOfficeHours
     };
 }
 
@@ -219,8 +234,129 @@ function applySettings(data) {
             return typeof t === "string" && t.length > 0 && t.charAt(0) === "/";
         });
     }
+    if (data.uxContextMaxAgeMins != null) {
+        var cam = parseInt(data.uxContextMaxAgeMins, 10);
+        if (!isNaN(cam) && cam >= 0) _contextMaxAgeMins = cam;
+    }
+    if (data.uxContextIgnoreOfficeHours != null) _uxContextIgnoreOfficeHours = !!data.uxContextIgnoreOfficeHours;
 
     return { restartNeeded: restartNeeded };
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// Persistent Browser Context Management
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Ensure a persistent browser context is available for page checks.
+ * Launches on first call, reuses on subsequent calls. Handles
+ * environment changes, max age recycling, and crash recovery.
+ *
+ * @returns {Promise<Object|null>} Playwright BrowserContext, or null if unavailable
+ */
+async function ensureContext() {
+    if (!_deps.playwright) return null;
+
+    // Office hours gate: if outside hours and bypass not enabled, shut down the context
+    if (_deps.isWithinOfficeHours && !_deps.isWithinOfficeHours() && !_uxContextIgnoreOfficeHours) {
+        if (_persistentContext) {
+            _deps.log("ux", "Outside office hours -- closing browser context");
+            await closeContext();
+        }
+        return null;
+    }
+
+    // Close if environment changed
+    if (_persistentContext && _contextEnv !== _uxProbeEnv) {
+        _deps.log("ux", "Probe environment changed (" + _contextEnv + " -> " + _uxProbeEnv + ") -- closing context");
+        await closeContext();
+    }
+
+    // Close if max age exceeded
+    if (_persistentContext && _contextMaxAgeMins > 0 && _contextLaunchedAt) {
+        var ageMs = Date.now() - _contextLaunchedAt;
+        if (ageMs >= _contextMaxAgeMins * 60 * 1000) {
+            _deps.log("ux", "Browser context max age exceeded (" + _contextMaxAgeMins + " min) -- recycling");
+            await closeContext();
+        }
+    }
+
+    // Health check existing context (detect Chromium process crash)
+    if (_persistentContext) {
+        try {
+            await _persistentContext.pages();
+            return _persistentContext;
+        } catch (e) {
+            _deps.log("ux", "Persistent context unusable, relaunching: " + e.message);
+            _persistentContext = null;
+            _contextEnv = null;
+            _contextLaunchedAt = null;
+        }
+    }
+
+    // Launch new context
+    var userDataDir = _deps.path.join(_deps.baseDir, "cache", "ux-user-data", _uxProbeEnv);
+    try {
+        _deps.fs.mkdirSync(userDataDir, { recursive: true });
+        _persistentContext = await _deps.playwright.chromium.launchPersistentContext(userDataDir, {
+            headless: true,
+            viewport: { width: 1280, height: 900 },
+            ignoreHTTPSErrors: true,
+            args: ["--disable-blink-features=AutomationControlled"]
+        });
+        _contextEnv = _uxProbeEnv;
+        _contextLaunchedAt = Date.now();
+        _sessionExpired = false;
+        _deps.log("ux", "Persistent browser context launched for " + _uxProbeEnv);
+        return _persistentContext;
+    } catch (e) {
+        _deps.log("ux", "Failed to launch persistent context: " + e.message);
+        _persistentContext = null;
+        _contextEnv = null;
+        _contextLaunchedAt = null;
+        return null;
+    }
+}
+
+/**
+ * Close the persistent browser context. Safe to call when no context exists.
+ * Called on: environment change, login redirect, browser re-login, server shutdown.
+ */
+async function closeContext() {
+    if (!_persistentContext) {
+        _deps.log("ux", "Persistent browser context closed (already inactive)");
+        return;
+    }
+    var ctx = _persistentContext;
+    // Null references synchronously to prevent ensureContext() from
+    // returning a closing context if called before the await resolves
+    _persistentContext = null;
+    _contextEnv = null;
+    _contextLaunchedAt = null;
+    _deps.log("ux", "Closing persistent browser context...");
+    // Race close against a timeout -- during SIGINT, Chromium receives the signal
+    // from the process group and may already be dead, causing ctx.close() to hang
+    try {
+        await Promise.race([
+            ctx.close(),
+            new Promise(function (resolve) { setTimeout(resolve, 3000); })
+        ]);
+    } catch (_) {}
+    _deps.log("ux", "Persistent browser context closed");
+}
+
+/**
+ * Returns the current state of the persistent browser context.
+ */
+function getContextStatus() {
+    return {
+        alive: !!_persistentContext,
+        env: _contextEnv,
+        launchedAt: _contextLaunchedAt ? new Date(_contextLaunchedAt).toISOString() : null,
+        uptimeMs: _persistentContext && _contextLaunchedAt ? Date.now() - _contextLaunchedAt : null,
+        maxAgeMins: _contextMaxAgeMins
+    };
 }
 
 
@@ -439,19 +575,17 @@ async function runPageCheck(options) {
     _pageCheckRunning = true;
     _deps.log("ux", "Page check starting: " + targetUrl);
 
-    var userDataDir = _deps.path.join(_deps.baseDir, "cache", "ux-user-data", envName);
-    var context = null;
     var page = null;
 
     try {
-        context = await _deps.playwright.chromium.launchPersistentContext(userDataDir, {
-            headless: true,
-            viewport: { width: 1280, height: 900 },
-            ignoreHTTPSErrors: true,
-            args: ["--disable-blink-features=AutomationControlled"]
-        });
+        var ctx = await ensureContext();
+        if (!ctx) {
+            var outsideHours = _deps.isWithinOfficeHours && !_deps.isWithinOfficeHours() && !_uxContextIgnoreOfficeHours;
+            _pageCheckRunning = false;
+            return { error: true, status: outsideHours ? 400 : 500, message: outsideHours ? "Page checks paused -- outside office hours" : "Could not launch browser context" };
+        }
 
-        page = await context.newPage();
+        page = await ctx.newPage();
         var startMs = Date.now();
 
         // Navigate and wait for load
@@ -493,8 +627,9 @@ async function runPageCheck(options) {
                     ]
                 });
             }
-            await page.close();
-            await context.close();
+            if (page) try { await page.close(); } catch (_) {}
+            _sessionExpired = true;
+            await closeContext();
             _pageCheckRunning = false;
             return { error: true, status: 401, message: "Browser session expired -- redirected to login page. Re-authenticate via Options > Authentication > Launch Browser." };
         }
@@ -681,7 +816,7 @@ async function runPageCheck(options) {
     } finally {
         _pageCheckRunning = false;
         if (page) try { await page.close(); } catch (_) {}
-        if (context) try { await context.close(); } catch (_) {}
+        // Context is NOT closed -- it persists for subsequent checks
     }
 }
 
@@ -714,20 +849,33 @@ function resolvePageTargets() {
 
 /**
  * Run page checks for all resolved targets sequentially.
- * Each target launches a separate Playwright context.
+ * All targets share the same persistent browser context.
  * @returns {Promise<Object>} { success, results: [{ url, ... }], skipped: number }
  */
 async function runAllPageChecks() {
     var targets = resolvePageTargets();
     if (targets.length === 0) return { success: false, error: true, status: 400, message: "No page check targets configured" };
 
+    // Reset per-cycle session expiry flag. If the session is still expired,
+    // the first target will detect it again and set the flag, skipping the rest.
+    // This ensures the flag doesn't persist across cycles (blocking retries after re-login).
+    _sessionExpired = false;
+
     var results = [];
     var skipped = 0;
     for (var i = 0; i < targets.length; i++) {
+        // If a prior target detected session expiry, skip remaining targets
+        // (they would all hit the same redirect). One alert per cycle.
+        if (_sessionExpired) {
+            _deps.log("ux", "Skipping remaining " + (targets.length - i) + " target(s) -- session expired");
+            skipped += (targets.length - i);
+            break;
+        }
         var result = await runPageCheck({ url: targets[i] });
         if (result.error) {
             // If Playwright isn't installed or UX is disabled, stop early
             if (result.status === 500 || result.status === 400) return result;
+            // Session expired (401): remaining targets skipped by the loop guard above
             // 409 (already running) shouldn't happen since we run sequentially, but handle it
             skipped++;
         } else {
@@ -753,7 +901,8 @@ function getStatus() {
         latestProbes: _latestProbeResults,
         latestPage: _latestPageResults,
         pageTargets: _uxPageTargets,
-        resolvedPageTargets: resolvePageTargets()
+        resolvedPageTargets: resolvePageTargets(),
+        context: getContextStatus()
     };
 }
 
@@ -794,5 +943,7 @@ module.exports = {
     resolvePageTargets: resolvePageTargets,
     getStatus: getStatus,
     getLatestPageResults: getLatestPageResults,
-    getBannerStatus: getBannerStatus
+    getBannerStatus: getBannerStatus,
+    closeContext: closeContext,
+    getContextStatus: getContextStatus
 };

@@ -403,6 +403,11 @@ async function runHealthCheckForEnv(envName) {
 // ═══════════════════════════════════════════════════════════════════
 
 function pushAlert(alert) {
+    // Suppress all alert delivery outside office hours
+    if (_deps.isWithinOfficeHours && !_deps.isWithinOfficeHours()) {
+        _deps.log("alert", "[Suppressed -- outside office hours] " + alert.title);
+        return;
+    }
     var data = JSON.stringify(alert);
     _deps.log("alert", alert.title + ": " + alert.body);
     for (var i = _sseClients.length - 1; i >= 0; i--) {

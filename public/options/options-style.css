@@ -486,6 +486,22 @@
 
 /* ─── High Contrast: see /shared/style.css ─── */
 
+/* ─── Browser Context Status ─── */
+.opt-context-status {
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.opt-context-status--on {
+    color: var(--accent-green);
+}
+
+.opt-context-status--off {
+    color: var(--text-muted);
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 640px) {
     .opt-body { padding: 20px 16px; }

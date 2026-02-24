@@ -26,6 +26,9 @@
     var _uxWorkItemId = "";
     var _uxPageTargets = [];
 
+    var _officeHoursEnabled = false;
+    var _uxContextIgnoreOfficeHours = false;
+
     var _isMultiUser = false;
     var _isAdmin = false;
 
@@ -61,6 +64,13 @@
         document.getElementById("optUxPageTargetAddBtn").addEventListener("click", addPageTarget);
         document.getElementById("optUxPageTargetInput").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addPageTarget(); } });
         document.getElementById("optSaveBtn").addEventListener("click", saveSettings);
+
+        // Office Hours
+        document.getElementById("optOhEnabledBtn").addEventListener("click", toggleOfficeHoursEnabled);
+        document.getElementById("optOhBypassBtn").addEventListener("click", toggleOfficeHoursBypass);
+
+        // UX Browser Context
+        document.getElementById("optUxContextStopBtn").addEventListener("click", stopBrowserContext);
 
         // Multi-user: admin key verification
         document.getElementById("optAdminVerifyBtn").addEventListener("click", verifyAdminKey);
@@ -143,7 +153,7 @@
             : "Master toggle. Requires browser permission.";
 
         // Server-setting panels: apply read-only state for non-admin
-        var serverPanels = ["monitor", "notifications", "metrics", "ux", "waila", "worktypes"];
+        var serverPanels = ["monitor", "notifications", "officehours", "metrics", "ux", "waila", "worktypes"];
         for (var i = 0; i < serverPanels.length; i++) {
             var panel = document.querySelector('[data-opt-panel="' + serverPanels[i] + '"]');
             if (!panel) continue;
@@ -315,9 +325,19 @@
             document.getElementById("optUxThresholdWarn").value = data.uxProbeThresholdWarn != null ? data.uxProbeThresholdWarn : 3000;
             document.getElementById("optUxThresholdCrit").value = data.uxProbeThresholdCrit != null ? data.uxProbeThresholdCrit : 5000;
             document.getElementById("optUxProbeTimeout").value = data.uxProbeTimeout != null ? data.uxProbeTimeout : 15000;
+            document.getElementById("optUxContextMaxAge").value = data.uxContextMaxAgeMins != null ? data.uxContextMaxAgeMins : 1440;
             populateUxEnvSelect(data.uxProbeEnv || "prod");
             renderUxProbeList();
             loadUxLatestResults();
+            loadContextStatus();
+
+            // Office Hours
+            _officeHoursEnabled = !!data.officeHoursEnabled;
+            _uxContextIgnoreOfficeHours = !!data.uxContextIgnoreOfficeHours;
+            document.getElementById("optOhStart").value = data.officeHoursStart || "08:00";
+            document.getElementById("optOhEnd").value = data.officeHoursEnd || "18:00";
+            updateOfficeHoursEnabledDisplay();
+            updateOfficeHoursBypassDisplay();
         }).catch(function () {});
     }
 
@@ -375,6 +395,11 @@
         body.uxProbes = _uxProbes;
         body.uxWorkItemId = document.getElementById("optUxWorkItemId").value.trim();
         body.uxPageTargets = _uxPageTargets;
+        body.uxContextMaxAgeMins = Math.max(0, parseInt(document.getElementById("optUxContextMaxAge").value, 10) || 0);
+        body.uxContextIgnoreOfficeHours = _uxContextIgnoreOfficeHours;
+        body.officeHoursEnabled = _officeHoursEnabled;
+        body.officeHoursStart = document.getElementById("optOhStart").value || "08:00";
+        body.officeHoursEnd = document.getElementById("optOhEnd").value || "18:00";
 
         fetch("/api/settings", {
             method: "POST",
@@ -648,6 +673,93 @@
             btn.classList.remove("opt-toggle-btn--on");
             label.textContent = "Off";
         }
+    }
+
+    // ─── Office Hours ───
+
+    function toggleOfficeHoursEnabled() {
+        if (_isMultiUser && !_isAdmin) return;
+        _officeHoursEnabled = !_officeHoursEnabled;
+        updateOfficeHoursEnabledDisplay();
+    }
+
+    function updateOfficeHoursEnabledDisplay() {
+        var btn = document.getElementById("optOhEnabledBtn");
+        var label = document.getElementById("optOhEnabledLabel");
+        if (_officeHoursEnabled) {
+            btn.classList.add("opt-toggle-btn--on");
+            label.textContent = "On";
+        } else {
+            btn.classList.remove("opt-toggle-btn--on");
+            label.textContent = "Off";
+        }
+    }
+
+    function toggleOfficeHoursBypass() {
+        if (_isMultiUser && !_isAdmin) return;
+        _uxContextIgnoreOfficeHours = !_uxContextIgnoreOfficeHours;
+        updateOfficeHoursBypassDisplay();
+    }
+
+    function updateOfficeHoursBypassDisplay() {
+        var btn = document.getElementById("optOhBypassBtn");
+        var label = document.getElementById("optOhBypassLabel");
+        if (_uxContextIgnoreOfficeHours) {
+            btn.classList.add("opt-toggle-btn--on");
+            label.textContent = "On";
+        } else {
+            btn.classList.remove("opt-toggle-btn--on");
+            label.textContent = "Off";
+        }
+    }
+
+    // ─── Browser Context Status ───
+
+    function loadContextStatus() {
+        fetch("/api/ux/status").then(function (r) { return r.json(); }).then(function (data) {
+            var ctx = data.context;
+            var statusEl = document.getElementById("optUxContextStatus");
+            var stopBtn = document.getElementById("optUxContextStopBtn");
+            if (!ctx || !ctx.alive) {
+                statusEl.textContent = "Not running";
+                statusEl.className = "opt-context-status opt-context-status--off";
+                stopBtn.style.display = "none";
+            } else {
+                var uptimeSec = Math.round((ctx.uptimeMs || 0) / 1000);
+                var uptimeStr = "";
+                if (uptimeSec >= 3600) {
+                    uptimeStr = Math.floor(uptimeSec / 3600) + "h " + Math.floor((uptimeSec % 3600) / 60) + "m";
+                } else if (uptimeSec >= 60) {
+                    uptimeStr = Math.floor(uptimeSec / 60) + "m " + (uptimeSec % 60) + "s";
+                } else {
+                    uptimeStr = uptimeSec + "s";
+                }
+                statusEl.textContent = "Running (" + (ctx.env || "--") + ") -- uptime " + uptimeStr;
+                statusEl.className = "opt-context-status opt-context-status--on";
+                stopBtn.style.display = "";
+                if (_isMultiUser && !_isAdmin) stopBtn.disabled = true;
+            }
+        }).catch(function () {
+            var statusEl = document.getElementById("optUxContextStatus");
+            statusEl.textContent = "Unknown";
+            statusEl.className = "opt-context-status";
+        });
+    }
+
+    function stopBrowserContext() {
+        if (_isMultiUser && !_isAdmin) return;
+        var btn = document.getElementById("optUxContextStopBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="fa fa-spinner fa-spin"></span>';
+        fetch("/api/ux/context/close", { method: "POST" })
+            .then(function (r) { return r.json(); })
+            .then(function () {
+                setTimeout(function () { loadContextStatus(); btn.innerHTML = '<span class="fa fa-refresh"></span> Restart'; btn.disabled = false; }, 500);
+            })
+            .catch(function () {
+                btn.innerHTML = '<span class="fa fa-refresh"></span> Restart';
+                btn.disabled = false;
+            });
     }
 
     // ─── UX Monitor ───

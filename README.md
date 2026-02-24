@@ -69,7 +69,7 @@ Work type configuration visualiser and cross-environment comparison tool. Sideba
 
 ### Options (`/options`)
 
-Runtime settings page with a left-nav layout. Sections for Appearance, Monitor, Notifications, Metrics, UX Monitor, WAILA, Work Types, Authentication, and Admin (multi-user mode). Changes take effect immediately and persist to `cache/settings.json`.
+Runtime settings page with a left-nav layout. Grouped into Appearance, Statistics (Monitor, Metrics, UX Monitor), Alerting (Notifications, Office Hours), Tools (WAILA, Work Types), Authentication, and Admin (multi-user mode). Changes take effect immediately and persist to `cache/settings.json`.
 
 ### UX Page (`/ux`)
 

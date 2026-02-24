@@ -30,7 +30,7 @@
         <span class="usd-page-header__icon usd-page-header__icon--blue"><span class="fa fa-cog"></span></span>
         <div>
             <div class="usd-page-header__title">Settings</div>
-            <div class="usd-page-header__desc">Appearance, recording, notifications, authentication, and UX monitoring configuration.</div>
+            <div class="usd-page-header__desc">Appearance, monitoring, alerting, authentication, and tool configuration.</div>
         </div>
     </div>
 </div>
@@ -46,9 +46,12 @@
                 <div class="opt-nav__separator"></div>
                 <div class="opt-nav__group-label">Statistics</div>
                 <button class="opt-nav__item" data-opt-nav="monitor">Monitor</button>
-                <button class="opt-nav__item" data-opt-nav="notifications">Notifications</button>
                 <button class="opt-nav__item" data-opt-nav="metrics">Metrics</button>
                 <button class="opt-nav__item" data-opt-nav="ux">UX Monitor</button>
+                <div class="opt-nav__separator"></div>
+                <div class="opt-nav__group-label">Alerting</div>
+                <button class="opt-nav__item" data-opt-nav="notifications">Notifications</button>
+                <button class="opt-nav__item" data-opt-nav="officehours">Office Hours</button>
                 <div class="opt-nav__separator"></div>
                 <div class="opt-nav__group-label">Tools</div>
                 <button class="opt-nav__item" data-opt-nav="waila">WAILA</button>
@@ -368,6 +371,75 @@
                 </div>
             </div>
 
+            <!-- Office Hours -->
+            <div class="opt-panel" data-opt-panel="officehours">
+                <div class="opt-panel__title">Office Hours</div>
+                <div class="opt-panel__desc">Restrict alert delivery to a time window. Monitoring, probes, and metrics recording continue outside this window -- only notifications are suppressed.</div>
+
+                <div class="opt-panel__sub-title">Schedule</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Enable Office Hours</div>
+                            <div class="opt-row__desc">When enabled, desktop and Teams notifications are suppressed outside the configured time window. All monitoring continues regardless.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optOhEnabledBtn">
+                                <span class="opt-toggle-btn__label" id="optOhEnabledLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Start Time</div>
+                            <div class="opt-row__desc">Notifications are enabled from this time. Uses the server's local timezone.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <input type="time" class="opt-input opt-input--wide" id="optOhStart" value="08:00" />
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">End Time</div>
+                            <div class="opt-row__desc">Notifications are suppressed after this time. Overnight spans (e.g. 22:00 to 06:00) are supported.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <input type="time" class="opt-input opt-input--wide" id="optOhEnd" value="18:00" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opt-panel__sub-title">Browser Context</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Keep Browser Context Outside Hours</div>
+                            <div class="opt-row__desc">When enabled, the Playwright browser context remains alive and page checks continue recording metrics outside office hours. Only alert delivery is suppressed. When disabled, the browser context is shut down outside hours to save memory.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <button class="opt-toggle-btn" id="optOhBypassBtn">
+                                <span class="opt-toggle-btn__label" id="optOhBypassLabel">Off</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opt-panel__sub-title">Future</div>
+                <div class="opt-card">
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Teams @ Mentions</div>
+                            <div class="opt-row__desc">Configuration for which users should receive @ mentions in Teams alerts. This feature will be available in a future update.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <span class="opt-status-badge"><span class="usd-status-dot usd-status-dot--warn"></span> Planned</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Metrics -->
             <div class="opt-panel" data-opt-panel="metrics">
                 <div class="opt-panel__title">Metrics</div>
@@ -484,6 +556,32 @@
                         </div>
                         <div class="opt-row__control">
                             <input type="text" class="opt-input opt-input--wide" id="optUxWorkItemId" placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890" />
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Max Context Age</div>
+                            <div class="opt-row__desc">Maximum time (minutes) the Playwright browser context can stay alive before being recycled. Prevents long-running Chromium memory accumulation. Set to 0 to disable.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <input type="number" class="opt-input" id="optUxContextMaxAge" min="0" />
+                                <span class="opt-input-suffix">min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opt-divider"></div>
+                    <div class="opt-row">
+                        <div class="opt-row__text">
+                            <div class="opt-row__label">Browser Context</div>
+                            <div class="opt-row__desc" id="optUxContextDesc">Persistent Chromium instance used for page checks. Stays alive between check cycles to maintain session cookies. Restarting forces a fresh browser launch on the next page check cycle.</div>
+                        </div>
+                        <div class="opt-row__control">
+                            <div class="opt-input-group">
+                                <span class="opt-context-status" id="optUxContextStatus">--</span>
+                                <button class="usd-btn" id="optUxContextStopBtn" style="display:none"><span class="fa fa-refresh"></span> Restart</button>
+                            </div>
                         </div>
                     </div>
                 </div>

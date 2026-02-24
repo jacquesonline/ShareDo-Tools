@@ -155,6 +155,10 @@ function loadSettings() {
             if (data.metricsEnabled != null) _metricsEnabled = !!data.metricsEnabled;
             if (data.metricsInterval != null) { var mi = parseInt(data.metricsInterval, 10); if (!isNaN(mi) && mi >= 5) _metricsInterval = mi; }
             if (data.chartBackgrounds != null) _chartBackgrounds = !!data.chartBackgrounds;
+            // Office Hours
+            if (data.officeHoursEnabled != null) _officeHoursEnabled = !!data.officeHoursEnabled;
+            if (data.officeHoursStart != null && typeof data.officeHoursStart === "string") _officeHoursStart = data.officeHoursStart;
+            if (data.officeHoursEnd != null && typeof data.officeHoursEnd === "string") _officeHoursEnd = data.officeHoursEnd;
             // UX Monitor
             uxMonitor.applySettings(data);
             log("settings", "Loaded from cache/settings.json");
@@ -190,7 +194,10 @@ function saveSettings() {
             highContrast: _highContrast,
             metricsEnabled: _metricsEnabled,
             metricsInterval: _metricsInterval,
-            chartBackgrounds: _chartBackgrounds
+            chartBackgrounds: _chartBackgrounds,
+            officeHoursEnabled: _officeHoursEnabled,
+            officeHoursStart: _officeHoursStart,
+            officeHoursEnd: _officeHoursEnd
         }, uxMonitor.getSettingsForSave()), null, 2));
     } catch (e) { log("settings", "Save failed: " + e.message); }
 }
@@ -214,6 +221,33 @@ var _highContrast = false;
 var _metricsEnabled = true;
 var _metricsInterval = 30; // seconds between metric writes per env+metric (minimum 5s)
 var _chartBackgrounds = false; // fill chart canvas background for image export
+
+// ─── Office Hours ───
+var _officeHoursEnabled = (process.env.OFFICE_HOURS_ENABLED || "false").toLowerCase() === "true";
+var _officeHoursStart = process.env.OFFICE_HOURS_START || "09:00";
+var _officeHoursEnd = process.env.OFFICE_HOURS_END || "17:00";
+
+/**
+ * Check whether the current server-local time falls within the configured office hours window.
+ * Returns true if office hours are disabled (i.e. always within hours).
+ * Handles overnight spans (e.g. start=22:00, end=06:00).
+ */
+function isWithinOfficeHours() {
+    if (!_officeHoursEnabled) return true;
+    var now = new Date();
+    var currentMins = now.getHours() * 60 + now.getMinutes();
+    var startParts = _officeHoursStart.split(":");
+    var endParts = _officeHoursEnd.split(":");
+    var startMins = (parseInt(startParts[0], 10) || 0) * 60 + (parseInt(startParts[1], 10) || 0);
+    var endMins = (parseInt(endParts[0], 10) || 0) * 60 + (parseInt(endParts[1], 10) || 0);
+    if (startMins <= endMins) {
+        // Normal span: e.g. 08:00 - 18:00
+        return currentMins >= startMins && currentMins < endMins;
+    } else {
+        // Overnight span: e.g. 22:00 - 06:00
+        return currentMins >= startMins || currentMins < endMins;
+    }
+}
 
 // UX Monitor settings are owned by server/ux-monitor.js
 // ─── Teams webhook (server-level, controlled via .env) ───
@@ -288,6 +322,11 @@ function printStartupBanner() {
     console.log(label + "  Alert duration     " + r + val + _alertDurationThreshold + "s" + r);
     console.log(label + "  Notifications      " + r + notifyColour + notifyStatus + r);
     console.log(label + "  Teams webhook      " + r + teamsColour + teamsStatus + r);
+
+    var ohStatus = _officeHoursEnabled ? "On (" + _officeHoursStart + " - " + _officeHoursEnd + ")" : "Off";
+    var ohColour = _officeHoursEnabled ? green : dim;
+    console.log(label + "  Office hours       " + r + ohColour + ohStatus + r);
+
     console.log(label + "  Metrics            " + r + metricsColour + metricsStatus + r);
     console.log(label + "  Health interval    " + r + val + _autoRefreshInterval + "ms" + r);
 
@@ -434,6 +473,10 @@ app.post("/api/auth/launch-browser", session.requireAdmin, async (req, res) => {
     log("cookie", "[" + envName + "] Launching browser for manual login...");
     res.json({ success: true, message: "Browser launched. Please log in." });
 
+    // Close UX monitor's persistent context to release the user data dir lock.
+    // The context will relaunch with updated cookies on the next page check cycle.
+    await uxMonitor.closeContext();
+
     var context = null;
     try {
         fs.mkdirSync(userDataDir, { recursive: true });
@@ -497,6 +540,9 @@ app.get("/api/settings", (req, res) => {
         metricsEnabled: _metricsEnabled,
         metricsInterval: _metricsInterval,
         teamsEnabled: _teamsEnabled,
+        officeHoursEnabled: _officeHoursEnabled,
+        officeHoursStart: _officeHoursStart,
+        officeHoursEnd: _officeHoursEnd,
         multiUser: session.isMultiUser()
     }, uxMonitor.getSettings());
 
@@ -623,6 +669,17 @@ app.post("/api/settings", (req, res) => {
     if (s.metricsInterval != null) {
         var mi = parseInt(s.metricsInterval, 10);
         if (!isNaN(mi) && mi >= 5) _metricsInterval = mi;
+    }
+
+    // Office Hours
+    if (s.officeHoursEnabled != null) _officeHoursEnabled = !!s.officeHoursEnabled;
+    if (s.officeHoursStart != null && typeof s.officeHoursStart === "string") {
+        var ohsParts = s.officeHoursStart.match(/^(\d{1,2}):(\d{2})$/);
+        if (ohsParts) _officeHoursStart = s.officeHoursStart;
+    }
+    if (s.officeHoursEnd != null && typeof s.officeHoursEnd === "string") {
+        var oheParts = s.officeHoursEnd.match(/^(\d{1,2}):(\d{2})$/);
+        if (oheParts) _officeHoursEnd = s.officeHoursEnd;
     }
 
     // UX Monitor settings
@@ -1145,14 +1202,16 @@ healthMonitor.init({
     },
     getBacklogThreshold: function () { return BACKLOG_THRESHOLD; },
     getAutoRefreshInterval: function () { return _autoRefreshInterval; },
-    getTeamsConfig: function () { return { enabled: _teamsEnabled, webhookUrl: TEAMS_WEBHOOK_URL }; }
+    getTeamsConfig: function () { return { enabled: _teamsEnabled, webhookUrl: TEAMS_WEBHOOK_URL }; },
+    isWithinOfficeHours: isWithinOfficeHours
 });
 healthMonitor.start();
 uxMonitor.init({
     environments: environments, cookieCache: auth.cookieCache,
     extractApiJwt: auth.extractApiJwt, log: log, metrics: metrics,
     pushAlert: healthMonitor.pushAlert, fmtAlertTimestamp: healthMonitor.fmtAlertTimestamp,
-    playwright: playwright, fs: fs, path: path, https: https, baseDir: __dirname
+    playwright: playwright, fs: fs, path: path, https: https, baseDir: __dirname,
+    isWithinOfficeHours: isWithinOfficeHours
 });
 uxMonitor.startProbeMonitor();
 uxMonitor.startPageMonitor();
@@ -1328,6 +1387,11 @@ app.get("/api/ux/page/latest", (_req, res) => {
     res.json({ results: uxMonitor.getLatestPageResults() });
 });
 
+app.post("/api/ux/context/close", session.requireAdmin, async (_req, res) => {
+    await uxMonitor.closeContext();
+    res.json({ success: true });
+});
+
 app.listen(PORT, () => {
     var c = _isTTY ? _ansi256 : function () { return ""; };
     var r = _isTTY ? _ansiReset : "";
@@ -1338,3 +1402,28 @@ app.listen(PORT, () => {
         auth.extractCookiesFromBrowserSessions();
     });
 });
+
+// ─── Shutdown: close persistent browser context to prevent orphaned Chromium ───
+var _shuttingDown = false;
+async function shutdown() {
+    if (_shuttingDown) return;  // guard against second Ctrl+C re-entering
+    _shuttingDown = true;
+    log("ux", "Server shutting down -- closing browser context");
+    // Safety timeout: if ctx.close() hangs, force exit after 5 seconds
+    var forceTimer = setTimeout(function () {
+        log("ux", "Shutdown timeout -- forcing exit");
+        process.exit(1);
+    }, 5000);
+    // Do NOT unref: we need the event loop alive for await to resolve
+    try {
+        await uxMonitor.closeContext();
+    } catch (e) {
+        log("ux", "Shutdown context close error: " + e.message);
+    }
+    clearTimeout(forceTimer);
+    log("ux", "Shutdown complete");
+    // Allow one event loop tick for stdout to flush before exit
+    setTimeout(function () { process.exit(0); }, 50);
+}
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

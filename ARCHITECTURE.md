@@ -33,14 +33,14 @@ server.js (composition root)
   |
   +-- auth.js              Token, cookie, HTTP helpers
   +-- session.js           Multi-user sessions (depends on: crypto)
-  +-- health-monitor.js    Health checks, SSE, Teams (depends on: auth, metrics)
-  +-- ux-monitor.js        Probes, page checks (depends on: auth, metrics, health-monitor.pushAlert, playwright)
+  +-- health-monitor.js    Health checks, SSE, Teams (depends on: auth, metrics, isWithinOfficeHours)
+  +-- ux-monitor.js        Probes, page checks (depends on: auth, metrics, health-monitor.pushAlert, playwright, isWithinOfficeHours)
   +-- waila-service.js     Workflow index (depends on: auth)
   +-- worktype-service.js  Type config index (depends on: auth)
   +-- metrics-service.js   JSONL recording (depends on: fs, path)
 ```
 
-No server module imports another server module. All cross-module communication flows through dependency injection from `server.js`.
+No server module imports another server module. All cross-module communication flows through dependency injection from `server.js`. The `isWithinOfficeHours` function is defined in `server.js` and injected into both `health-monitor.js` (to gate alert delivery) and `ux-monitor.js` (to gate browser context lifecycle).
 
 ---
 
@@ -214,6 +214,12 @@ The health monitor only alerts on transitions (first breach after clear), not on
 1. **SSE**: Writes to all connected `/api/alerts/stream` clients. The client-side `shared.js` displays browser `Notification` popups if the user has opted in.
 2. **Teams**: If Teams webhook is enabled and the alert does not have `skipTeams: true`, sends an Adaptive Card via the configured webhook URL.
 
+### Office Hours Gate
+
+When office hours are enabled, `pushAlert()` checks `isWithinOfficeHours()` before dispatching. Alerts generated outside the configured window are suppressed with a log entry (`[Suppressed -- outside office hours]`). This is a hard gate on all alert delivery -- both SSE and Teams.
+
+Health monitor state tracking (duration timers, firstSeen, prev state) continues unaffected outside office hours. The limitation is that conditions that develop overnight and persist into office hours will not auto-alert unless they clear and re-trigger. UX monitor alerts (probes, page checks, session expiry) are also suppressed outside hours via the same gate.
+
 ### Teams Adaptive Cards
 
 Alerts are formatted as Adaptive Card v1.4 payloads with colour-coded titles (attention for streams, warning for nodes, accent for services) and a FactSet containing structured details (stream name, backlog value, threshold, environment link, timestamp).
@@ -274,7 +280,7 @@ Both services run builds asynchronously. The build endpoint returns immediately 
 
 ### API Probes
 
-A set of predefined API requests (`_uxProbes` array) executed against a configurable environment. Each probe measures total round-trip time and extracts the server-reported `tookMs`. Results are compared against warn/crit thresholds and can trigger alerts. The request timeout is configurable (`uxProbeTimeout`, default 15000ms) and is enforced to be at least as large as the critical threshold to prevent probes timing out before threshold evaluation.
+A set of predefined API requests (`_uxProbes` array) executed against a configurable environment. Each probe measures total round-trip time and extracts the server-reported `tookMs`. Results are compared against warn/crit thresholds and can trigger alerts. The request timeout is configurable (`uxProbeTimeout`, default 15000ms) and is enforced to be at least as large as the critical threshold to prevent probes timing out before threshold evaluation. Probes are lightweight HTTP requests and do not require Playwright.
 
 ### Playwright Page Checks
 
@@ -282,14 +288,40 @@ Loads configured page targets (`_uxPageTargets`) in a headless Chromium browser 
 
 - Web Vitals (FCP, LCP, TTI) via `PerformanceObserver`
 - Navigation timing breakdown (TTFB, DOM processing, render)
-- AJAX requests captured via `performance.getEntriesByType("resource")`
-- Total load time, status code, console errors
+- AJAX requests captured via `$ajaxClientTimer` (ShareDo's built-in client timer)
+- Total load time, status code
 
 Results are recorded as metrics and can trigger alerts based on configurable Web Vital thresholds.
 
-### Browser Session Reuse
+### Persistent Browser Context
 
-Page checks use Playwright persistent contexts stored in `cache/ux-user-data/{env}/`. This preserves authentication state across checks, avoiding re-login on every cycle.
+Page checks use a long-lived Playwright persistent context that survives across check cycles. This replaces the earlier architecture of launching and closing Chromium for every target on every cycle.
+
+**Why**: Repeated Chromium launches trigger Azure AD smart lockout (the pattern resembles credential stuffing), cause cookie flush race conditions (cookies not written to disk before process exits), and allow session idle expiry between cycles (no browser process to hold cookies in memory).
+
+**How**: `ensureContext()` is called at the start of each page check. On first call it launches a persistent context into `cache/ux-user-data/{env}/` and stores references in module-level state (`_persistentContext`, `_contextEnv`, `_contextLaunchedAt`). Subsequent calls return the existing context after a health check (`_persistentContext.pages()`). Individual page checks open and close pages (tabs) within the context. The context itself is only closed on:
+
+- Environment change (detected by `ensureContext()` comparing `_contextEnv` against `_uxProbeEnv`)
+- Max age exceeded (`uxContextMaxAgeMins`, default 1440 minutes / 24 hours)
+- Login redirect detected (session expired)
+- Manual browser login via Options (releases user data dir lock)
+- Office hours boundary (if bypass is disabled)
+- Admin-triggered restart via `POST /api/ux/context/close`
+- Server shutdown (`SIGTERM`/`SIGINT` handlers)
+
+**Shutdown handling**: During `SIGINT`, Chromium receives the signal from the terminal's process group and may already be dying. `closeContext()` races `ctx.close()` against a 3-second timeout to prevent hanging. The `server.js` shutdown handler has an additional 5-second safety timeout. References are nulled synchronously before the async close to prevent `ensureContext()` from returning a closing context.
+
+### Session Expiry Deduplication
+
+When a page check detects a login redirect, it sets `_sessionExpired = true` and closes the context. The `runAllPageChecks()` loop checks this flag before each target -- remaining targets in the cycle are skipped without relaunching Chromium, producing exactly one session alert per cycle instead of one per target. The flag is reset at the start of each new cycle (`runAllPageChecks()`), allowing the next cycle to retry. Manual `runPageCheck()` calls bypass the flag entirely.
+
+### Office Hours Interaction
+
+When office hours are enabled and the bypass toggle (`uxContextIgnoreOfficeHours`) is off, `ensureContext()` returns null outside the configured window. If a context is already alive, it is closed. Page checks receive a descriptive "paused -- outside office hours" response. When the bypass is on, the context stays alive and page checks continue recording metrics, but alerts are still suppressed by the `pushAlert()` gate in `health-monitor.js`. Probes always run regardless of office hours (they are lightweight and don't require Chromium).
+
+### Context Status
+
+`GET /api/ux/status` includes a `context` property: `{ alive, env, launchedAt, uptimeMs, maxAgeMins }`. The Options page displays this as a live status indicator in the UX Monitor panel with an admin-gated Restart button.
 
 ---
 
@@ -316,7 +348,11 @@ Page checks use Playwright persistent contexts stored in `cache/ux-user-data/{en
 
 Certain setting changes trigger subsystem restarts:
 - `autoRefreshInterval` or `desktopAlertMonitoring` change: `healthMonitor.start()` restarts the health check interval
-- UX-related settings (`uxEnabled`, `uxAutoProbes`, `uxProbeInterval`, etc.): probe and page monitors restart
+- UX-related settings (`uxEnabled`, `uxAutoProbes`, `uxProbeInterval`, `uxProbeEnv`, etc.): probe and page monitors restart. Environment change also triggers persistent browser context closure and relaunch.
+
+### Office Hours Settings
+
+Office hours settings (`officeHoursEnabled`, `officeHoursStart`, `officeHoursEnd`) are server-level settings in `server.js`. They are read from `.env` at startup, overridden by `cache/settings.json`, and modifiable at runtime via `POST /api/settings` (admin-gated). The `isWithinOfficeHours()` function is a live check against current state -- it is not stored as a result but evaluated on each call. The browser context bypass (`uxContextIgnoreOfficeHours`) is a UX monitor setting owned by `ux-monitor.js`.
 
 ---
 
@@ -486,13 +522,14 @@ The mock page also displays current notification settings (backlog threshold, al
 
 ### UX Monitor
 
-| Method | Path                   | Auth    | Purpose                       |
-|--------|------------------------|---------|-------------------------------|
-| GET    | `/api/ux/status`       | Session | UX monitor status and results |
-| POST   | `/api/ux/probe/run`    | Session | Run API probe cycle manually  |
-| POST   | `/api/ux/page/run`     | Session | Run page check (single URL)  |
-| POST   | `/api/ux/page/run-all` | Session | Run all page check targets   |
-| GET    | `/api/ux/page/latest`  | Session | Latest page check results    |
+| Method | Path                      | Auth    | Purpose                                    |
+|--------|---------------------------|---------|--------------------------------------------|
+| GET    | `/api/ux/status`          | Session | UX monitor status, results, context state  |
+| POST   | `/api/ux/probe/run`       | Session | Run API probe cycle manually               |
+| POST   | `/api/ux/page/run`        | Session | Run page check (single URL)               |
+| POST   | `/api/ux/page/run-all`    | Session | Run all page check targets                |
+| GET    | `/api/ux/page/latest`     | Session | Latest page check results                 |
+| POST   | `/api/ux/context/close`   | Admin   | Close persistent browser context (restart) |
 
 ### Session (Multi-User)
 
