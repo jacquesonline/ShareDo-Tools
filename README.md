@@ -89,6 +89,7 @@ Notification testing page available when `MOCK_ENV_ENABLED=true`. Provides contr
 
 ```
 npm install
+npx playwright install
 cp .env.example .env
 ```
 
