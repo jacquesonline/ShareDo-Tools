@@ -21,7 +21,7 @@
 .iss-table-wrap { overflow-x: auto; }
 
 /* ─── Row description (truncated) ─── */
-.iss-desc { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--font-size-md); color: var(--text-muted); }
+.iss-desc { max-width: 300px; overflow: hidden; text-overflow: ellipsis; font-size: var(--font-size-md); color: var(--text-muted); }
 .iss-desc:hover { white-space: normal; overflow: visible; }
 
 /* ─── Tags ─── */
