@@ -1,3 +1,11 @@
 node_modules/
 .env
 cache/
+
+# VS Code: ignore local workspace state, allow shared project config
+.vscode/*
+!.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
