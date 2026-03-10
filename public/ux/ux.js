@@ -366,8 +366,10 @@
     function renderAll(pageData, apiData) {
         _allPageEntries = pageData.entries || [];
         _currentPageEntries = getFilteredPageEntries();
-        var filteredPageData = { entries: _currentPageEntries };
-        renderSummary(pageData); renderCompareChart(pageData); renderDetailCharts(filteredPageData); renderProbesChart(apiData);
+        renderSummary({ entries: _allPageEntries });
+        renderCompareChart({ entries: _allPageEntries });
+        renderDetailCharts({ entries: _currentPageEntries });
+        renderProbesChart(apiData);
         updateResetZoomBtn("Vitals", false); updateResetZoomBtn("Probes", false); updateResetZoomBtn("Compare", false);
     }
 
