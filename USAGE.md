@@ -9,6 +9,7 @@ Instructional guide for day-to-day use and team onboarding. For technical intern
 - [Getting Started](#getting-started)
 - [Environment Switching](#environment-switching)
 - [Authentication](#authentication)
+- [ShareDo Hyperlink Activity Tracking](#sharedo-hyperlink-activity-tracking)
 - [Monitor Page](#monitor-page)
 - [Issues Page](#issues-page)
 - [Metrics Page](#metrics-page)
@@ -78,6 +79,69 @@ To extract the cookie from your browser: open ShareDo admin in your browser, ope
 ### Cookie Lifecycle
 
 Once a cookie is set (by any method), the application automatically refreshes it every 10 minutes (configurable in Options > Monitor > Cookie Refresh Interval). The cookie status indicator in the header shows the expiry time and whether auto-refresh is active. If a refresh fails with 401, auto-refresh stops and the cookie is marked as expired.
+
+---
+
+## ShareDo Hyperlink Activity Tracking
+
+Use the tracking endpoints when you want ShareDo to turn activity logging on or off and send activity events into ShareDo Tools.
+
+### Start/Stop Endpoint
+
+`GET /track/activity`
+
+### Supported Query Parameters
+
+- `userEmail`: Email of the ShareDo user who clicked the link
+- `userId`: Optional user identifier from ShareDo
+- `userName`: Optional display name
+- `action`: Optional label for the toggle event
+- `workItemId`: Optional work item identifier
+- `reference`: Optional work item reference
+- `source`: Optional source system label (defaults to `ShareDo`)
+- `meta`: Optional free-text metadata
+- `key`: Required only when `TRACK_ACTIVITY_SECRET` is configured on the server
+
+Each call toggles the tracking switch:
+
+- First call turns tracking on
+- Second call turns tracking off
+- While tracking is off, `/track/event` exits without logging
+
+### Example Start/Stop Call
+
+```text
+http://localhost:3000/track/activity?userEmail=jane.doe%40mauriceblackburn.com.au&action=sharedo-toggle&workItemId=123456&reference=MAT-000123&source=ShareDo&key=your-secret
+```
+
+Each toggle call is appended to:
+
+`cache/activity/sharedo-activity.jsonl`
+
+### Event Logging Endpoint
+
+`POST /track/event`
+
+Send JSON events from ShareDo JavaScript after tracking has been turned on. If tracking is off, the endpoint returns without logging.
+
+Example body:
+
+```json
+{
+	"type": "heartbeat",
+	"page": "sharedo",
+	"path": "/sharedo/123",
+	"workItemId": "123",
+	"reference": "MAT-123",
+	"data": {
+		"title": "Matter Screen"
+	}
+}
+```
+
+If you host this for a team, set `TRACK_ACTIVITY_SECRET` in `.env` and include `key=<secret>` in the hyperlink query string so only authorised callers can write events.
+
+If you want ShareDo itself to continue sending activity events after the initial click, use the integration script at `integrations/sharedo-activity-tracker.js` inside the ShareDo application and configure `TRACK_ALLOWED_ORIGINS` so the browser can call the `/track/*` endpoints cross-origin.
 
 ---
 

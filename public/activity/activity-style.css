@@ -1,0 +1,38 @@
+.act-global-error {
+    display: none;
+}
+
+.act-page-header {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.act-body {
+    padding: 16px 20px;
+}
+
+.act-limit-label {
+    font-size: var(--font-size-md);
+    color: var(--text-secondary);
+}
+
+.act-limit-input {
+    width: 90px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
+}
+
+.act-limit-input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.act-table-wrap {
+    max-height: calc(100vh - 240px);
+    overflow: auto;
+}

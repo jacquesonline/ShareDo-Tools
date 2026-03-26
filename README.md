@@ -131,6 +131,13 @@ Environments are discovered automatically from `.env` variables following the pa
 | `{ENV}_COOKIE_USERNAME`   | Auto-auth: local forms-based username       |
 | `{ENV}_COOKIE_PASSWORD`   | Auto-auth: local forms-based password       |
 
+Additional optional variable:
+
+| Variable                  | Purpose                                    |
+|---------------------------|--------------------------------------------|
+| `TRACK_ACTIVITY_SECRET`   | Shared secret required by `GET /track/activity` via query parameter `key` |
+| `TRACK_ALLOWED_ORIGINS`   | Comma-separated browser origins allowed to call `/track/*` with credentials from external JavaScript |
+
 Default host derivation follows the pattern `mb-{env}.sharedo.tech` for the API and `mb-{env}-identity.sharedo.tech` for identity, with special handling for `prod`.
 
 ---
@@ -205,6 +212,8 @@ sharedo-monitor/
       metrics.html, metrics.js, metrics-style.css
     ux/
       ux.html, ux.js, ux-style.css
+    integrations/
+      sharedo-activity-tracker.js        Drop-in ShareDo-side tracker for start + ongoing activity events
     search/
       search.html, search.js, search-style.css
     waila/
@@ -221,6 +230,8 @@ sharedo-monitor/
       register.html, register.js, register-style.css
   cache/                                 Auto-created, gitignored
     settings.json                        Runtime settings (persisted from Options page)
+    activity/
+      sharedo-activity.jsonl             Hyperlink activity audit log (JSONL)
     metrics/
       {env}/
         streamstats.jsonl                Stream backlog history

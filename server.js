@@ -117,6 +117,21 @@ const PORT = parseInt(process.env.PORT, 10) || 3000;
 let BACKLOG_THRESHOLD = parseInt(process.env.BACKLOG_THRESHOLD, 10) || 250;
 const LOG_401 = (process.env.LOG_401 || "false").toLowerCase() === "true";
 const SETTINGS_PATH = path.join(__dirname, "cache", "settings.json");
+const ACTIVITY_LOG_PATH = path.join(__dirname, "cache", "activity", "sharedo-activity.jsonl");
+const TRACK_ACTIVITY_SECRET = process.env.TRACK_ACTIVITY_SECRET || "";
+const TRACK_ALLOWED_ORIGINS = (process.env.TRACK_ALLOWED_ORIGINS || "").split(",").map(function (v) { return String(v || "").trim(); }).filter(Boolean);
+var _activityTrackingState = {
+    enabled: false,
+    startedAt: null,
+    stoppedAt: null,
+    source: null,
+    userEmail: null,
+    userId: null,
+    userName: null,
+    workItemId: null,
+    reference: null,
+    metadata: null
+};
 
 // Load valid theme IDs from manifest
 var _validThemes = new Set(["dark", "light"]); // fallback
@@ -200,6 +215,59 @@ function saveSettings() {
             officeHoursEnd: _officeHoursEnd
         }, uxMonitor.getSettingsForSave()), null, 2));
     } catch (e) { log("settings", "Save failed: " + e.message); }
+}
+
+function getClientIp(req) {
+    var xff = req.headers["x-forwarded-for"];
+    if (xff && typeof xff === "string") {
+        return xff.split(",")[0].trim();
+    }
+    return (req.socket && req.socket.remoteAddress) || null;
+}
+
+function appendActivityEvent(entry) {
+    try {
+        var dir = path.dirname(ACTIVITY_LOG_PATH);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.appendFileSync(ACTIVITY_LOG_PATH, JSON.stringify(entry) + "\n", "utf8");
+        return true;
+    } catch (e) {
+        log("api", "Activity log write failed: " + e.message);
+        return false;
+    }
+}
+
+function readRecentActivity(limit) {
+    var max = parseInt(limit, 10);
+    if (isNaN(max) || max < 1) max = 100;
+    if (max > 1000) max = 1000;
+
+    try {
+        if (!fs.existsSync(ACTIVITY_LOG_PATH)) return [];
+        var text = fs.readFileSync(ACTIVITY_LOG_PATH, "utf8");
+        if (!text) return [];
+        var lines = text.split("\n").filter(Boolean);
+        var slice = lines.slice(Math.max(0, lines.length - max));
+        var items = [];
+        for (var i = 0; i < slice.length; i++) {
+            try { items.push(JSON.parse(slice[i])); } catch (e) {}
+        }
+        return items.reverse();
+    } catch (e) {
+        log("api", "Activity log read failed: " + e.message);
+        return [];
+    }
+}
+
+function applyTrackCors(req, res) {
+    var origin = req.get("origin");
+    if (!origin) return;
+    if (TRACK_ALLOWED_ORIGINS.indexOf(origin) === -1) return;
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
 }
 var _autoRefreshInterval = 60000;
 var _alertDurationThreshold = parseInt(process.env.ALERT_DURATION_THRESHOLD, 10) || 60; // seconds
@@ -375,7 +443,88 @@ app.get("/register", (_req, res) => {
     if (!session.isMultiUser()) return res.redirect("/");
     res.sendFile(path.join(__dirname, "public", "register", "register.html"));
 });
+
+app.use("/track", function (req, res, next) {
+    applyTrackCors(req, res);
+    if (req.method === "OPTIONS") return res.status(204).end();
+    next();
+});
+
+// Public endpoint for ShareDo hyperlinks to track user-triggered activity.
+// Example: /track/activity?userEmail=someone@mauriceblackburn.com.au&action=open-work-item&workItemId=123&next=/search
+app.get("/track/activity", (req, res) => {
+    var q = req.query || {};
+    if (TRACK_ACTIVITY_SECRET) {
+        var providedKey = q.key ? String(q.key) : "";
+        if (providedKey !== TRACK_ACTIVITY_SECRET) {
+            return res.status(403).json({ error: true, message: "Invalid tracking key" });
+        }
+    }
+
+    var now = new Date().toISOString();
+    var willEnable = !_activityTrackingState.enabled;
+    _activityTrackingState.enabled = willEnable;
+    _activityTrackingState.source = q.source ? String(q.source) : (_activityTrackingState.source || "ShareDo");
+    _activityTrackingState.userEmail = q.userEmail ? String(q.userEmail) : _activityTrackingState.userEmail;
+    _activityTrackingState.userId = q.userId ? String(q.userId) : _activityTrackingState.userId;
+    _activityTrackingState.userName = q.userName ? String(q.userName) : _activityTrackingState.userName;
+    _activityTrackingState.workItemId = q.workItemId ? String(q.workItemId) : _activityTrackingState.workItemId;
+    _activityTrackingState.reference = q.reference ? String(q.reference) : _activityTrackingState.reference;
+    _activityTrackingState.metadata = q.meta ? String(q.meta) : _activityTrackingState.metadata;
+    if (willEnable) _activityTrackingState.startedAt = now;
+    else _activityTrackingState.stoppedAt = now;
+
+    var event = {
+        ts: now,
+        source: _activityTrackingState.source || "ShareDo",
+        action: willEnable ? "tracking-started" : "tracking-stopped",
+        userEmail: _activityTrackingState.userEmail,
+        userId: _activityTrackingState.userId,
+        userName: _activityTrackingState.userName,
+        workItemId: _activityTrackingState.workItemId,
+        reference: _activityTrackingState.reference,
+        metadata: _activityTrackingState.metadata,
+        requestedPath: req.originalUrl,
+        referer: req.get("referer") || null,
+        userAgent: req.get("user-agent") || null,
+        ip: getClientIp(req)
+    };
+
+    if (!appendActivityEvent(event)) return res.status(500).json({ error: true, message: "Failed to record activity" });
+    return res.json({ success: true, enabled: _activityTrackingState.enabled, event: event });
+});
+
+app.post("/track/event", (req, res) => {
+    if (!_activityTrackingState.enabled) return res.status(204).end();
+
+    var body = req.body || {};
+    var activityType = body.type ? String(body.type) : "activity";
+    var event = {
+        ts: new Date().toISOString(),
+        source: _activityTrackingState.source || "ShareDo",
+        action: activityType,
+        activityType: activityType,
+        userEmail: body.userEmail ? String(body.userEmail) : _activityTrackingState.userEmail,
+        userId: body.userId ? String(body.userId) : _activityTrackingState.userId,
+        userName: body.userName ? String(body.userName) : _activityTrackingState.userName,
+        workItemId: body.workItemId ? String(body.workItemId) : _activityTrackingState.workItemId,
+        reference: body.reference ? String(body.reference) : _activityTrackingState.reference,
+        metadata: body.data ? JSON.stringify(body.data) : null,
+        currentPath: body.path ? String(body.path) : null,
+        page: body.page ? String(body.page) : null,
+        environment: body.environment ? String(body.environment) : null,
+        visibility: body.visibility ? String(body.visibility) : null,
+        referer: req.get("referer") || null,
+        userAgent: req.get("user-agent") || null,
+        ip: getClientIp(req) || null
+    };
+
+    if (!appendActivityEvent(event)) return res.status(500).json({ error: true, message: "Failed to record activity event" });
+    return res.status(204).end();
+});
+
 app.get("/", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "monitor", "monitor.html")); });
+app.get("/activity", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "activity", "activity.html")); });
 app.get("/search", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "search", "search.html")); });
 app.get("/waila", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "waila", "waila.html")); });
 app.get("/options", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "options", "options.html")); });
@@ -390,6 +539,7 @@ app.get("/api/env", (req, res) => {
     res.json({ current: req.envName, environment: env.label, apiHost: env.apiHost, hasCookie: !!auth.cookieCache[req.envName],
         environments: envNames.map(n => ({ name: n, label: environments[n].label, apiHost: environments[n].apiHost, hasCookie: !!auth.cookieCache[n] })) });
 });
+
 app.post("/api/env/select", (req, res) => {
     const t = req.body && req.body.environment; if (!t || !environments[t]) return res.status(400).json({ error: true, message: "Unknown env" });
     currentEnv = t; const env = environments[currentEnv]; log("env", `Switched to: ${env.label} (${env.apiHost})`);
@@ -1009,6 +1159,12 @@ app.post("/api/search/presets", (req, res) => {
     if (!Array.isArray(presets)) return res.status(400).json({ error: true, message: "Expected an array" });
     writePresets(presets);
     res.json({ success: true, count: presets.length });
+});
+
+app.get("/api/activity/log", session.requireAdmin, (req, res) => {
+    var limit = req.query && req.query.limit;
+    var items = readRecentActivity(limit);
+    res.json({ count: items.length, items: items });
 });
 
 // ═══════════════════════════════════════════════════════════════════

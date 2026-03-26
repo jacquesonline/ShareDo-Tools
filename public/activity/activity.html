@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
+<link rel="stylesheet" href="/activity/activity-style.css">
+</head>
+<body>
+<div id="globalError" class="usd-global-error act-global-error"></div>
+
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect" title="Environment"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right"></div>
+</div>
+
+<div class="usd-page-header act-page-header">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--amber"><span class="fa fa-history"></span></span>
+        <div>
+            <div class="usd-page-header__title">Activity Log</div>
+            <div class="usd-page-header__desc">Shows tracking start, stop, and event entries written to the activity log file.</div>
+        </div>
+    </div>
+    <div class="usd-page-header__actions">
+        <label for="activityLimit" class="act-limit-label">Rows</label>
+        <input id="activityLimit" class="act-limit-input" type="number" value="200" min="1" max="1000" />
+        <button class="usd-btn usd-btn--primary" id="activityRefreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
+    </div>
+</div>
+
+<div class="act-body">
+    <div class="usd-section">
+        <div class="usd-section__header">
+            <div class="usd-section__header-left">
+                <span class="usd-section__icon usd-section__icon--config"><span class="fa fa-list"></span></span>
+                <span class="usd-section__title">Recent Entries</span>
+            </div>
+            <div class="usd-section__header-right">
+                <span class="usd-badge usd-badge--neutral" id="activityCountBadge">0</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="act-table-wrap">
+                <table class="usd-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Page</th>
+                            <th>Path</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityBody">
+                        <tr><td colspan="6" class="usd-table__muted">Click Refresh to load</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/activity/activity.js"></script>
+</body>
+</html>

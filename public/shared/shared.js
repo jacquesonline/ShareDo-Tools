@@ -31,6 +31,7 @@ var shared = (function () {
         { href: "/issues",   page: "issues",       label: "Issues" },
         { href: "/metrics",  page: "metrics",      label: "Metrics" },
         { href: "/ux",       page: "ux",            label: "UX" },
+        { href: "/activity", page: "activity",     label: "Activity" },
         { href: "/search",   page: "search",       label: "Search" },
         { href: "/waila",    page: "waila",        label: "WAILA" },
         { href: "/worktype", page: "worktype",     label: "Work Types" },
