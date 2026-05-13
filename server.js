@@ -382,6 +382,7 @@ app.get("/options", session.pageGate, (_req, res) => { res.sendFile(path.join(__
 app.get("/issues", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "issues", "issues.html")); });
 app.get("/metrics", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "metrics", "metrics.html")); });
 app.get("/worktype", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "worktype", "worktype.html")); });
+app.get("/activity", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "activity", "activity.html")); });
 app.get("/ux", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "ux", "ux.html")); });
 app.get("/theme-builder", session.pageGate, (_req, res) => { res.sendFile(path.join(__dirname, "public", "theme-builder", "theme-builder.html")); });
 
@@ -1390,6 +1391,63 @@ app.get("/api/ux/page/latest", (_req, res) => {
 app.post("/api/ux/context/close", session.requireAdmin, async (_req, res) => {
     await uxMonitor.closeContext();
     res.json({ success: true });
+});
+
+// ─── Activity Tracking ───
+var _trackingEnabled = false;
+var _trackAllowedOrigins = (process.env.TRACK_ALLOWED_ORIGINS || "")
+    .split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+var _trackActivitySecret = process.env.TRACK_ACTIVITY_SECRET || "";
+var _trackEventsFile = process.env.TRACK_EVENTS_FILE ||
+    path.join(__dirname, "data", "activity-events.jsonl");
+
+app.use("/track", function (req, res, next) {
+    var origin = req.headers.origin;
+    if (origin && _trackAllowedOrigins.indexOf(origin) !== -1) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    next();
+});
+
+app.get("/track/activity", function (req, res) {
+    if (req.query.key !== _trackActivitySecret) return res.status(403).json({ error: "Forbidden" });
+    _trackingEnabled = !_trackingEnabled;
+    log("api", "Activity tracking " + (_trackingEnabled ? "enabled" : "disabled") +
+        " (source=" + (req.query.source || "") + ", user=" + (req.query.userName || "") + ")");
+    res.json({ enabled: _trackingEnabled });
+});
+
+app.post("/track/event", function (req, res) {
+    if (!_trackingEnabled) return res.json({ ok: false });
+    var event = Object.assign({}, req.body, { serverTs: new Date().toISOString() });
+    try {
+        var dir = path.dirname(_trackEventsFile);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.appendFileSync(_trackEventsFile, JSON.stringify(event) + "\n");
+    } catch (e) {
+        log("api", "Failed to write activity event: " + e.message);
+        return res.status(500).json({ ok: false });
+    }
+    res.json({ ok: true });
+});
+
+app.get("/api/activity", function (req, res) {
+    var limit = Math.min(parseInt(req.query.limit) || 500, 5000);
+    if (!fs.existsSync(_trackEventsFile)) return res.json({ events: [], tracking: _trackingEnabled, total: 0 });
+    try {
+        var raw = fs.readFileSync(_trackEventsFile, "utf8").trim();
+        if (!raw) return res.json({ events: [], tracking: _trackingEnabled, total: 0 });
+        var lines = raw.split("\n").filter(Boolean);
+        var events = lines.map(function (l) { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean);
+        var meaningful = events.filter(function (e) { return e.type !== "api-call"; });
+        var result = meaningful.slice(-limit).reverse();
+        res.json({ events: result, tracking: _trackingEnabled, total: events.length });
+    } catch (e) {
+        res.status(500).json({ error: "Failed to read activity events: " + e.message });
+    }
 });
 
 app.listen(PORT, () => {

@@ -1,0 +1,176 @@
+/* ═══════════════════════════════════════════
+   Activity page
+   ═══════════════════════════════════════════ */
+
+/* ─── Count badge (blue variant) ─── */
+.usd-badge--blue { background: var(--accent-blue-bg); color: var(--accent-blue); }
+
+/* ─── Tracking badge ─── */
+.act-tracking-badge {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+.act-tracking-badge--on  { background: var(--accent-green-bg);  color: var(--accent-green); }
+.act-tracking-badge--off { background: var(--accent-amber-bg); color: var(--accent-amber); }
+
+/* ─── User cards grid ─── */
+.act-users {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 14px;
+}
+
+.act-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 240px;
+    max-width: 340px;
+    flex: 1 1 240px;
+    border-left: 3px solid var(--border);
+    transition: border-color 0.2s ease;
+}
+
+.act-stale--fresh { border-left-color: var(--accent-green); }
+.act-stale--idle  { border-left-color: var(--accent-amber); }
+.act-stale--old   { border-left-color: var(--border); }
+
+/* ─── Avatar ─── */
+.act-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent-blue-bg);
+    color: var(--accent-blue);
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+}
+
+.act-user-info { flex: 1; min-width: 0; }
+
+.act-user-name {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.act-user-email {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.act-user-desc {
+    font-size: var(--font-size-md);
+    color: var(--text-secondary);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.act-user-time {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    text-align: right;
+}
+
+/* ─── Feed controls ─── */
+.act-feed-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+}
+
+.act-filter-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+}
+
+.act-filter-select {
+    font-size: var(--font-size-md);
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    outline: none;
+    cursor: pointer;
+}
+
+.act-filter-select:hover, .act-filter-select:focus { border-color: var(--accent-blue); }
+
+.act-dedup-note {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ─── Feed table ─── */
+.act-feed-wrap { overflow-x: auto; }
+
+.act-type-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+}
+
+.act-icon--blue   { background: var(--accent-blue-bg);   color: var(--accent-blue); }
+.act-icon--green  { background: var(--accent-green-bg);  color: var(--accent-green); }
+.act-icon--amber  { background: var(--accent-amber-bg);  color: var(--accent-amber); }
+.act-icon--muted  { background: var(--bg-card);          color: var(--text-muted); }
+
+.act-feed-user  { font-weight: 600; font-size: var(--font-size-base); white-space: nowrap; }
+.act-feed-desc  { color: var(--text-primary); }
+.act-feed-page  { font-size: var(--font-size-md); color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap; }
+.act-feed-time  { font-size: var(--font-size-sm); font-family: var(--font-mono); color: var(--text-muted); white-space: nowrap; text-align: right; }
+
+/* ─── Work item link ─── */
+.act-wi-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    margin-left: 4px;
+    font-size: var(--font-size-xs);
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+}
+.act-wi-link:hover { opacity: 1; }
+
+/* ─── Empty state ─── */
+.act-empty {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--font-size-md);
+}

@@ -34,6 +34,7 @@ var shared = (function () {
         { href: "/search",   page: "search",       label: "Search" },
         { href: "/waila",    page: "waila",        label: "WAILA" },
         { href: "/worktype", page: "worktype",     label: "Work Types" },
+        { href: "/activity", page: "activity",     label: "Activity" },
         { href: "/options",  page: "options",       label: null, icon: "fa-cog", title: "Options" }
     ];
 

@@ -31,6 +31,20 @@ var cookieSource = {};
 var cookieRefreshTimers = {};
 var COOKIE_REFRESH_INTERVAL = 10 * 60 * 1000;
 
+// Returns { rejectUnauthorized: false } for localhost/127.0.0.1 (self-signed certs in local dev).
+function _tlsOpts(hostname) {
+    var h = (hostname || "").split(":")[0];
+    if (h === "localhost" || h === "127.0.0.1" || h === "::1") return { rejectUnauthorized: false };
+    return {};
+}
+
+// Splits "hostname:port" into { hostname, port }. Falls back to port 443.
+function _parseHost(host) {
+    var idx = (host || "").indexOf(":");
+    if (idx === -1) return { hostname: host || "", port: 443 };
+    return { hostname: host.substring(0, idx), port: parseInt(host.substring(idx + 1), 10) || 443 };
+}
+
 function init(deps) { _deps = deps; }
 
 // ── Token ──
@@ -43,7 +57,7 @@ function getToken(envName) {
         var body = _deps.querystring.stringify({ grant_type: "client_credentials", scope: "sharedo" });
         var authHeader = "Basic " + Buffer.from(env.clientId + ":" + env.clientSecret).toString("base64");
         var urlObj = new URL("https://" + env.identityHost + "/connect/token");
-        var opts = { hostname: urlObj.hostname, port: 443, path: urlObj.pathname, method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": Buffer.byteLength(body), "Authorization": authHeader } };
+        var opts = Object.assign({ hostname: urlObj.hostname, port: parseInt(urlObj.port, 10) || 443, path: urlObj.pathname, method: "POST", family: 4, headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": Buffer.byteLength(body), "Authorization": authHeader } }, _tlsOpts(urlObj.hostname));
         var req = _deps.https.request(opts, function (res) { var d = ""; res.on("data", function (c) { d += c; }); res.on("end", function () {
             if (res.statusCode !== 200) return reject(new Error("Token failed for " + envName + ": " + res.statusCode + " - " + d));
             try { var p = JSON.parse(d); tokenCache[envName] = { accessToken: p.access_token, expiresAt: Date.now() + (p.expires_in * 1000) }; resolve(p.access_token); } catch (e) { reject(new Error("Token parse: " + e.message)); }
@@ -72,7 +86,8 @@ function isRefreshing(envName) { return !!cookieRefreshTimers[envName]; }
 
 function refreshCookie(envName) {
     var env = _deps.environments[envName]; var cur = cookieCache[envName]; if (!env || !cur) return;
-    var opts = { hostname: env.apiHost, port: 443, path: "/security/refreshTokens", method: "GET", headers: { "Cookie": cur, "X-Requested-With": "XMLHttpRequest", "X-Passive-Request": "true", "Accept": "application/json" } };
+    var _rh = _parseHost(env.apiHost);
+    var opts = Object.assign({ hostname: _rh.hostname, port: _rh.port, path: "/security/refreshTokens", method: "GET", headers: { "Cookie": cur, "X-Requested-With": "XMLHttpRequest", "X-Passive-Request": "true", "Accept": "application/json" } }, _tlsOpts(_rh.hostname));
     var req = _deps.https.request(opts, function (res) { var d = ""; res.on("data", function (c) { d += c; }); res.on("end", function () {
         if (res.statusCode === 200) { var sc = res.headers["set-cookie"]; if (sc && sc.length) {
             var base = cookieCache[envName] || cur;
@@ -93,7 +108,8 @@ function setCookieRefreshInterval(ms) { COOKIE_REFRESH_INTERVAL = ms; for (var e
 // ── OIDC flow helpers ──
 function httpsGet(hostname, urlPath, headers) {
     return new Promise(function (resolve, reject) {
-        var opts = { hostname: hostname, port: 443, path: urlPath, method: "GET", headers: headers || {}, timeout: 15000 };
+        var _gh = _parseHost(hostname);
+        var opts = Object.assign({ hostname: _gh.hostname, port: _gh.port, path: urlPath, method: "GET", headers: headers || {}, timeout: 15000 }, _tlsOpts(_gh.hostname));
         var req = _deps.https.request(opts, function (res) { var d = ""; res.on("data", function (c) { d += c; }); res.on("end", function () { resolve({ status: res.statusCode, headers: res.headers, body: d }); }); });
         req.on("timeout", function () { req.destroy(); reject(new Error("Timeout: GET " + urlPath)); }); req.on("error", reject); req.end();
     });
@@ -101,7 +117,8 @@ function httpsGet(hostname, urlPath, headers) {
 function httpsPost(hostname, urlPath, body, headers) {
     return new Promise(function (resolve, reject) {
         var bodyBuf = Buffer.from(body); var h = Object.assign({ "Content-Length": bodyBuf.length }, headers || {});
-        var opts = { hostname: hostname, port: 443, path: urlPath, method: "POST", headers: h, timeout: 15000 };
+        var _ph = _parseHost(hostname);
+        var opts = Object.assign({ hostname: _ph.hostname, port: _ph.port, path: urlPath, method: "POST", headers: h, timeout: 15000 }, _tlsOpts(_ph.hostname));
         var req = _deps.https.request(opts, function (res) { var d = ""; res.on("data", function (c) { d += c; }); res.on("end", function () { resolve({ status: res.statusCode, headers: res.headers, body: d }); }); });
         req.on("timeout", function () { req.destroy(); reject(new Error("Timeout: POST " + urlPath)); }); req.on("error", reject); req.write(bodyBuf); req.end();
     });
@@ -224,7 +241,8 @@ function sharedoRequest(apiHost, urlPath, method, body, authParam) {
         if (body) { headers["Content-Type"] = "application/json"; }
         var bodyStr = body ? JSON.stringify(body) : null;
         if (bodyStr) headers["Content-Length"] = Buffer.byteLength(bodyStr);
-        var opts = { hostname: apiHost, port: 443, path: urlPath, method: method, headers: headers, timeout: 15000 };
+        var _sh = _parseHost(apiHost);
+        var opts = Object.assign({ hostname: _sh.hostname, port: _sh.port, path: urlPath, method: method, headers: headers, timeout: 15000 }, _tlsOpts(_sh.hostname));
         var req = _deps.https.request(opts, function (res) { var d = ""; res.on("data", function (c) { d += c; }); res.on("end", function () {
             if (res.statusCode >= 400) { var wa = res.headers["www-authenticate"] || null; if (res.statusCode !== 401 || _deps.isLog401()) _deps.log("api", res.statusCode + " " + method + " " + urlPath + (wa ? " | " + wa : "") + (d ? " | " + d.substring(0,150) : "")); return resolve({ error: true, status: res.statusCode, message: d.substring(0,500), url: urlPath, wwwAuthenticate: wa }); }
             try { resolve(JSON.parse(d)); } catch(e) { resolve({ error: true, status: res.statusCode, message: "Invalid JSON" }); }

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity - ShareDo Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/themes.css">
+<link rel="stylesheet" href="/activity/activity-style.css">
+</head>
+<body>
+
+<div id="globalError" class="usd-global-error" style="display:none"></div>
+
+<!-- Header -->
+<div class="usd-header">
+    <div class="usd-header__left">
+        <span class="usd-header__title">ShareDo Tools</span>
+        <nav class="usd-nav" id="mainNav"></nav>
+        <select class="usd-header__env-select" id="envSelect"></select>
+        <span class="usd-header__host" id="hostLabel">--</span>
+        <span class="usd-header__cookie-status" id="cookieStatus"></span>
+    </div>
+    <div class="usd-header__right"></div>
+</div>
+
+<!-- Page header -->
+<div class="usd-page-header">
+    <div class="usd-page-header__identity">
+        <span class="usd-page-header__icon usd-page-header__icon--purple"><span class="fa fa-users"></span></span>
+        <div>
+            <div class="usd-page-header__title">Activity</div>
+            <div class="usd-page-header__desc">Live user activity from ShareDo. Shows each user's current location and a deduplicated feed of recent actions. Requires the ShareDo tracking script to be active.</div>
+        </div>
+    </div>
+    <div class="usd-page-header__actions">
+        <span class="act-tracking-badge" id="trackingBadge"></span>
+        <label class="usd-auto-toggle" id="autoRefreshToggle" title="Auto-refresh every 30s">
+            <span class="usd-toggle-track" id="toggleTrack"><span class="usd-toggle-knob"></span></span>
+            <span id="autoRefreshLabel">Auto 30s</span>
+        </label>
+        <button class="usd-btn usd-btn--primary" id="refreshBtn"><span class="fa fa-refresh"></span> Refresh</button>
+    </div>
+</div>
+
+<!-- Body -->
+<div class="usd-body">
+
+    <!-- Active Users -->
+    <div class="usd-section" id="sectionUsers">
+        <div class="usd-section__header" onclick="toggleSection('sectionUsers')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--ee"><span class="fa fa-user"></span></span>
+                <span class="usd-section__title">Active Users</span>
+                <span class="usd-badge usd-badge--blue" id="userCount" style="display:none"></span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="act-users" id="userCards">
+                <div class="act-empty" id="usersEmpty" style="display:none">No user activity recorded yet.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="usd-section" id="sectionFeed">
+        <div class="usd-section__header" onclick="toggleSection('sectionFeed')">
+            <div class="usd-section__header-left">
+                <span class="fa fa-chevron-down usd-section__chevron"></span>
+                <span class="usd-section__icon usd-section__icon--search"><span class="fa fa-list"></span></span>
+                <span class="usd-section__title">Activity Feed</span>
+                <span class="usd-badge usd-badge--blue" id="feedCount" style="display:none"></span>
+            </div>
+            <div class="usd-section__header-right">
+                <span class="act-dedup-note">Consecutive duplicate actions collapsed</span>
+            </div>
+        </div>
+        <div class="usd-section__content">
+            <div class="act-feed-controls">
+                <label class="act-filter-label">Filter user:
+                    <select class="act-filter-select" id="filterUser">
+                        <option value="">All users</option>
+                    </select>
+                </label>
+                <label class="act-filter-label">Filter type:
+                    <select class="act-filter-select" id="filterType">
+                        <option value="">All actions</option>
+                        <option value="page-navigation">Page visits</option>
+                        <option value="blade-open">Blade opens</option>
+                        <option value="blade-close">Blade closes</option>
+                        <option value="button-click">Button clicks</option>
+                    </select>
+                </label>
+            </div>
+            <div class="act-feed-wrap">
+                <table class="usd-table" id="feedTable">
+                    <thead>
+                        <tr>
+                            <th style="width:34px"></th>
+                            <th>User</th>
+                            <th>Activity</th>
+                            <th>Location</th>
+                            <th style="width:110px">When</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedBody"></tbody>
+                </table>
+                <div class="act-empty" id="feedEmpty" style="display:none">No activity to display.</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/shared/shared.js"></script>
+<script src="/activity/activity.js"></script>
+</body>
+</html>
