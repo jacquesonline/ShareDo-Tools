@@ -500,6 +500,17 @@ app.post("/api/auth/launch-browser", session.requireAdmin, async (req, res) => {
                 var jwt = auth.extractApiJwt(cookieHeader);
                 var identity = jwt ? auth.getJwtIdentity(jwt) : null;
                 log("cookie", "[" + envName + "] Browser login captured session" + (identity ? " for " + identity : "") + " (cookie: " + cookieHeader.length + " chars)");
+                // Persist storage state so session cookies (which Playwright would otherwise
+                // drop on context close) survive into the headless page-check context.
+                try {
+                    var storageDir = path.join(__dirname, "cache", "ux-storage-state");
+                    fs.mkdirSync(storageDir, { recursive: true });
+                    var storagePath = path.join(storageDir, envName + ".json");
+                    await context.storageState({ path: storagePath });
+                    log("cookie", "[" + envName + "] Storage state saved to " + storagePath);
+                } catch (ssErr) {
+                    log("cookie", "[" + envName + "] Failed to save storage state: " + ssErr.message);
+                }
                 captured = true;
                 break;
             }

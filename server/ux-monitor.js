@@ -309,6 +309,21 @@ async function ensureContext() {
         _contextLaunchedAt = Date.now();
         _sessionExpired = false;
         _deps.log("ux", "Persistent browser context launched for " + _uxProbeEnv);
+        // Inject cookies from the storage state saved by interactive login. Session cookies
+        // (no Expires attribute) are not persisted on disk by launchPersistentContext, so we
+        // re-inject them on every launch to keep the headless session alive.
+        try {
+            var storagePath = _deps.path.join(_deps.baseDir, "cache", "ux-storage-state", _uxProbeEnv + ".json");
+            if (_deps.fs.existsSync(storagePath)) {
+                var stored = JSON.parse(_deps.fs.readFileSync(storagePath, "utf8"));
+                if (stored && Array.isArray(stored.cookies) && stored.cookies.length > 0) {
+                    await _persistentContext.addCookies(stored.cookies);
+                    _deps.log("ux", "Injected " + stored.cookies.length + " cookies from storage state for " + _uxProbeEnv);
+                }
+            }
+        } catch (ssErr) {
+            _deps.log("ux", "Failed to inject storage state cookies: " + ssErr.message);
+        }
         return _persistentContext;
     } catch (e) {
         _deps.log("ux", "Failed to launch persistent context: " + e.message);
@@ -329,12 +344,25 @@ async function closeContext() {
         return;
     }
     var ctx = _persistentContext;
+    var closingEnv = _contextEnv;
     // Null references synchronously to prevent ensureContext() from
     // returning a closing context if called before the await resolves
     _persistentContext = null;
     _contextEnv = null;
     _contextLaunchedAt = null;
     _deps.log("ux", "Closing persistent browser context...");
+    // Refresh saved storage state so rotated session cookies survive the recycle.
+    // Skipped on session-expired close — would overwrite good cookies with the redirect set.
+    if (closingEnv && !_sessionExpired) {
+        try {
+            var storageDir = _deps.path.join(_deps.baseDir, "cache", "ux-storage-state");
+            _deps.fs.mkdirSync(storageDir, { recursive: true });
+            var storagePath = _deps.path.join(storageDir, closingEnv + ".json");
+            await ctx.storageState({ path: storagePath });
+        } catch (ssErr) {
+            _deps.log("ux", "Failed to refresh storage state on close: " + ssErr.message);
+        }
+    }
     // Race close against a timeout -- during SIGINT, Chromium receives the signal
     // from the process group and may already be dead, causing ctx.close() to hang
     try {

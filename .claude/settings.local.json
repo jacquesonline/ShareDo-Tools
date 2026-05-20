@@ -40,7 +40,13 @@
       "PowerShell(Remove-Item *)",
       "PowerShell(Get-Item C:\\\\Projects\\\\ShareDo-Tools.zip | Select-Object Name, @{N='SizeMB';E={[math]::Round\\($_.Length/1MB,2\\)}}, LastWriteTime)",
       "PowerShell(if \\(Test-Path C:\\\\Projects\\\\ShareDo-Tools.zip\\) { \"Exists: $\\(\\(Get-Item C:\\\\Projects\\\\ShareDo-Tools.zip\\).Length\\) bytes\" } else { \"Does not exist\" })",
-      "PowerShell(& \"$env:SystemRoot\\\\System32\\\\tar.exe\" -tf C:\\\\Projects\\\\ShareDo-Tools.zip | Select-Object -First 30; \"---\"; \"Total entries: $\\(\\(& \"$env:SystemRoot\\\\System32\\\\tar.exe\" -tf C:\\\\Projects\\\\ShareDo-Tools.zip | Measure-Object\\).Count\\)\")"
+      "PowerShell(& \"$env:SystemRoot\\\\System32\\\\tar.exe\" -tf C:\\\\Projects\\\\ShareDo-Tools.zip | Select-Object -First 30; \"---\"; \"Total entries: $\\(\\(& \"$env:SystemRoot\\\\System32\\\\tar.exe\" -tf C:\\\\Projects\\\\ShareDo-Tools.zip | Measure-Object\\).Count\\)\")",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell($dirs = Get-ChildItem \"C:\\\\Projects\\\\ShareDo-Tools\\\\cache\\\\ux-user-data\" -Directory -ErrorAction SilentlyContinue; if \\($dirs\\) { $dirs | ForEach-Object { \"$\\($_.Name\\) - modified $\\($_.LastWriteTime\\)\" } } else { \"directory exists but is empty or no subdirs\" })",
+      "Bash(python -m json.tool)",
+      "PowerShell(Test-Path *)",
+      "PowerShell($j = Get-Content \"C:\\\\Projects\\\\ShareDo-Tools\\\\cache\\\\ux-storage-state\\\\preprod.json\" | ConvertFrom-Json; \"Cookies count: $\\($j.cookies.Count\\)\"; \"---\"; $j.cookies | ForEach-Object { $exp = if \\($_.expires -eq -1\\) { \"SESSION\" } else { \\([DateTimeOffset]::FromUnixTimeSeconds\\([int64]$_.expires\\)\\).ToString\\(\\) }; \"$\\($_.name\\)  | domain=$\\($_.domain\\)  | expires=$exp\" })",
+      "Bash(git *)"
     ]
   }
 }
