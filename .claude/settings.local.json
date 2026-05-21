@@ -46,7 +46,8 @@
       "Bash(python -m json.tool)",
       "PowerShell(Test-Path *)",
       "PowerShell($j = Get-Content \"C:\\\\Projects\\\\ShareDo-Tools\\\\cache\\\\ux-storage-state\\\\preprod.json\" | ConvertFrom-Json; \"Cookies count: $\\($j.cookies.Count\\)\"; \"---\"; $j.cookies | ForEach-Object { $exp = if \\($_.expires -eq -1\\) { \"SESSION\" } else { \\([DateTimeOffset]::FromUnixTimeSeconds\\([int64]$_.expires\\)\\).ToString\\(\\) }; \"$\\($_.name\\)  | domain=$\\($_.domain\\)  | expires=$exp\" })",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Skill(sync-repos)"
     ]
   }
 }
